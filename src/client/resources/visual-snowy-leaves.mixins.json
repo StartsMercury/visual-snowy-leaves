@@ -1,0 +1,13 @@
+{
+    "required": true,
+    "package": "io.github.startsmercury.visual_snowy_leaves.mixin.client",
+    "compatibilityLevel": "JAVA_17",
+    "client": [
+        "ModelBlockRendererMixin",
+        "RenderChunkRegionAccessor",
+        "TerrainParticleMixin"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
+}

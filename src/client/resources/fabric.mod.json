@@ -1,0 +1,45 @@
+{
+	"schemaVersion": 1,
+	"id": "visual-snowy-leaves",
+	"version": "${version}",
+	"name": "Visual Snowy Leaves",
+	"description": "Snowy leaves that works for you, everywhere (especially servers).",
+	"authors": [
+		{
+			"name": "StartsMercury",
+			"contact": {
+				"homepage": "https://github.com/StartsMercury"
+			}
+		}
+	],
+	"contact": {
+		"homepage": "https://modrinth.com/mod/visual-snowy-leaves",
+		"sources": "https://github.com/StartsMercury/visual-snowy-leaves",
+		"issues": "https://github.com/StartsMercury/visual-snowy-leaves/issues"
+	},
+	"license": "MIT",
+	"icon": "assets/visual-snowy-leaves/icon.png",
+	"environment": "client",
+	"entrypoints": {
+		"client": []
+	},
+	"custom": {
+		"modmenu": {
+			"links": {
+				"modmenu.github_releases": "https://github.com/StartsMercury/visual-snowy-leaves/releases",
+				"modmenu.modrinth": "https://modrinth.com/mod/visual-snowy-leaves"
+			}
+		}
+	},
+	"mixins": [
+		"visual-snowy-leaves.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.15",
+		"java": ">=${version_java}",
+		"minecraft": "*"
+	},
+	"recommends": {
+		"minecraft": "${version_minecraft}"
+	}
+}
