@@ -151,7 +151,6 @@ public abstract class ModelBakeryMixin implements ModelBakeryExtension {
             return;
         }
 
-        System.out.printf("#%08X for %s%n", _rgbMultiplier, block);
         blockColors.addMapping(MultipliedBlockColor.setMultiplier(blockColor, _rgbMultiplier), id);
     }
 
