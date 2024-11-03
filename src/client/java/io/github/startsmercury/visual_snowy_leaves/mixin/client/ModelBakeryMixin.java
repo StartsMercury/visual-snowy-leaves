@@ -33,6 +33,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Map;
 import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -93,7 +94,7 @@ public abstract class ModelBakeryMixin implements ModelBakeryExtension {
     public void visual_snowy_leaves$modifySprites(final AtlasSet.StitchResult atlas) {
         final var blockColors = ((BlockColorsAccessor) this.blockColors).getBlockColors();
 
-        for (final var block : this.visual_snowy_leaves$models.keys()) {
+        for (final var block : this.visual_snowy_leaves$models.keySet()) {
             visual_snowy_leaves$modifySpritesOf(atlas, blockColors, block);
         }
     }
@@ -104,8 +105,7 @@ public abstract class ModelBakeryMixin implements ModelBakeryExtension {
         final IdMapper<BlockColor> blockColors,
         final ResourceLocation block
     ) {
-        final var contentsCollection = this.visual_snowy_leaves$models
-            .get(block)
+        final var contentsCollection = Set.copyOf(this.visual_snowy_leaves$models.get(block))
             .stream()
             .map(ModelBakery.MODEL_LISTER::idToFile)
             .map(this.modelResources::get)
@@ -126,7 +126,7 @@ public abstract class ModelBakeryMixin implements ModelBakeryExtension {
                 .map(TextureAtlasSprite::contents)
             )
             .map(contents -> (SpriteContentsAccessor) contents)
-            .toList();
+            .collect(Collectors.toSet());
 
         final var allArgbPixels = contentsCollection
             .stream()
