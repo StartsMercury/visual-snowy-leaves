@@ -6,6 +6,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.platform.NativeImage;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.ColorComponent;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.ModelBakeryExtension;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.MultipliedBlockColor;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.VisualSnowyLeavesImpl;
 import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.color.block.BlockColors;
@@ -112,6 +113,7 @@ public abstract class ModelBakeryMixin implements ModelBakeryExtension {
                 .getElements()
                 .stream()
                 .flatMap(element -> element.faces.values().stream())
+                .filter(face -> face.tintIndex == 0)
                 .map(face -> face.texture)
                 .collect(Collectors.toSet())
                 .stream()
@@ -149,18 +151,13 @@ public abstract class ModelBakeryMixin implements ModelBakeryExtension {
             return;
         }
 
-        blockColors.addMapping(
-            (blockState, blockAndTintGetter, blockPos, i) -> {
-                final var argb = blockColor.getColor(blockState, blockAndTintGetter, blockPos, i);
-                return FastColor.ARGB32.multiply(argb, _rgbMultiplier);
-            },
-            id
-        );
+        System.out.printf("#%08X for %s%n", _rgbMultiplier, block);
+        blockColors.addMapping(MultipliedBlockColor.setMultiplier(blockColor, _rgbMultiplier), id);
     }
 
     @Unique
     private static int getArgbOfMaxLightness(final int[] argbArray) {
-        var maxValue = -1;
+        var maxLightness2x = -1;
         var minSaturation = 256;
         var result = 0xFF_FF_FF_FF;
 
@@ -177,16 +174,23 @@ public abstract class ModelBakeryMixin implements ModelBakeryExtension {
             final var max = Math.max(Math.max(r, g), b);
             final var min = Math.min(Math.min(r, g), b);
 
-            @SuppressWarnings("UnnecessaryLocalVariable")
-            final var value = max;
-            final var chroma = max - min;
-            final var saturation = value == 0 ? 0 : 255 * chroma / value;
-
-            if (saturation > minSaturation || value <= maxValue) {
+            final int saturation;
+            {
+                @SuppressWarnings("UnnecessaryLocalVariable")
+                final var value = max;
+                final var chroma = max - min;
+                saturation = value == 0 ? 0 : 255 * chroma / value;
+            }
+            if (saturation - 2 > minSaturation) {
                 continue;
             }
 
-            maxValue = value;
+            final var lightness2x = max + min;
+            if (lightness2x <= maxLightness2x) {
+                continue;
+            }
+
+            maxLightness2x = lightness2x;
             minSaturation = saturation;
             result = argb;
         }

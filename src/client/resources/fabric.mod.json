@@ -21,7 +21,9 @@
 	"icon": "assets/visual-snowy-leaves/icon.png",
 	"environment": "client",
 	"entrypoints": {
-		"client": []
+		"client": [
+			"io.github.startsmercury.visual_snowy_leaves.impl.client.VisualSnowyLeavesImpl::init"
+		]
 	},
 	"custom": {
 		"modmenu": {
