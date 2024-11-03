@@ -6,7 +6,7 @@ object Constants {
 }
 
 plugins {
-    id("fabric-loom") version "1.8.6"
+    id("fabric-loom") version "1.8.12"
 }
 
 base {
@@ -24,6 +24,7 @@ java {
 }
 
 loom {
+    accessWidenerPath = file("src/client/resources/visual-snowy-leaves.accesswidener")
     runtimeOnlyLog4j = true
     splitEnvironmentSourceSets()
 
@@ -36,7 +37,7 @@ loom {
 dependencies {
     minecraft("com.mojang:minecraft:${Constants.VERSION_MINECRAFT}")
     mappings(loom.officialMojangMappings())
-    modImplementation("net.fabricmc:fabric-loader:0.16.5")
+    modImplementation("net.fabricmc:fabric-loader:0.16.9")
 }
 
 tasks.withType<ProcessResources> {

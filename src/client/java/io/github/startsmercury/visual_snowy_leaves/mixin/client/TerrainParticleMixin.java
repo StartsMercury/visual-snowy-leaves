@@ -6,6 +6,7 @@ import io.github.startsmercury.visual_snowy_leaves.impl.client.VisualSnowyLeaves
 import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.particle.TerrainParticle;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.block.state.BlockState;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Slice;
@@ -20,8 +21,9 @@ public abstract class TerrainParticleMixin {
     private boolean overrideParticleTint(
         final boolean original,
         final @Local(ordinal = 0, argsOnly = true) ClientLevel level,
+        final @Local(ordinal = 0, argsOnly = true) BlockState blockState,
         final @Local(ordinal = 0, argsOnly = true) BlockPos blockPos
     ) {
-        return original || VisualSnowyLeavesImpl.isSnowyAt(level, blockPos);
+        return original || VisualSnowyLeavesImpl.isSnowyAt(level, blockState, blockPos);
     }
 }
