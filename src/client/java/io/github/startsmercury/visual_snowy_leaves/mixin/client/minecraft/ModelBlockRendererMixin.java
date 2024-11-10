@@ -1,4 +1,4 @@
-package io.github.startsmercury.visual_snowy_leaves.mixin.client;
+package io.github.startsmercury.visual_snowy_leaves.mixin.client.minecraft;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;

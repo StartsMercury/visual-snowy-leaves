@@ -1,4 +1,4 @@
-package io.github.startsmercury.visual_snowy_leaves.mixin.client;
+package io.github.startsmercury.visual_snowy_leaves.mixin.client.minecraft;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
@@ -8,7 +8,6 @@ import io.github.startsmercury.visual_snowy_leaves.impl.client.ColorComponent;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.ModelBakeryExtension;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.MultipliedBlockColor;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.VisualSnowyLeavesImpl;
-import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.BlockModelDefinition;
@@ -19,7 +18,6 @@ import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.AtlasSet;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.core.IdMapper;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
@@ -92,17 +90,14 @@ public abstract class ModelBakeryMixin implements ModelBakeryExtension {
 
     @Override
     public void visual_snowy_leaves$modifySprites(final AtlasSet.StitchResult atlas) {
-        final var blockColors = ((BlockColorsAccessor) this.blockColors).getBlockColors();
-
         for (final var block : this.visual_snowy_leaves$models.keySet()) {
-            visual_snowy_leaves$modifySpritesOf(atlas, blockColors, block);
+            visual_snowy_leaves$modifySpritesOf(atlas, block);
         }
     }
 
     @Unique
     private void visual_snowy_leaves$modifySpritesOf(
         final AtlasSet.StitchResult atlas,
-        final IdMapper<BlockColor> blockColors,
         final ResourceLocation block
     ) {
         final var contentsCollection = Set.copyOf(this.visual_snowy_leaves$models.get(block))
@@ -146,12 +141,15 @@ public abstract class ModelBakeryMixin implements ModelBakeryExtension {
             );
 
         final var id = BuiltInRegistries.BLOCK.getId(BuiltInRegistries.BLOCK.get(block));
-        final var blockColor = blockColors.byId(id);
+        final var blockColor = ((BlockColorsAccessor) this.blockColors).getBlockColors().byId(id);
         if (blockColor == null) {
             return;
         }
 
-        blockColors.addMapping(MultipliedBlockColor.setMultiplier(blockColor, _rgbMultiplier), id);
+        this.blockColors.register(
+            MultipliedBlockColor.setMultiplier(blockColor, _rgbMultiplier),
+            BuiltInRegistries.BLOCK.get(block)
+        );
     }
 
     @Unique

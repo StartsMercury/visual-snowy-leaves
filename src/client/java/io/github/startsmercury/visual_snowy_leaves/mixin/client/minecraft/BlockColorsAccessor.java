@@ -1,4 +1,4 @@
-package io.github.startsmercury.visual_snowy_leaves.mixin.client;
+package io.github.startsmercury.visual_snowy_leaves.mixin.client.minecraft;
 
 import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.color.block.BlockColors;

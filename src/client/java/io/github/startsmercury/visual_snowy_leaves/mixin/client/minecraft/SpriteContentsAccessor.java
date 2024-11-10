@@ -1,4 +1,4 @@
-package io.github.startsmercury.visual_snowy_leaves.mixin.client;
+package io.github.startsmercury.visual_snowy_leaves.mixin.client.minecraft;
 
 import com.mojang.blaze3d.platform.NativeImage;
 import net.minecraft.client.renderer.texture.SpriteContents;

@@ -1,4 +1,4 @@
-package io.github.startsmercury.visual_snowy_leaves.mixin.client;
+package io.github.startsmercury.visual_snowy_leaves.mixin.client.minecraft;
 
 import net.minecraft.client.renderer.chunk.RenderChunkRegion;
 import net.minecraft.world.level.Level;

@@ -1,4 +1,4 @@
-package io.github.startsmercury.visual_snowy_leaves.mixin.client;
+package io.github.startsmercury.visual_snowy_leaves.mixin.client.minecraft;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.ModelBakeryExtension;

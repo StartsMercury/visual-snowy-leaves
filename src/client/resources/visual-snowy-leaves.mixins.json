@@ -1,17 +1,19 @@
 {
-  "required": true,
-  "package": "io.github.startsmercury.visual_snowy_leaves.mixin.client",
-  "compatibilityLevel": "JAVA_17",
-  "client": [
-    "BlockColorsAccessor",
-    "ModelBakeryMixin",
-    "ModelBlockRendererMixin",
-    "ModelManagerMixin",
-    "RenderChunkRegionAccessor",
-    "SpriteContentsAccessor",
-    "TerrainParticleMixin"
-  ],
-  "injectors": {
-    "defaultRequire": 1
-  }
+    "required": true,
+    "package": "io.github.startsmercury.visual_snowy_leaves.mixin.client",
+    "compatibilityLevel": "JAVA_17",
+    "client": [
+        "minecraft.BlockColorsAccessor",
+        "minecraft.ModelBakeryMixin",
+        "minecraft.ModelBlockRendererMixin",
+        "minecraft.ModelManagerMixin",
+        "minecraft.RenderChunkRegionAccessor",
+        "minecraft.SpriteContentsAccessor",
+        "minecraft.TerrainParticleMixin",
+        "sodium.BlockRendererMixin",
+        "sodium.WorldSliceAccessor"
+    ],
+    "injectors": {
+        "defaultRequire": 1
+    }
 }
