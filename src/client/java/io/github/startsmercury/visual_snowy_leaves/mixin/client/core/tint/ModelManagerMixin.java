@@ -1,7 +1,7 @@
-package io.github.startsmercury.visual_snowy_leaves.mixin.client.minecraft;
+package io.github.startsmercury.visual_snowy_leaves.mixin.client.core.tint;
 
 import com.llamalad7.mixinextras.sugar.Local;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.ModelBakeryExtension;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.SpriteWhitenerAware;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.world.inventory.InventoryMenu;
 import org.spongepowered.asm.mixin.Mixin;
@@ -17,6 +17,6 @@ public class ModelManagerMixin {
         final @Local(ordinal = 0, argsOnly = true) ModelManager.ReloadState reloadState
     ) {
         final var atlas = reloadState.atlasPreparations().get(InventoryMenu.BLOCK_ATLAS);
-        ((ModelBakeryExtension) reloadState.modelBakery()).visual_snowy_leaves$modifySprites(atlas);
+        ((SpriteWhitenerAware) reloadState.modelBakery()).getSpriteWhitener().modifySprites(atlas);
     }
 }

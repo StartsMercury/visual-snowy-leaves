@@ -1,13 +1,11 @@
-package io.github.startsmercury.visual_snowy_leaves.mixin.client.minecraft;
+package io.github.startsmercury.visual_snowy_leaves.impl.client;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.blaze3d.platform.NativeImage;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.ColorComponent;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.ModelBakeryExtension;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.MultipliedBlockColor;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.VisualSnowyLeavesImpl;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.util.ColorComponent;
+import io.github.startsmercury.visual_snowy_leaves.mixin.client.core.tint.BlockColorsAccessor;
+import io.github.startsmercury.visual_snowy_leaves.mixin.client.core.tint.SpriteContentsAccessor;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.renderer.block.model.BlockModel;
 import net.minecraft.client.renderer.block.model.BlockModelDefinition;
@@ -21,13 +19,6 @@ import net.minecraft.client.resources.model.ModelBakery;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
-import org.spongepowered.asm.mixin.Final;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
-import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import java.util.Map;
 import java.util.Objects;
@@ -36,31 +27,28 @@ import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
-@Mixin(ModelBakery.class)
-public abstract class ModelBakeryMixin implements ModelBakeryExtension {
-    @Final
-    @Shadow
-    private BlockColors blockColors;
+public final class SpriteWhitener {
+    private final BlockColors blockColors;
 
-    @Final
-    @Shadow
-    private Map<ResourceLocation, BlockModel> modelResources;
+    private final Map<? super ResourceLocation, ? extends BlockModel> modelResources;
 
-    @Unique
-    private final Multimap<ResourceLocation, ResourceLocation> visual_snowy_leaves$models = HashMultimap.create();
+    private final Multimap<ResourceLocation, ResourceLocation> models;
 
-    @Inject(
-        method = "loadModel",
-        at = @At(
-            value = "INVOKE",
-            target = "Lcom/google/common/collect/Maps;newIdentityHashMap()Ljava/util/IdentityHashMap;",
-            remap = false
-        )
-    )
-    private void captureModels(
-        final CallbackInfo callback,
-        final @Local(ordinal = 1) ResourceLocation resourceLocation2,
-        final @Local(ordinal = 0) BlockModelDefinition blockModelDefinition
+    public SpriteWhitener(
+        final BlockColors blockColors,
+        final Map<? super ResourceLocation, ? extends BlockModel> modelResources
+    ) {
+        Objects.requireNonNull(blockColors, "Parameter blockColors is null");
+        Objects.requireNonNull(modelResources, "Parameter modelResources is null");
+
+        this.blockColors = blockColors;
+        this.modelResources = modelResources;
+        this.models = HashMultimap.create();
+    }
+
+    public void analyzeModels(
+        final ResourceLocation resourceLocation2,
+        final BlockModelDefinition blockModelDefinition
     ) {
         if (!VisualSnowyLeavesImpl.TARGET_BLOCKS.contains(resourceLocation2)) {
             return;
@@ -85,22 +73,20 @@ public abstract class ModelBakeryMixin implements ModelBakeryExtension {
         Stream.concat(multiPartVariants, variants)
             .flatMap((variant) -> variant.getVariants().stream())
             .map(Variant::getModelLocation)
-            .forEach(model -> this.visual_snowy_leaves$models.put(resourceLocation2, model));
+            .forEach(model -> this.models.put(resourceLocation2, model));
     }
 
-    @Override
-    public void visual_snowy_leaves$modifySprites(final AtlasSet.StitchResult atlas) {
-        for (final var block : this.visual_snowy_leaves$models.keySet()) {
-            visual_snowy_leaves$modifySpritesOf(atlas, block);
+    public void modifySprites(final AtlasSet.StitchResult atlas) {
+        for (final var block : this.models.keySet()) {
+            modifySpritesOf(atlas, block);
         }
     }
 
-    @Unique
-    private void visual_snowy_leaves$modifySpritesOf(
+    private void modifySpritesOf(
         final AtlasSet.StitchResult atlas,
         final ResourceLocation block
     ) {
-        final var contentsCollection = Set.copyOf(this.visual_snowy_leaves$models.get(block))
+        final var contentsCollection = Set.copyOf(this.models.get(block))
             .stream()
             .map(ModelBakery.MODEL_LISTER::idToFile)
             .map(this.modelResources::get)
@@ -147,12 +133,11 @@ public abstract class ModelBakeryMixin implements ModelBakeryExtension {
         }
 
         this.blockColors.register(
-            MultipliedBlockColor.setMultiplier(blockColor, _rgbMultiplier),
+            SnowableBlockColor.setMultiplier(blockColor, _rgbMultiplier),
             BuiltInRegistries.BLOCK.get(block)
         );
     }
 
-    @Unique
     private static int getArgbOfMaxLightness(final int[] argbArray) {
         var maxLightness2x = -1;
         var minSaturation = 256;
@@ -195,7 +180,6 @@ public abstract class ModelBakeryMixin implements ModelBakeryExtension {
         return result;
     }
 
-    @Unique
     private int normalize(final int argb, final int _xyz) {
         final var a = FastColor.ARGB32.alpha(argb);
         final var r = FastColor.ARGB32.red(argb);

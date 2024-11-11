@@ -1,0 +1,30 @@
+package io.github.startsmercury.visual_snowy_leaves.mixin.client.core.transition.minecraft;
+
+import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.SnowAware;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.VisualSnowyLeavesAware;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.VisualSnowyLeavesImpl;
+import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.client.renderer.chunk.RenderChunkRegion;
+import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+
+@Mixin(RenderChunkRegion.class)
+public class RenderChunkRegionMixin implements SnowAware, VisualSnowyLeavesAware {
+    @Final
+    @Shadow
+    protected Level level;
+
+    @Override
+    public VisualSnowyLeavesImpl getVisualSnowyLeaves() {
+        assert level instanceof ClientLevel;
+        return ((VisualSnowyLeavesAware) this.level).getVisualSnowyLeaves();
+    }
+
+    @Override
+    public boolean visual_snowy_leaves$coldEnoughToSnow(final BlockPos blockPos) {
+        return ((SnowAware) this.level).visual_snowy_leaves$coldEnoughToSnow(blockPos);
+    }
+}
