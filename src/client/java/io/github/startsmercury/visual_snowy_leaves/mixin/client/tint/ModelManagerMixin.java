@@ -1,4 +1,4 @@
-package io.github.startsmercury.visual_snowy_leaves.mixin.client.core.tint;
+package io.github.startsmercury.visual_snowy_leaves.mixin.client.tint;
 
 import com.llamalad7.mixinextras.sugar.Local;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.SpriteWhitenerAware;

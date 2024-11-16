@@ -1,4 +1,4 @@
-package io.github.startsmercury.visual_snowy_leaves.mixin.client.core.transition.sodium;
+package io.github.startsmercury.visual_snowy_leaves.mixin.client.transition.sodium;
 
 import io.github.startsmercury.visual_snowy_leaves.impl.client.SnowData;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.VisualSnowyLeavesImpl;

@@ -1,4 +1,4 @@
-package io.github.startsmercury.visual_snowy_leaves.mixin.client.core.transition.minecraft;
+package io.github.startsmercury.visual_snowy_leaves.mixin.client.extension;
 
 import io.github.startsmercury.visual_snowy_leaves.impl.client.VisualSnowyLeavesImpl;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.compile.CompileVisualSnowyLeavesAware;

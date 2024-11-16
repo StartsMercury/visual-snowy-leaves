@@ -1,4 +1,4 @@
-package io.github.startsmercury.visual_snowy_leaves.mixin.client.core.transition.minecraft;
+package io.github.startsmercury.visual_snowy_leaves.mixin.client.transition.minecraft;
 
 import net.minecraft.client.multiplayer.ClientChunkCache;
 import net.minecraft.world.level.chunk.LevelChunk;
