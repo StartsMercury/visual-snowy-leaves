@@ -1,6 +1,7 @@
 package io.github.startsmercury.visual_snowy_leaves.impl.client;
 
 import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.SnowAware;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.SnowDataAware;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.VisualSnowyLeavesAware;
 import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.core.BlockPos;
@@ -11,28 +12,28 @@ import org.jetbrains.annotations.Nullable;
 
 import java.util.Objects;
 
-public final class SnowableBlockColor implements BlockColor {
-    public static SnowableBlockColor setMultiplier(
-        final BlockColor blockColor,
-        final int multiplier
+public record SnowableBlockColor(BlockColor blockColor, int correctionMultiplier) implements BlockColor {
+    public static final int COLOR_WHITE = 0xFFFFFFFF;
+
+    private static boolean isSnowyAt(
+        final @Nullable BlockAndTintGetter blockAndTintGetter,
+        final @Nullable BlockPos blockPos
     ) {
-        final SnowableBlockColor self;
-        if (blockColor instanceof final SnowableBlockColor snowableBlockColor) {
-            self = snowableBlockColor;
-        } else {
-            self = new SnowableBlockColor(blockColor);
-        }
-        self.setCorrectionMultiplier(multiplier);
-        return self;
+        return blockPos != null
+            && blockAndTintGetter instanceof final SnowAware snowAware
+            && snowAware.visual_snowy_leaves$coldEnoughToSnow(blockPos);
     }
 
-    private final BlockColor blockColor;
+    public static SnowableBlockColor setMultiplier(BlockColor blockColor, final int multiplier) {
+        while (blockColor instanceof final SnowableBlockColor snowableBlockColor) {
+            blockColor = snowableBlockColor.blockColor;
+        }
 
-    private int correctionMultiplier;
+        return new SnowableBlockColor(blockColor, multiplier);
+    }
 
-    public SnowableBlockColor(final BlockColor blockColor) {
-        Objects.requireNonNull(blockColor);
-        this.blockColor = blockColor;
+    public SnowableBlockColor {
+        Objects.requireNonNull(blockColor, "Parameter blockColor is null");
     }
 
     @Override
@@ -48,20 +49,31 @@ public final class SnowableBlockColor implements BlockColor {
         if (i != 0) {
             return base;
         }
-        if (blockPos == null) {
-            return FastColor.ARGB32.multiply(base, correctionMultiplier);
-        }
-        if (
-            !(blockAndTintGetter instanceof final SnowAware snowAware)
-                || !(snowAware.visual_snowy_leaves$coldEnoughToSnow(blockPos))
-                || !(blockAndTintGetter instanceof final VisualSnowyLeavesAware aware)
-        ) {
+        if (!(blockAndTintGetter instanceof final VisualSnowyLeavesAware vslAware)) {
             return FastColor.ARGB32.multiply(base, correctionMultiplier);
         }
 
-        final var visualSnowyLeaves = aware.getVisualSnowyLeaves();
-        final var snowiness = visualSnowyLeaves.getSnowiness();
-        final var maxSnowiness = visualSnowyLeaves.getMaxSnowiness();
+        final var config = vslAware.getVisualSnowyLeaves().getConfig();
+
+        switch (config.snowyMode()) {
+            case NEVER:
+                return FastColor.ARGB32.multiply(base, correctionMultiplier);
+            case SNOWING:
+                break;
+            case ALWAYS:
+                return COLOR_WHITE;
+        }
+
+        if (!isSnowyAt(blockAndTintGetter, blockPos)) {
+            return FastColor.ARGB32.multiply(base, correctionMultiplier);
+        }
+
+        if (!(blockAndTintGetter instanceof final SnowDataAware snowDataAware)) {
+            return COLOR_WHITE;
+        }
+
+        final var curr = snowDataAware.visual_snowy_leaves$getSnowData().getAccumulatedTicks();
+        final var max = config.transitionDuration().asTicks();
 
         final var r = FastColor.ARGB32.red(correctionMultiplier) * FastColor.ARGB32.red(base);
         final var g = FastColor.ARGB32.green(correctionMultiplier) * FastColor.ARGB32.green(base);
@@ -69,17 +81,9 @@ public final class SnowableBlockColor implements BlockColor {
 
         return FastColor.ARGB32.color(
             FastColor.ARGB32.alpha(base),
-            (maxSnowiness * r + snowiness * (255 * 255 - r)) / (255 * maxSnowiness),
-            (maxSnowiness * g + snowiness * (255 * 255 - g)) / (255 * maxSnowiness),
-            (maxSnowiness * b + snowiness * (255 * 255 - b)) / (255 * maxSnowiness)
+            Integer.divideUnsigned(max * r + curr * (255 * 255 - r), 255 * max),
+            Integer.divideUnsigned(max * g + curr * (255 * 255 - g), 255 * max),
+            Integer.divideUnsigned(max * b + curr * (255 * 255 - b), 255 * max)
         );
-    }
-
-    public int getCorrectionMultiplier() {
-        return correctionMultiplier;
-    }
-
-    public void setCorrectionMultiplier(final int correctionMultiplier) {
-        this.correctionMultiplier = correctionMultiplier;
     }
 }

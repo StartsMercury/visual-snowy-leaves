@@ -22,7 +22,10 @@
 	"environment": "client",
 	"entrypoints": {
 		"client": [
-			"io.github.startsmercury.visual_snowy_leaves.impl.client.VisualSnowyLeavesImpl::init"
+            "io.github.startsmercury.visual_snowy_leaves.impl.client.entrypoint.VisualSnowyLeavesFabric"
+		],
+		"modmenu": [
+			"io.github.startsmercury.visual_snowy_leaves.impl.client.entrypoint.VisualSnowyLeavesModMenu"
 		]
 	},
 	"custom": {
@@ -31,6 +34,11 @@
 				"modmenu.github_releases": "https://github.com/StartsMercury/visual-snowy-leaves/releases",
 				"modmenu.modrinth": "https://modrinth.com/mod/visual-snowy-leaves"
 			}
+		},
+		"loom:injected_interfaces": {
+			"net/minecraft/class_310": [
+				"io/github/startsmercury/visual_snowy_leaves/impl/client/extension/compile/CompileVisualSnowyLeavesAware"
+			]
 		}
 	},
 	"accessWidener": "visual-snowy-leaves.accesswidener",

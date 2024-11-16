@@ -1,33 +1,37 @@
 package io.github.startsmercury.visual_snowy_leaves.mixin.client.core.transition.minecraft;
 
-import com.llamalad7.mixinextras.sugar.Local;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.SnowData;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.VisualSnowyLeavesImpl;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.SnowDataAware;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.VisualSnowyLeavesAware;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ClientLevel.class)
-public class ClientLevelMixin implements VisualSnowyLeavesAware {
+public class ClientLevelMixin implements SnowDataAware, VisualSnowyLeavesAware {
+    @Final
+    @Shadow
+    private Minecraft minecraft;
+
     @Unique
-    private final VisualSnowyLeavesImpl visualSnowyLeaves = new VisualSnowyLeavesImpl();
+    private final SnowData snowData = new SnowData();
 
     @Override
+    @SuppressWarnings("AddedMixinMembersNamePattern")
     public VisualSnowyLeavesImpl getVisualSnowyLeaves() {
-        return this.visualSnowyLeaves;
+        return this.minecraft.getVisualSnowyLeaves();
     }
 
-    @Inject(method = "<init>", at = @At("RETURN"))
-    private void fastForwardOnCreate(
-        final CallbackInfo callback,
-        final @Local(ordinal = 0, argsOnly = true) ClientLevel.ClientLevelData clientLevelData
-    ) {
-        if (clientLevelData.isRaining()) {
-            this.visualSnowyLeaves.setSnowiness(this.visualSnowyLeaves.getMaxSnowiness());
-        }
+    @Override
+    public SnowData visual_snowy_leaves$getSnowData() {
+        return this.snowData;
     }
 
     @Inject(
@@ -44,6 +48,6 @@ public class ClientLevelMixin implements VisualSnowyLeavesAware {
         )
     )
     private void updateSnowiness(final CallbackInfo callback) {
-        this.visualSnowyLeaves.tick((ClientLevel) (Object) this);
+        this.snowData.tick((ClientLevel) (Object) this);
     }
 }

@@ -1,166 +1,226 @@
 package io.github.startsmercury.visual_snowy_leaves.impl.client;
 
-import io.github.startsmercury.visual_snowy_leaves.mixin.client.core.transition.minecraft.ClientChunkCache$StorageAccessor;
-import io.github.startsmercury.visual_snowy_leaves.mixin.client.core.transition.minecraft.ClientChunkCacheAccessor;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
+import com.google.gson.*;
+import com.google.gson.stream.JsonWriter;
+import com.mojang.serialization.JsonOps;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.config.Config;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.SnowDataAware;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.util.Chunks;
 import net.fabricmc.loader.api.FabricLoader;
-import net.minecraft.SharedConstants;
-import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.Mth;
+import net.minecraft.Util;
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.GsonHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.time.Duration;
-import java.util.Set;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public final class VisualSnowyLeavesImpl {
-    public static final String MODID = "visual-snowy-leaves";
+    private Config config;
 
-    private static int tryIntoTicksOrMax(final Duration duration) {
-        try {
-            return (int) Math.min(duration.dividedBy(ONE_TICK), Integer.MAX_VALUE);
-        } catch (final ArithmeticException ignored) {
-            return Integer.MAX_VALUE;
-        }
+    private final FabricLoader fabricLoader;
+
+    private final Logger logger;
+
+    private final Minecraft minecraft;
+
+    public VisualSnowyLeavesImpl(final Minecraft minecraft) {
+        this.config = Config.DEFAULT;
+        this.fabricLoader = FabricLoader.getInstance();
+        this.logger = LoggerFactory.getLogger(VslConstants.NAME);
+        this.minecraft = minecraft;
+
+        this.logger.info("{} is initialized!", VslConstants.NAME);
     }
 
-    public static final Set<? extends ResourceLocation> TARGET_BLOCKS = Stream.of(
-        "oak", "spruce", "birch", "jungle", "acacia", "dark_oak", "mangrove"
-    )
-        .map(base -> base + "_leaves")
-        .map(ResourceLocation::new)
-        .collect(Collectors.toSet());
+    public Logger getLogger() {
+        return this.logger;
+    }
 
-    public static void init() {
-        final var fabricLoader = FabricLoader.getInstance();
+    public Config getConfig() {
+        return this.config;
+    }
 
-        if (!fabricLoader.isModLoaded("fabric-resource-loader-v0")) {
+    public void setConfig(final Config config) {
+        final var oldConfig = this.config;
+        this.config = config;
+
+        //noinspection ConstantValue
+        if (
+            !oldConfig.targetBlockKeys().equals(config.targetBlockKeys())
+                // May be true when too early in construction injection
+                && this.minecraft.getResourceManager() != null
+        ) {
+            this.logger.debug(
+                "[{}] Reloading resource packs to modify sprite changes...",
+                VslConstants.NAME
+            );
+
+            this.minecraft.reloadResourcePacks();
+        }
+
+        final var level = this.minecraft.level;
+        if (level == null) {
+            this.logger.debug(
+                "[{}] Skipping level snowy ticker since there is no level...",
+                VslConstants.NAME
+            );
             return;
         }
 
-        ResourceManagerHelper.registerBuiltinResourcePack(
-            new ResourceLocation(MODID, "vsl-jlf"),
-            fabricLoader.getModContainer(MODID).orElseThrow(() -> new AssertionError(
-                "Expected this mod (" + MODID + ") be loaded and recognized by Fabric"
-            )),
-            Component.literal("Jungle Leaves Fix"),
-            ResourcePackActivationType.NORMAL
-        );
-    }
+        if (oldConfig.transitionDuration() != config.transitionDuration()) {
+            this.logger.debug(
+                "[{}] Normalizing snowy progress using ratio and proportion...",
+                VslConstants.NAME
+            );
 
-    private static final Duration ONE_SECOND = Duration.ofSeconds(1L);
-
-    private static final Duration ONE_TICK = ONE_SECOND.dividedBy(SharedConstants.TICKS_PER_SECOND);
-
-    public static final Duration MAX_DURATION = ONE_TICK.multipliedBy(Integer.MAX_VALUE).dividedBy(255 * 255);
-
-    public static final Duration DEFAULT_DURATION = Duration.ofSeconds(20);
-
-    public static final Duration DEFAULT_INTERVAL = ONE_SECOND;
-
-    private int elapsed;
-
-    private final int interval;
-
-    private final int maxSnowiness;
-
-    private int snowiness;
-
-    public VisualSnowyLeavesImpl() {
-        this(DEFAULT_DURATION, DEFAULT_INTERVAL);
-    }
-
-    public VisualSnowyLeavesImpl(final Duration fullTransition, final Duration interval) {
-        if (fullTransition.compareTo(MAX_DURATION) > 0) {
-            final var message = "Expected a duration not greater than "
-                + MAX_DURATION
-                + " instead got "
-                + fullTransition;
-            throw new IllegalArgumentException(message);
+            ((SnowDataAware) level).visual_snowy_leaves$getSnowData().onTransitionDurationChange(
+                oldConfig.transitionDuration().asTicks(),
+                config.transitionDuration().asTicks()
+            );
         }
 
-        this.interval = tryIntoTicksOrMax(interval);
-        this.maxSnowiness = (int) fullTransition.dividedBy(ONE_TICK);
+        if (oldConfig.snowyMode() != config.snowyMode()) {
+            this.logger.debug(
+                "[{}] Snowing mode changed, requesting lazy rebuild to all chunks...",
+                VslConstants.NAME
+            );
+
+            Chunks.requestRebuildAll(level);
+        }
     }
 
-    public int getInterval() {
-        return this.interval;
+    public void openConfigFile() {
+        this.logger.debug("[{}] Opening config...", VslConstants.NAME);
+        Util.getPlatform().openFile(this.getConfigFile());
     }
 
-    public int getMaxSnowiness() {
-        return this.maxSnowiness;
-    }
-
-    public int getSnowiness() {
-        return this.snowiness;
-    }
-
-    public void setSnowiness(final int snowiness) {
-        this.snowiness = Mth.clamp(snowiness, 0, this.maxSnowiness);
-    }
-
-    public void tick(final ClientLevel level) {
-        final var elapsed = this.elapsed;
-        final var changed = level.isRaining()
-            ? this.tickSnowinessIncrement()
-            : this.tickSnowinessDecrement();
-
-        if (changed) {
-            if (elapsed < this.getInterval()) {
-                this.elapsed = elapsed + 1;
-                return;
-            }
+    public void reloadConfig() {
+        if (this.loadConfig()) {
+            this.saveConfig();
         } else {
-            if (elapsed <= 0) {
-                return;
-            }
+            this.openConfigFile();
         }
-
-        final var chunkSource = (ClientChunkCacheAccessor) level.getChunkSource();
-        final var storage = (ClientChunkCache$StorageAccessor) (Object) chunkSource.getStorage();
-        if (storage == null) {
-            return;
-        }
-
-        final var chunks = storage.getChunks();
-        final var chunkCount = chunks.length();
-
-        for (var i = 0; i < chunkCount; i++) {
-            final var chunk = chunks.getPlain(i);
-            if (chunk == null) {
-                continue;
-            }
-
-            final var pos = chunk.getPos();
-            final var levelChunkSections = chunk.getSections();
-
-            for (var k = 0; k < levelChunkSections.length; ++k) {
-                final var l = level.getSectionYFromSectionIndex(k);
-                level.setSectionDirtyWithNeighbors(pos.x, l, pos.z);
-            }
-        }
-
-        this.elapsed = 0;
     }
 
-    public boolean tickSnowinessDecrement() {
-        final var snowiness = this.snowiness;
-        if (snowiness <= 0) {
+    private boolean loadConfig() {
+        this.logger.debug("[{}] Loading config...", VslConstants.NAME);
+
+        final var path = this.getConfigPath();
+        final JsonElement json;
+
+        final ArrayList<CharSequence> lines;
+        try (final var lineStream = Files.lines(path)) {
+            lines = lineStream
+                .filter(line -> !line.endsWith(VslConstants.IGNORE_TAG))
+                .collect(Collectors.toCollection(ArrayList::new));
+        } catch (final IOException cause) {
+            this.logger.warn("[{}] Unable to read config json", VslConstants.NAME, cause);
             return false;
         }
-        this.snowiness = snowiness - 1;
+
+        try{
+            json = JsonParser.parseString(String.join("\n", lines));
+        } catch (final JsonParseException cause) {
+            this.logger.warn("[{}] Invalid config json syntax", VslConstants.NAME, cause);
+
+            final var lineMatcher = VslConstants.LINE_PATTERN.matcher(cause.getMessage());
+            var line = 0;
+
+            if (lineMatcher.find()) {
+                final var capturedLine = lineMatcher.group(1);
+                try {
+                    line = Integer.parseInt(capturedLine);
+                } catch (final NumberFormatException ignored) {
+
+                }
+            }
+
+
+            final var errorMessageBuilder = new StringBuilder();
+
+            final var columnMatcher = VslConstants.COLUMN_PATTERN.matcher(cause.getMessage());
+
+            if (columnMatcher.find()) {
+                try {
+                    final var capturedColumn = columnMatcher.group(1);
+                    final var column = Integer.parseInt(capturedColumn);
+
+                    if (column >= 2) {
+                        errorMessageBuilder.append(" ".repeat(column - 2));
+                    }
+
+                    errorMessageBuilder.append("^ ");
+                } catch (final NumberFormatException ignored) {
+
+                }
+            }
+
+            errorMessageBuilder.append(cause.getMessage())
+                .append("\t")
+                .append(VslConstants.IGNORE_TAG);
+            lines.add(line, errorMessageBuilder);
+
+            try {
+                Files.write(path, lines);
+            } catch (final IOException cause2) {
+                this.logger.warn(
+                    "[{}] Unable to update config json with an error message",
+                    VslConstants.NAME,
+                    cause2
+                );
+            }
+
+            return false;
+        }
+
+        Config.CODEC
+            .decode(JsonOps.INSTANCE, json)
+            .get()
+            .ifLeft(result -> this.setConfig(result.getFirst()))
+            .ifRight(result -> this.logger
+                .warn("[{}] Unable to decode config: {}", VslConstants.NAME, result.message())
+            );
+
         return true;
     }
 
-    public boolean tickSnowinessIncrement() {
-        final var snowiness = this.snowiness;
-        if (snowiness >= this.maxSnowiness) {
-            return false;
+    private void saveConfig() {
+        this.logger.debug("[{}] Saving config...", VslConstants.NAME);
+
+        final var path = this.fabricLoader.getConfigDir().resolve(VslConstants.CONFIG_NAME);
+        final var json = (JsonObject) Config.CODEC.encodeStart(JsonOps.INSTANCE, this.config)
+            .getOrThrow(false, cause -> {
+                this.logger.warn("[{}] Unable to encode config: {}", VslConstants.NAME, cause);
+            });
+
+        json.addProperty("__message", "Click the config button again to load changes.");
+
+        try (
+            final var bufferedWriter = Files.newBufferedWriter(path);
+            final var jsonWriter = new JsonWriter(bufferedWriter)
+        ) {
+            jsonWriter.setIndent("    ");
+
+            GsonHelper.writeValue(jsonWriter, json, Comparator.naturalOrder());
+
+            bufferedWriter.newLine();
+        } catch (final IOException cause) {
+            this.logger.warn("[{}] Unable to write config json", VslConstants.NAME, cause);
         }
-        this.snowiness = snowiness + 1;
-        return true;
+    }
+
+    private Path getConfigPath() {
+        return this.fabricLoader.getConfigDir().resolve(VslConstants.CONFIG_NAME);
+    }
+
+    public File getConfigFile() {
+        return this.getConfigPath().toFile();
     }
 }

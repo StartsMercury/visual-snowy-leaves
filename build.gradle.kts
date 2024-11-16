@@ -36,8 +36,16 @@ loom {
 
 repositories {
     maven {
+        name = "Terraformers Maven"
+        url = uri("https://maven.terraformersmc.com")
+        content {
+            includeGroup("com.terraformersmc")
+        }
+    }
+
+    maven {
         name = "Modrinth Maven"
-	url = uri("https://api.modrinth.com/maven")
+	    url = uri("https://api.modrinth.com/maven")
         content {
             includeGroup("maven.modrinth")
         }
@@ -51,6 +59,7 @@ dependencies {
 
     modImplementation(fabricApi.module("fabric-resource-loader-v0", "0.92.2+1.20.1"))
 
+    modImplementation("com.terraformersmc:modmenu:7.2.2")
     modCompileOnly("maven.modrinth:sodium:mc1.20.1-0.5.11")
 }
 

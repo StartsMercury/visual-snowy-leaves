@@ -6,11 +6,9 @@ import com.mojang.blaze3d.platform.NativeImage;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.util.ColorComponent;
 import io.github.startsmercury.visual_snowy_leaves.mixin.client.core.tint.BlockColorsAccessor;
 import io.github.startsmercury.visual_snowy_leaves.mixin.client.core.tint.SpriteContentsAccessor;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
-import net.minecraft.client.renderer.block.model.BlockModel;
-import net.minecraft.client.renderer.block.model.BlockModelDefinition;
-import net.minecraft.client.renderer.block.model.MultiVariant;
-import net.minecraft.client.renderer.block.model.Variant;
+import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.block.model.multipart.Selector;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.AtlasSet;
@@ -28,29 +26,25 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public final class SpriteWhitener {
-    private final BlockColors blockColors;
-
-    private final Map<? super ResourceLocation, ? extends BlockModel> modelResources;
-
     private final Multimap<ResourceLocation, ResourceLocation> models;
 
-    public SpriteWhitener(
-        final BlockColors blockColors,
-        final Map<? super ResourceLocation, ? extends BlockModel> modelResources
-    ) {
-        Objects.requireNonNull(blockColors, "Parameter blockColors is null");
-        Objects.requireNonNull(modelResources, "Parameter modelResources is null");
+    private final Set<? extends ResourceLocation> targetBlockKeys;
 
-        this.blockColors = blockColors;
-        this.modelResources = modelResources;
+    public SpriteWhitener() {
         this.models = HashMultimap.create();
+        this.targetBlockKeys = Set.copyOf(
+            Minecraft.getInstance()
+                .getVisualSnowyLeaves()
+                .getConfig()
+                .targetBlockKeys()
+        );
     }
 
     public void analyzeModels(
-        final ResourceLocation resourceLocation2,
+        final ResourceLocation blockKey,
         final BlockModelDefinition blockModelDefinition
     ) {
-        if (!VisualSnowyLeavesImpl.TARGET_BLOCKS.contains(resourceLocation2)) {
+        if (!this.targetBlockKeys.contains(blockKey)) {
             return;
         }
 
@@ -73,23 +67,39 @@ public final class SpriteWhitener {
         Stream.concat(multiPartVariants, variants)
             .flatMap((variant) -> variant.getVariants().stream())
             .map(Variant::getModelLocation)
-            .forEach(model -> this.models.put(resourceLocation2, model));
+            .forEach(model -> this.models.put(blockKey, model));
     }
 
-    public void modifySprites(final AtlasSet.StitchResult atlas) {
+    public void modifySprites(
+        final BlockColors blockColors,
+        final Map<? super ResourceLocation, ? extends BlockModel> modelResources,
+        final AtlasSet.StitchResult atlas
+    ) {
+        final var blockColorsAccessor = (BlockColorsAccessor) blockColors;
+
+        for (final var blockColor : blockColorsAccessor.getBlockColors()) {
+            if (blockColor instanceof final SnowableBlockColor snowable) {
+                final var id = blockColorsAccessor.getBlockColors().getId(blockColor);
+                // It is possible for changes to persist without this:
+                blockColors.register(snowable.blockColor(), BuiltInRegistries.BLOCK.byId(id));
+            }
+        }
+
         for (final var block : this.models.keySet()) {
-            modifySpritesOf(atlas, block);
+            modifySpritesOf(blockColors, modelResources, atlas, block);
         }
     }
 
     private void modifySpritesOf(
-        final AtlasSet.StitchResult atlas,
-        final ResourceLocation block
+            final BlockColors blockColors,
+            final Map<? super ResourceLocation, ? extends BlockModel> modelResources,
+            final AtlasSet.StitchResult atlas,
+            final ResourceLocation block
     ) {
         final var contentsCollection = Set.copyOf(this.models.get(block))
             .stream()
             .map(ModelBakery.MODEL_LISTER::idToFile)
-            .map(this.modelResources::get)
+            .map(modelResources::get)
             .flatMap(blockModel -> blockModel
                 .getElements()
                 .stream()
@@ -127,12 +137,12 @@ public final class SpriteWhitener {
             );
 
         final var id = BuiltInRegistries.BLOCK.getId(BuiltInRegistries.BLOCK.get(block));
-        final var blockColor = ((BlockColorsAccessor) this.blockColors).getBlockColors().byId(id);
+        final var blockColor = ((BlockColorsAccessor) blockColors).getBlockColors().byId(id);
         if (blockColor == null) {
             return;
         }
 
-        this.blockColors.register(
+        blockColors.register(
             SnowableBlockColor.setMultiplier(blockColor, _rgbMultiplier),
             BuiltInRegistries.BLOCK.get(block)
         );
