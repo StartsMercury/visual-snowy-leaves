@@ -23,7 +23,7 @@ public class VisualSnowyLeavesFabric implements ClientModInitializer {
         }
 
         ResourceManagerHelper.registerBuiltinResourcePack(
-            new ResourceLocation(MODID, "vsl-jlf"),
+            ResourceLocation.fromNamespaceAndPath(MODID, "vsl-jlf"),
             fabricLoader.getModContainer(MODID).orElseThrow(() -> new AssertionError(
                 "Expected this mod ("
                     + MODID

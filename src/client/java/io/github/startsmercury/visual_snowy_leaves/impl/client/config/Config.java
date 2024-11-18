@@ -49,7 +49,7 @@ public record Config(
         "oak", "spruce", "birch", "jungle", "acacia", "dark_oak", "mangrove"
     )
         .map(base -> base + "_leaves")
-        .map(ResourceLocation::new)
+        .map(ResourceLocation::parse)
         .collect(Collectors.toUnmodifiableSet());
 
     @SuppressWarnings("deprecation")
