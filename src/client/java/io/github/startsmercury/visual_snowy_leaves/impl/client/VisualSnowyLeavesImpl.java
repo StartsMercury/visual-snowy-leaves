@@ -1,7 +1,11 @@
 package io.github.startsmercury.visual_snowy_leaves.impl.client;
 
-import com.google.gson.*;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonWriter;
+import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.config.Config;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.SnowDataAware;
@@ -182,9 +186,8 @@ public final class VisualSnowyLeavesImpl {
 
         Config.CODEC
             .decode(JsonOps.INSTANCE, json)
-            .get()
-            .ifLeft(result -> this.setConfig(result.getFirst()))
-            .ifRight(result -> this.logger
+            .ifSuccess(result -> this.setConfig(result.getFirst()))
+            .ifError(result -> this.logger
                 .warn("[{}] Unable to decode config: {}", VslConstants.NAME, result.message())
             );
 
@@ -195,10 +198,21 @@ public final class VisualSnowyLeavesImpl {
         this.logger.debug("[{}] Saving config...", VslConstants.NAME);
 
         final var path = this.fabricLoader.getConfigDir().resolve(VslConstants.CONFIG_NAME);
-        final var json = (JsonObject) Config.CODEC.encodeStart(JsonOps.INSTANCE, this.config)
-            .getOrThrow(false, cause -> {
-                this.logger.warn("[{}] Unable to encode config: {}", VslConstants.NAME, cause);
-            });
+
+        final JsonObject json;
+        switch (Config.CODEC.encodeStart(JsonOps.INSTANCE, this.config)) {
+            case DataResult.Success<JsonElement>(final var value, final var lifecycle):
+                json = (JsonObject) value;
+                break;
+            case DataResult.Error<JsonElement>(
+                final var messageSupplier,
+                final var partialValue,
+                final var lifecycle
+            ):
+                final var message = messageSupplier.get();
+                this.logger.warn("[{}] Unable to encode config: {}", VslConstants.NAME, message);
+                return;
+        }
 
         json.addProperty("__message", "Click the config button again to load changes.");
 
