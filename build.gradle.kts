@@ -2,7 +2,7 @@ object Constants {
     const val VERSION = "0.4.0"
 
     const val VERSION_JAVA = 21
-    const val VERSION_MINECRAFT = "1.21"
+    const val VERSION_MINECRAFT = "1.21.1"
 }
 
 plugins {
@@ -57,14 +57,14 @@ dependencies {
     mappings(loom.officialMojangMappings())
     modImplementation("net.fabricmc:fabric-loader:0.16.9")
 
-    modImplementation(fabricApi.module("fabric-resource-loader-v0", "0.102.0+1.21"))
+    modImplementation(fabricApi.module("fabric-resource-loader-v0", "0.108.0+1.21.1"))
 
     modImplementation("com.terraformersmc:modmenu:11.0.3")
-    modRuntimeOnly(fabricApi.module("fabric-screen-api-v1", "0.102.0+1.21"))
-    modRuntimeOnly(fabricApi.module("fabric-key-binding-api-v1", "0.102.0+1.21"))
-    modRuntimeOnly(fabricApi.module("fabric-lifecycle-events-v1", "0.102.0+1.21"))
+    modRuntimeOnly(fabricApi.module("fabric-screen-api-v1", "0.108.0+1.21.1"))
+    modRuntimeOnly(fabricApi.module("fabric-key-binding-api-v1", "0.108.0+1.21.1"))
+    modRuntimeOnly(fabricApi.module("fabric-lifecycle-events-v1", "0.108.0+1.21.1"))
 
-    modCompileOnly("maven.modrinth:sodium:mc1.21-0.6.0-beta.2-fabric")
+    modCompileOnly("maven.modrinth:sodium:mc1.21.1-0.6.0-fabric")
 }
 
 tasks.withType<ProcessResources> {
