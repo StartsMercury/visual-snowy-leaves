@@ -5,7 +5,7 @@ import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.SnowDat
 import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.VisualSnowyLeavesAware;
 import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.core.BlockPos;
-import net.minecraft.util.FastColor;
+import net.minecraft.util.ARGB;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
@@ -50,14 +50,14 @@ public record SnowableBlockColor(BlockColor blockColor, int correctionMultiplier
             return base;
         }
         if (!(blockAndTintGetter instanceof final VisualSnowyLeavesAware vslAware)) {
-            return FastColor.ARGB32.multiply(base, correctionMultiplier);
+            return ARGB.multiply(base, correctionMultiplier);
         }
 
         final var config = vslAware.getVisualSnowyLeaves().getConfig();
 
         switch (config.snowyMode()) {
             case NEVER:
-                return FastColor.ARGB32.multiply(base, correctionMultiplier);
+                return ARGB.multiply(base, correctionMultiplier);
             case SNOWING:
                 break;
             case ALWAYS:
@@ -65,7 +65,7 @@ public record SnowableBlockColor(BlockColor blockColor, int correctionMultiplier
         }
 
         if (!isSnowyAt(blockAndTintGetter, blockPos)) {
-            return FastColor.ARGB32.multiply(base, correctionMultiplier);
+            return ARGB.multiply(base, correctionMultiplier);
         }
 
         if (!(blockAndTintGetter instanceof final SnowDataAware snowDataAware)) {
@@ -75,12 +75,12 @@ public record SnowableBlockColor(BlockColor blockColor, int correctionMultiplier
         final var curr = snowDataAware.visual_snowy_leaves$getSnowData().getAccumulatedTicks();
         final var max = config.transitionDuration().asTicks();
 
-        final var r = FastColor.ARGB32.red(correctionMultiplier) * FastColor.ARGB32.red(base);
-        final var g = FastColor.ARGB32.green(correctionMultiplier) * FastColor.ARGB32.green(base);
-        final var b = FastColor.ARGB32.blue(correctionMultiplier) * FastColor.ARGB32.blue(base);
+        final var r = ARGB.red(correctionMultiplier) * ARGB.red(base);
+        final var g = ARGB.green(correctionMultiplier) * ARGB.green(base);
+        final var b = ARGB.blue(correctionMultiplier) * ARGB.blue(base);
 
-        return FastColor.ARGB32.color(
-            FastColor.ARGB32.alpha(base),
+        return ARGB.color(
+            ARGB.alpha(base),
             Integer.divideUnsigned(max * r + curr * (255 * 255 - r), 255 * max),
             Integer.divideUnsigned(max * g + curr * (255 * 255 - g), 255 * max),
             Integer.divideUnsigned(max * b + curr * (255 * 255 - b), 255 * max)

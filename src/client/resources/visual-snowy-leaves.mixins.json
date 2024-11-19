@@ -7,7 +7,6 @@
         "tint.BlockColorsAccessor",
         "tint.BlockStateModelLoaderMixin",
         "tint.ModelBakeryAccessor",
-        "tint.ModelBakeryMixin",
         "tint.ModelManagerMixin",
         "tint.SpriteContentsAccessor",
         "transition.minecraft.ClientChunkCache$StorageAccessor",

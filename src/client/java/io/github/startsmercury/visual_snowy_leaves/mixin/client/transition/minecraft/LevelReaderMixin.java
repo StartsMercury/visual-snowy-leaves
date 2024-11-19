@@ -9,6 +9,8 @@ import org.spongepowered.asm.mixin.Mixin;
 public interface LevelReaderMixin extends SnowAware {
     @Override
     default boolean visual_snowy_leaves$coldEnoughToSnow(final BlockPos blockPos) {
-        return ((LevelReader) this).getBiome(blockPos).value().coldEnoughToSnow(blockPos);
+        final var levelReader = (LevelReader) this;
+        final var seaLevel = levelReader.getSeaLevel();
+        return levelReader.getBiome(blockPos).value().coldEnoughToSnow(blockPos, seaLevel);
     }
 }

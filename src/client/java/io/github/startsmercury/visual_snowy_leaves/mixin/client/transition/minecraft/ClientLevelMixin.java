@@ -39,8 +39,8 @@ public class ClientLevelMixin implements SnowDataAware, VisualSnowyLeavesAware {
         at = @At(
             value = "INVOKE",
             target = """
-                Lnet/minecraft/client/multiplayer/ClientLevel;  \
-                getProfiler(                                    \
+                Lnet/minecraft/util/profiling/Profiler;         \
+                get(                                            \
                                                                 \
                 ) Lnet/minecraft/util/profiling/ProfilerFiller; \
             """,
