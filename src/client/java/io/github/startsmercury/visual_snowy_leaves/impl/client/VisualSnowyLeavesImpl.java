@@ -16,6 +16,7 @@ import org.slf4j.LoggerFactory;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -109,6 +110,10 @@ public final class VisualSnowyLeavesImpl {
         }
     }
 
+    /**
+     * @return {@code false} if loading encountered json syntax exceptions;
+     *     {@code true} otherwise.
+     */
     private boolean loadConfig() {
         this.logger.debug("[{}] Loading config...", VslConstants.NAME);
 
@@ -120,9 +125,12 @@ public final class VisualSnowyLeavesImpl {
             lines = lineStream
                 .filter(line -> !line.endsWith(VslConstants.IGNORE_TAG))
                 .collect(Collectors.toCollection(ArrayList::new));
+        } catch (final NoSuchFileException cause) {
+            this.logger.info("[{}] Config does not exist, using default", VslConstants.NAME);
+            return true;
         } catch (final IOException cause) {
             this.logger.warn("[{}] Unable to read config json", VslConstants.NAME, cause);
-            return false;
+            return true;
         }
 
         try{
