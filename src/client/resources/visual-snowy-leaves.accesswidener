@@ -1,4 +1,8 @@
 accessWidener v2 named
 
-accessible class net/minecraft/client/multiplayer/ClientChunkCache$Storage
-accessible class net/minecraft/client/resources/model/ModelManager$ReloadState
+accessible class  net/minecraft/client/multiplayer/ClientChunkCache$Storage
+accessible class  net/minecraft/client/renderer/block/model/TextureSlots$Reference
+accessible class  net/minecraft/client/renderer/block/model/TextureSlots$Value
+accessible field  net/minecraft/client/resources/model/BlockStateModelLoader BLOCKSTATE_LISTER Lnet/minecraft/resources/FileToIdConverter;
+accessible method net/minecraft/client/resources/model/BlockStateModelLoader definitionLocationToBlockMapper ()Ljava/util/function/Function;
+accessible class  net/minecraft/client/resources/model/ModelManager$ReloadState

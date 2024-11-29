@@ -2,7 +2,7 @@ object Constants {
     const val VERSION = "0.4.2"
 
     const val VERSION_JAVA = 21
-    const val VERSION_MINECRAFT = "1.21.3"
+    const val VERSION_MINECRAFT = "1.21.4-rc1"
 }
 
 plugins {
@@ -57,12 +57,12 @@ dependencies {
     mappings(loom.officialMojangMappings())
     modImplementation("net.fabricmc:fabric-loader:0.16.9")
 
-    modImplementation(fabricApi.module("fabric-resource-loader-v0", "0.109.0+1.21.3"))
+    modImplementation(fabricApi.module("fabric-resource-loader-v0", "0.110.1+1.21.4"))
 
     modImplementation("com.terraformersmc:modmenu:12.0.0-beta.1")
-    modRuntimeOnly(fabricApi.module("fabric-screen-api-v1", "0.109.0+1.21.3"))
-    modRuntimeOnly(fabricApi.module("fabric-key-binding-api-v1", "0.109.0+1.21.3"))
-    modRuntimeOnly(fabricApi.module("fabric-lifecycle-events-v1", "0.109.0+1.21.3"))
+    modRuntimeOnly(fabricApi.module("fabric-screen-api-v1", "0.110.1+1.21.4"))
+    modRuntimeOnly(fabricApi.module("fabric-key-binding-api-v1", "0.110.1+1.21.4"))
+    modRuntimeOnly(fabricApi.module("fabric-lifecycle-events-v1", "0.110.1+1.21.4"))
 
     modCompileOnly("maven.modrinth:sodium:mc1.21.3-0.6.0-fabric")
 }
@@ -71,7 +71,7 @@ tasks.withType<ProcessResources> {
     val data = mapOf(
         "version" to Constants.VERSION,
         "version_java" to Constants.VERSION_JAVA,
-        "version_minecraft" to Constants.VERSION_MINECRAFT,
+        "version_minecraft" to "1.21.4-rc.1",
     )
 
     inputs.properties(data)

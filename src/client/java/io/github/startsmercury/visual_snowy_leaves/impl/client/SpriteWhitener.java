@@ -6,6 +6,7 @@ import com.google.common.collect.Multimaps;
 import com.mojang.blaze3d.platform.NativeImage;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.util.ColorComponent;
 import io.github.startsmercury.visual_snowy_leaves.mixin.client.tint.BlockColorsAccessor;
+import io.github.startsmercury.visual_snowy_leaves.mixin.client.tint.BlockModelInvoker;
 import io.github.startsmercury.visual_snowy_leaves.mixin.client.tint.SpriteContentsAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
@@ -19,7 +20,10 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
@@ -28,17 +32,21 @@ import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public final class SpriteWhitener {
-    private static final SpriteWhitener EMPTY = new SpriteWhitener(Multimaps.forMap(Map.of()), Set.of());
+    private static final SpriteWhitener EMPTY = new SpriteWhitener(
+        LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME),
+        Multimaps.forMap(Map.of()),
+        Set.of()
+    );
 
     public static SpriteWhitener createDefault() {
+        return create(Minecraft.getInstance().getVisualSnowyLeaves());
+    }
+
+    public static SpriteWhitener create(final VisualSnowyLeavesImpl visualSnowyLeaves) {
         return new SpriteWhitener(
+            visualSnowyLeaves.getLogger(),
             HashMultimap.create(),
-            Set.copyOf(
-                Minecraft.getInstance()
-                    .getVisualSnowyLeaves()
-                    .getConfig()
-                    .targetBlockKeys()
-            )
+            Set.copyOf(visualSnowyLeaves.getConfig().targetBlockKeys())
         );
     }
 
@@ -46,14 +54,18 @@ public final class SpriteWhitener {
         return SpriteWhitener.EMPTY;
     }
 
+    private final Logger logger;
+
     private final Multimap<ResourceLocation, ResourceLocation> models;
 
     private final Set<? extends ResourceLocation> targetBlockKeys;
 
     private SpriteWhitener(
+        final Logger logger,
         final Multimap<ResourceLocation, ResourceLocation> models,
         final Set<? extends ResourceLocation> targetBlockKeys
     ) {
+        this.logger = logger;
         this.models = models;
         this.targetBlockKeys = targetBlockKeys;
     }
@@ -78,7 +90,7 @@ public final class SpriteWhitener {
 
         Stream.concat(multiPartVariants, variants)
             .flatMap((variant) -> variant.variants().stream())
-            .map(Variant::getModelLocation)
+            .map(Variant::modelLocation)
             .forEach(model -> this.models.put(blockKey, model));
     }
 
@@ -88,7 +100,6 @@ public final class SpriteWhitener {
         final AtlasSet.StitchResult atlas
     ) {
         final var blockColorsAccessor = (BlockColorsAccessor) blockColors;
-        final var logger = Minecraft.getInstance().getVisualSnowyLeaves().getLogger();
 
         for (final var blockColor : blockColorsAccessor.getBlockColors()) {
             if (blockColor instanceof final SnowableBlockColor snowable) {
@@ -115,22 +126,38 @@ public final class SpriteWhitener {
             .map(modelResources::get)
             .map(SpriteWhitener::asBlockModelOrElseNull)
             .filter(Objects::nonNull)
-            .flatMap(blockModel -> blockModel
-                .getElements()
-                .stream()
-                .flatMap(element -> element.faces.values().stream())
-                .filter(face -> face.tintIndex() == 0)
-                .map(BlockElementFace::texture)
-                .collect(Collectors.toSet())
-                .stream()
-                .map(blockModel::getMaterial)
-                .map(Material::texture)
-                .collect(Collectors.toSet())
-                .stream()
-                .map(atlas::getSprite)
-                .filter(Objects::nonNull)
-                .map(TextureAtlasSprite::contents)
-            )
+            .flatMap(blockModel -> {
+                @SuppressWarnings({ "unchecked", "rawtypes" })
+                final var models = (List<BlockModel>) (List) Stream.iterate(
+                    blockModel,
+                    it -> it instanceof BlockModel,
+                    UnbakedModel::getParent
+                ).toList();
+
+                final var textureSlots = new HashMap<String, TextureSlots.SlotContents>();
+                for (final var model : models.reversed()) {
+                    textureSlots.putAll(model.getTextureSlots().values());
+                }
+
+                return models
+                    .stream()
+                    .flatMap(it -> ((BlockModelInvoker) it).callGetElements().stream())
+                    .flatMap(element -> element.faces.values().stream())
+                    .filter(face -> face.tintIndex() == 0)
+                    .map(BlockElementFace::texture)
+                    .map(texture -> texture.substring(1))
+                    .collect(Collectors.toSet())
+                    .stream()
+                    .map(textureSlots::get)
+                    .map(slotContents -> resolveSlotContent(textureSlots, slotContents))
+                    .filter(Objects::nonNull)
+                    .map(Material::texture)
+                    .collect(Collectors.toSet())
+                    .stream()
+                    .map(atlas::getSprite)
+                    .filter(Objects::nonNull)
+                    .map(TextureAtlasSprite::contents);
+            })
             .map(contents -> (SpriteContentsAccessor) contents)
             .collect(Collectors.toSet());
 
@@ -171,6 +198,23 @@ public final class SpriteWhitener {
         }
 
         blockColors.register(SnowableBlockColor.setMultiplier(blockColor, _rgbMultiplier), block);
+    }
+
+    private static Material resolveSlotContent(
+        final Map<? super String, ? extends TextureSlots.SlotContents> textureSlots,
+        TextureSlots.SlotContents slotContents
+    ) {
+        while (true) {
+            switch (slotContents) {
+                case null:
+                    return null;
+                case TextureSlots.Value(final var material):
+                    return material;
+                case TextureSlots.Reference(final var target):
+                    slotContents = textureSlots.get(target);
+                    break;
+            }
+        }
     }
 
     private static BlockModel asBlockModelOrElseNull(final UnbakedModel unbakedModel) {
