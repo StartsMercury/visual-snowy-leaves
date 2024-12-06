@@ -57,12 +57,12 @@ dependencies {
     mappings(loom.officialMojangMappings())
     modImplementation("net.fabricmc:fabric-loader:0.16.9")
 
-    modImplementation(fabricApi.module("fabric-resource-loader-v0", "0.110.1+1.21.4"))
+    modImplementation(fabricApi.module("fabric-resource-loader-v0", "0.111.0+1.21.4"))
 
     modImplementation("com.terraformersmc:modmenu:12.0.0-beta.1")
-    modRuntimeOnly(fabricApi.module("fabric-screen-api-v1", "0.110.1+1.21.4"))
-    modRuntimeOnly(fabricApi.module("fabric-key-binding-api-v1", "0.110.1+1.21.4"))
-    modRuntimeOnly(fabricApi.module("fabric-lifecycle-events-v1", "0.110.1+1.21.4"))
+    modRuntimeOnly(fabricApi.module("fabric-screen-api-v1", "0.111.0+1.21.4"))
+    modRuntimeOnly(fabricApi.module("fabric-key-binding-api-v1", "0.111.0+1.21.4"))
+    modRuntimeOnly(fabricApi.module("fabric-lifecycle-events-v1", "0.111.0+1.21.4"))
 
     modCompileOnly("maven.modrinth:sodium:mc1.21.3-0.6.0-fabric")
 }
