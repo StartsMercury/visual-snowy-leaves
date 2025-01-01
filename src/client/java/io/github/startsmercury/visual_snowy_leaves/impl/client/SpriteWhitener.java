@@ -132,9 +132,16 @@ public final class SpriteWhitener {
             .stream()
             .map(SpriteContentsAccessor::getByMipLevel)
             .flatMap(Stream::of)
-            .forEach(
-                image -> image.applyToAllPixels(rgba -> normalize(rgba, _rgbMultiplier))
-            );
+            .forEach(image -> {
+                final int width = image.getWidth();
+                final int height = image.getHeight();
+                for (var y = 0; y < height; y++) {
+                    for (var x = 0; x < width; x++) {
+                        final var rgba = image.getPixelRGBA(x, y);
+                        image.setPixelRGBA(x, y, normalize(rgba, _rgbMultiplier));
+                    }
+                }
+            });
 
         final var id = BuiltInRegistries.BLOCK.getId(BuiltInRegistries.BLOCK.get(block));
         final var blockColor = ((BlockColorsAccessor) blockColors).getBlockColors().byId(id);
