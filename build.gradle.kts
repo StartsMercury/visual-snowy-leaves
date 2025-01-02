@@ -2,7 +2,7 @@ object Constants {
     const val VERSION = "0.4.2"
 
     const val VERSION_JAVA = 17
-    const val VERSION_MINECRAFT = "1.18.2"
+    const val VERSION_MINECRAFT = "1.17.1"
 }
 
 plugins {
@@ -24,13 +24,11 @@ java {
 }
 
 loom {
-    accessWidenerPath = file("src/client/resources/visual-snowy-leaves.accesswidener")
+    accessWidenerPath = file("src/main/resources/visual-snowy-leaves.accesswidener")
     runtimeOnlyLog4j = true
-    splitEnvironmentSourceSets()
 
     mods.register("visual-snowy-leaves") {
         sourceSet("main")
-        sourceSet("client")
     }
 }
 
@@ -57,10 +55,10 @@ dependencies {
     mappings(loom.officialMojangMappings())
     modImplementation("net.fabricmc:fabric-loader:0.16.9")
 
-    modImplementation(fabricApi.module("fabric-resource-loader-v0", "0.77.0+1.18.2"))
+    modImplementation(fabricApi.module("fabric-resource-loader-v0", "0.46.1+1.17"))
 
-    modImplementation("com.terraformersmc:modmenu:3.2.5")
-    modCompileOnly("maven.modrinth:sodium:mc1.18.2-0.4.1")
+    modImplementation("com.terraformersmc:modmenu:2.0.17")
+    modCompileOnly("maven.modrinth:sodium:mc1.17.1-0.3.4")
 }
 
 tasks.withType<ProcessResources> {

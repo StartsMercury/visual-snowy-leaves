@@ -22,13 +22,12 @@ public class VisualSnowyLeavesFabric implements ClientModInitializer {
         }
 
         ResourceManagerHelper.registerBuiltinResourcePack(
-            new ResourceLocation(MODID, "vsl-jlf"),
+            new ResourceLocation(MODID, "vsl_jlf"),
             fabricLoader.getModContainer(MODID).orElseThrow(() -> new AssertionError(
                 "Expected this mod ("
                     + MODID
                     + ") be loaded and recognized by VisualSnowyLeavesFabric"
             )),
-            "Jungle Leaves Fix",
             ResourcePackActivationType.NORMAL
         );
     }

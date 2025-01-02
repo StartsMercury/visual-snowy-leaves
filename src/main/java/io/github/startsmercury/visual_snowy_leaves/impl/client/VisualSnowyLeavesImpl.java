@@ -3,8 +3,8 @@ package io.github.startsmercury.visual_snowy_leaves.impl.client;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
-import com.google.gson.JsonParser;
 import com.google.gson.internal.Streams;
+import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import com.mojang.serialization.JsonOps;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.config.Config;
@@ -18,6 +18,7 @@ import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.StringReader;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
@@ -136,7 +137,7 @@ public final class VisualSnowyLeavesImpl {
         }
 
         try{
-            json = JsonParser.parseString(String.join("\n", lines));
+            json = Streams.parse(new JsonReader(new StringReader(String.join("\n", lines))));
         } catch (final JsonParseException cause) {
             this.logger.warn("[{}] Invalid config json syntax", VslConstants.NAME, cause);
 
