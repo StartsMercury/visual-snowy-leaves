@@ -6,7 +6,7 @@ import io.github.startsmercury.visual_snowy_leaves.impl.client.VslConstants;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.compile.CompileVisualSnowyLeavesAware;
 import net.minecraft.Util;
 import net.minecraft.client.gui.screens.Screen;
-import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.TextComponent;
 
 public class VisualSnowyLeavesModMenu implements ModMenuApi {
     private static void openConfigFile(
@@ -22,7 +22,7 @@ public class VisualSnowyLeavesModMenu implements ModMenuApi {
 
     @Override
     public ConfigScreenFactory<?> getModConfigScreenFactory() {
-        return screen -> new Screen(Component.empty()) {
+        return screen -> new Screen(TextComponent.EMPTY) {
             @Override
             protected void init() {
                 final var minecraft = this.minecraft;

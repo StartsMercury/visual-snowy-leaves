@@ -5,10 +5,9 @@
     "client": [
         "extension.MinecraftMixin",
         "tint.BlockColorsAccessor",
-        "tint.ModelBakeryAccessor",
         "tint.ModelBakeryMixin",
-        "tint.ModelManagerMixin",
-        "tint.SpriteContentsAccessor",
+        "tint.TextureAtlas$PreparationsAccessor",
+        "tint.TextureAtlasSpriteAccessor",
         "transition.minecraft.ClientChunkCache$StorageAccessor",
         "transition.minecraft.ClientChunkCacheAccessor",
         "transition.minecraft.ClientLevelMixin",

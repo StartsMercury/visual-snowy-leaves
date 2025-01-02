@@ -5,7 +5,6 @@ import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
 import net.fabricmc.fabric.api.resource.ResourcePackActivationType;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.Minecraft;
-import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
 import static io.github.startsmercury.visual_snowy_leaves.impl.client.VslConstants.MODID;
@@ -29,7 +28,7 @@ public class VisualSnowyLeavesFabric implements ClientModInitializer {
                     + MODID
                     + ") be loaded and recognized by VisualSnowyLeavesFabric"
             )),
-            Component.literal("Jungle Leaves Fix"),
+            "Jungle Leaves Fix",
             ResourcePackActivationType.NORMAL
         );
     }

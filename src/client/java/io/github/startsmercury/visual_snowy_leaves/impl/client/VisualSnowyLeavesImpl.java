@@ -1,6 +1,10 @@
 package io.github.startsmercury.visual_snowy_leaves.impl.client;
 
-import com.google.gson.*;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParseException;
+import com.google.gson.JsonParser;
+import com.google.gson.internal.Streams;
 import com.google.gson.stream.JsonWriter;
 import com.mojang.serialization.JsonOps;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.config.Config;
@@ -9,7 +13,6 @@ import io.github.startsmercury.visual_snowy_leaves.impl.client.util.Chunks;
 import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.GsonHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,7 +22,6 @@ import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.Path;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.stream.Collectors;
 
 public final class VisualSnowyLeavesImpl {
@@ -208,7 +210,9 @@ public final class VisualSnowyLeavesImpl {
                 this.logger.warn("[{}] Unable to encode config: {}", VslConstants.NAME, cause);
             });
 
-        json.addProperty("__message", "Click the config button again to load changes.");
+        final var modifiedJson = new JsonObject();
+        modifiedJson.addProperty("__message", "Click the config button again to load changes.");
+        json.entrySet().forEach(entry -> modifiedJson.add(entry.getKey(), entry.getValue()));
 
         try (
             final var bufferedWriter = Files.newBufferedWriter(path);
@@ -216,7 +220,7 @@ public final class VisualSnowyLeavesImpl {
         ) {
             jsonWriter.setIndent("    ");
 
-            GsonHelper.writeValue(jsonWriter, json, Comparator.naturalOrder());
+            Streams.write(modifiedJson, jsonWriter);
 
             bufferedWriter.newLine();
         } catch (final IOException cause) {

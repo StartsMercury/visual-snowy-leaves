@@ -6,8 +6,8 @@ import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.SnowAwa
 import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.SnowDataAware;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.VisualSnowyLeavesAware;
 import me.jellysquid.mods.sodium.client.world.WorldSlice;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -16,7 +16,7 @@ import org.spongepowered.asm.mixin.Shadow;
 public class WorldSliceMixin implements SnowAware, SnowDataAware, VisualSnowyLeavesAware {
     @Final
     @Shadow
-    private ClientLevel world;
+    private Level world;
 
     @Override
     @SuppressWarnings("AddedMixinMembersNamePattern")

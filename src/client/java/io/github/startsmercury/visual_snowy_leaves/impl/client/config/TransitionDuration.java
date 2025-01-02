@@ -26,7 +26,7 @@ public final class TransitionDuration implements Comparable<TransitionDuration> 
                     final var ticks = Math.min(TickUtil.parse(input), MAX_VALUE.ticks);
                     return DataResult.success(new TransitionDuration(ticks));
                 } catch (final TickParseException cause) {
-                    return DataResult.error(cause::getMessage);
+                    return DataResult.error(cause.getMessage());
                 }
             },
             self -> TickUtil.format(self.ticks, true)

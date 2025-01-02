@@ -11,7 +11,7 @@ public final class RebuildInterval implements Comparable<RebuildInterval> {
             try {
                 return DataResult.success(new RebuildInterval(TickUtil.parse(input)));
             } catch (final TickParseException cause) {
-                return DataResult.error(cause::getMessage);
+                return DataResult.error(cause.getMessage());
             }
         },
         self -> TickUtil.format(self.ticks, true)

@@ -23,7 +23,7 @@ public record Config(
                 try {
                     return DataResult.success(Set.copyOf(list));
                 } catch (final NullPointerException cause) {
-                    return DataResult.error(() -> "Immutable set cannot contain nulls");
+                    return DataResult.error("Immutable set cannot contain nulls");
                 }
             },
             set -> {

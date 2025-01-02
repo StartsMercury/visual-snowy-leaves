@@ -2,24 +2,24 @@ package io.github.startsmercury.visual_snowy_leaves.impl.client;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.mojang.blaze3d.platform.NativeImage;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.util.ColorComponent;
 import io.github.startsmercury.visual_snowy_leaves.mixin.client.tint.BlockColorsAccessor;
-import io.github.startsmercury.visual_snowy_leaves.mixin.client.tint.SpriteContentsAccessor;
+import io.github.startsmercury.visual_snowy_leaves.mixin.client.tint.TextureAtlasSpriteAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
-import net.minecraft.client.renderer.block.model.*;
+import net.minecraft.client.renderer.block.model.BlockModel;
+import net.minecraft.client.renderer.block.model.BlockModelDefinition;
+import net.minecraft.client.renderer.block.model.MultiVariant;
+import net.minecraft.client.renderer.block.model.Variant;
 import net.minecraft.client.renderer.block.model.multipart.Selector;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.AtlasSet;
 import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.ModelBakery;
-import net.minecraft.core.registries.BuiltInRegistries;
+import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.core.Registry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.FastColor;
 
 import java.util.Map;
-import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -72,8 +72,8 @@ public final class SpriteWhitener {
 
     public void modifySprites(
         final BlockColors blockColors,
-        final Map<? super ResourceLocation, ? extends BlockModel> modelResources,
-        final AtlasSet.StitchResult atlas
+        final Map<? super ResourceLocation, ? extends UnbakedModel> modelResources,
+        final Map<? super ResourceLocation, ? extends TextureAtlasSprite> sprites
     ) {
         final var blockColorsAccessor = (BlockColorsAccessor) blockColors;
 
@@ -81,25 +81,26 @@ public final class SpriteWhitener {
             if (blockColor instanceof final SnowableBlockColor snowable) {
                 final var id = blockColorsAccessor.getBlockColors().getId(blockColor);
                 // It is possible for changes to persist without this:
-                blockColors.register(snowable.blockColor(), BuiltInRegistries.BLOCK.byId(id));
+                blockColors.register(snowable.blockColor(), Registry.BLOCK.byId(id));
             }
         }
 
         for (final var block : this.models.keySet()) {
-            modifySpritesOf(blockColors, modelResources, atlas, block);
+            modifySpritesOf(blockColors, modelResources, sprites, block);
         }
     }
 
     private void modifySpritesOf(
-            final BlockColors blockColors,
-            final Map<? super ResourceLocation, ? extends BlockModel> modelResources,
-            final AtlasSet.StitchResult atlas,
-            final ResourceLocation block
+        final BlockColors blockColors,
+        final Map<? super ResourceLocation, ? extends UnbakedModel> modelResources,
+        final Map<? super ResourceLocation, ? extends TextureAtlasSprite> sprites,
+        final ResourceLocation block
     ) {
         final var contentsCollection = Set.copyOf(this.models.get(block))
             .stream()
-            .map(ModelBakery.MODEL_LISTER::idToFile)
             .map(modelResources::get)
+            .filter(it -> it instanceof BlockModel)
+            .map(it -> (BlockModel) it)
             .flatMap(blockModel -> blockModel
                 .getElements()
                 .stream()
@@ -112,25 +113,27 @@ public final class SpriteWhitener {
                 .map(Material::texture)
                 .collect(Collectors.toSet())
                 .stream()
-                .map(atlas::getSprite)
-                .filter(Objects::nonNull)
-                .map(TextureAtlasSprite::contents)
+                .map(sprites::get)
+                .map(it -> (TextureAtlasSpriteAccessor) it)
+                .map(TextureAtlasSpriteAccessor::getMainImage)
             )
-            .map(contents -> (SpriteContentsAccessor) contents)
             .collect(Collectors.toSet());
 
         final var allArgbPixels = contentsCollection
             .stream()
-            .map(SpriteContentsAccessor::getOriginalImage)
-            .map(NativeImage::getPixelsRGBA)
-            .flatMapToInt(IntStream::of)
+            .map(it -> it[0])
+            .flatMapToInt(nativeImage -> {
+                return IntStream.range(0, nativeImage.getHeight()).flatMap(y -> {
+                    return IntStream.range(0, nativeImage.getWidth())
+                        .map(x -> nativeImage.getPixelRGBA(x, y));
+                });
+            })
             .toArray();
 
         final var _rgbMultiplier = 0xFF_00_00_00 | getArgbOfMaxLightness(allArgbPixels);
 
         contentsCollection
             .stream()
-            .map(SpriteContentsAccessor::getByMipLevel)
             .flatMap(Stream::of)
             .forEach(image -> {
                 final int width = image.getWidth();
@@ -143,7 +146,7 @@ public final class SpriteWhitener {
                 }
             });
 
-        final var id = BuiltInRegistries.BLOCK.getId(BuiltInRegistries.BLOCK.get(block));
+        final var id = Registry.BLOCK.getId(Registry.BLOCK.get(block));
         final var blockColor = ((BlockColorsAccessor) blockColors).getBlockColors().byId(id);
         if (blockColor == null) {
             return;
@@ -151,7 +154,7 @@ public final class SpriteWhitener {
 
         blockColors.register(
             SnowableBlockColor.setMultiplier(blockColor, _rgbMultiplier),
-            BuiltInRegistries.BLOCK.get(block)
+            Registry.BLOCK.get(block)
         );
     }
 

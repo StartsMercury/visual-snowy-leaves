@@ -2,7 +2,7 @@ object Constants {
     const val VERSION = "0.4.1"
 
     const val VERSION_JAVA = 17
-    const val VERSION_MINECRAFT = "1.19.4"
+    const val VERSION_MINECRAFT = "1.18.2"
 }
 
 plugins {
@@ -57,10 +57,10 @@ dependencies {
     mappings(loom.officialMojangMappings())
     modImplementation("net.fabricmc:fabric-loader:0.16.9")
 
-    modImplementation(fabricApi.module("fabric-resource-loader-v0", "0.87.2+1.19.4"))
+    modImplementation(fabricApi.module("fabric-resource-loader-v0", "0.77.0+1.18.2"))
 
-    modImplementation("com.terraformersmc:modmenu:6.3.1")
-    modCompileOnly("maven.modrinth:sodium:mc1.19.4-0.4.10")
+    modImplementation("com.terraformersmc:modmenu:3.2.5")
+    modCompileOnly("maven.modrinth:sodium:mc1.18.2-0.4.1")
 }
 
 tasks.withType<ProcessResources> {
