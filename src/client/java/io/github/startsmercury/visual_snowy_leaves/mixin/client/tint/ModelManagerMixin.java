@@ -5,7 +5,8 @@ import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.SpriteWhitener;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.VslConstants;
-import net.minecraft.Util;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.util.SequencedCompletableFuture;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.util.UnknownBlockStateDefinitionException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.renderer.block.model.BlockModelDefinition;
@@ -25,6 +26,7 @@ import org.spongepowered.asm.mixin.injection.At;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.Executor;
 import java.util.function.Consumer;
 
@@ -74,12 +76,7 @@ public abstract class ModelManagerMixin {
                     final var stateDefinition = function.apply(resourceLocation);
 
                     if (stateDefinition == null) {
-                        logger.debug(
-                            "[{}] Discovered unknown block state definition {}, ignoring",
-                            VslConstants.NAME,
-                            resourceLocation
-                        );
-                        return null;
+                        throw new UnknownBlockStateDefinitionException(resourceLocation);
                     }
 
                     final var resources = entry.getValue();
@@ -106,7 +103,22 @@ public abstract class ModelManagerMixin {
                 }, executor));
             }
 
-            return Util.sequence(list);
+            return SequencedCompletableFuture.tryFilter(list, throwable -> {
+                if (throwable instanceof CompletionException) {
+                    throwable = throwable.getCause();
+                }
+                if (throwable instanceof final Error error) {
+                    throw error;
+                } else if (throwable instanceof final UnknownBlockStateDefinitionException cause) {
+                    logger.debug(
+                        "[{}] Discovered unknown block state definition {}, ignoring",
+                        VslConstants.NAME,
+                        cause.getResourceLocation()
+                    );
+                } else {
+                    logger.error("[{}] Uncaught exception", VslConstants.NAME, throwable);
+                }
+            });
         });
 
         final var spriteWhitenerFuture = modelDiscoveryFuture.thenCompose(modelDiscovery -> {
