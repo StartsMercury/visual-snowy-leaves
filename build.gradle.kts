@@ -59,7 +59,7 @@ dependencies {
 
     modImplementation(fabricApi.module("fabric-resource-loader-v0", "0.115.1+1.21.4"))
 
-    modImplementation("com.terraformersmc:modmenu:12.0.0-beta.1")
+    modImplementation("com.terraformersmc:modmenu:13.0.1")
     modRuntimeOnly(fabricApi.module("fabric-screen-api-v1", "0.115.1+1.21.4"))
     modRuntimeOnly(fabricApi.module("fabric-key-binding-api-v1", "0.115.1+1.21.4"))
     modRuntimeOnly(fabricApi.module("fabric-lifecycle-events-v1", "0.115.1+1.21.4"))
