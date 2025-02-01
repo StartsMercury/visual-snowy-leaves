@@ -192,9 +192,9 @@ public final class VisualSnowyLeavesImpl {
             return false;
         }
 
-        Config.CODEC
+        Config.LENIENT_CODEC
             .decode(JsonOps.INSTANCE, json)
-            .ifSuccess(result -> this.setConfig(result.getFirst()))
+            .ifSuccess(result -> this.setConfig(result.getFirst().upgrade()))
             .ifError(result -> this.logger
                 .warn("[{}] Unable to decode config: {}", VslConstants.NAME, result.message())
             );

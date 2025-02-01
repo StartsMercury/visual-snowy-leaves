@@ -6,7 +6,6 @@ import io.github.startsmercury.visual_snowy_leaves.impl.client.VslConstants;
 import net.minecraft.SharedConstants;
 
 import java.time.Duration;
-import java.util.Objects;
 
 import static io.github.startsmercury.visual_snowy_leaves.impl.client.VslConstants.Duration.ONE_TICK;
 
