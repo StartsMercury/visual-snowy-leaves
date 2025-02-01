@@ -55,4 +55,20 @@ public final class RebuildInterval implements Comparable<RebuildInterval> {
     public int compareTo(final RebuildInterval rhs) {
         return Integer.compareUnsigned(this.ticks, rhs.ticks);
     }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj instanceof final RebuildInterval other) {
+            return this.ticks == other.ticks;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(this.ticks);
+    }
 }

@@ -6,6 +6,7 @@ import io.github.startsmercury.visual_snowy_leaves.impl.client.VslConstants;
 import net.minecraft.SharedConstants;
 
 import java.time.Duration;
+import java.util.Objects;
 
 import static io.github.startsmercury.visual_snowy_leaves.impl.client.VslConstants.Duration.ONE_TICK;
 
@@ -101,5 +102,21 @@ public final class TransitionDuration implements Comparable<TransitionDuration> 
     @Override
     public int compareTo(final TransitionDuration rhs) {
         return Integer.compareUnsigned(this.ticks, rhs.ticks);
+    }
+
+    @Override
+    public boolean equals(final Object obj) {
+        if (this == obj) {
+            return true;
+        } else if (obj instanceof final TransitionDuration other) {
+            return this.ticks == other.ticks;
+        } else {
+            return false;
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(this.ticks);
     }
 }
