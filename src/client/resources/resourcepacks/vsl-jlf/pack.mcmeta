@@ -1,7 +1,7 @@
 {
     "pack": {
-        "pack_format": 47,
-        "supported_formats": [ 47, 999 ],
+        "pack_format": 51,
+        "supported_formats": [ 51, 999 ],
         "description": "Fix fruit tint."
     }
 }
