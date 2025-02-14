@@ -6,7 +6,6 @@ import com.google.common.collect.Multimaps;
 import com.mojang.blaze3d.platform.NativeImage;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.util.ColorComponent;
 import io.github.startsmercury.visual_snowy_leaves.mixin.client.tint.BlockColorsAccessor;
-import io.github.startsmercury.visual_snowy_leaves.mixin.client.tint.BlockModelInvoker;
 import io.github.startsmercury.visual_snowy_leaves.mixin.client.tint.SpriteContentsAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
@@ -22,11 +21,7 @@ import net.minecraft.util.ARGB;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
@@ -78,15 +73,12 @@ public final class SpriteWhitener {
             return;
         }
 
-        final var multiPart = blockModelDefinition.getMultiPart();
-        final Stream<MultiVariant> multiPartVariants;
-        if (multiPart != null) {
-            multiPartVariants = multiPart.selectors().stream().map(Selector::getVariant);
-        } else {
-            multiPartVariants = Stream.empty();
-        }
+        final var multiPartVariants = blockModelDefinition
+            .multiPart()
+            .stream()
+            .flatMap(it -> it.selectors().stream().map(Selector::variant));
 
-        final var variants = blockModelDefinition.getMultiVariants().stream();
+        final var variants = blockModelDefinition.variants().values().stream();
 
         Stream.concat(multiPartVariants, variants)
             .flatMap((variant) -> variant.variants().stream())
@@ -129,20 +121,23 @@ public final class SpriteWhitener {
             .flatMap(blockModel -> {
                 @SuppressWarnings({ "unchecked", "rawtypes" })
                 final var models = (List<BlockModel>) (List) Stream.iterate(
-                    blockModel,
-                    it -> it instanceof BlockModel,
-                    UnbakedModel::getParent
+                    (UnbakedModel) blockModel,
+                    it -> it instanceof BlockModel && it.parent() != null,
+                    it -> modelResources.get(it.parent())
                 ).toList();
 
                 final var textureSlots = new HashMap<String, TextureSlots.SlotContents>();
                 for (final var model : models.reversed()) {
-                    textureSlots.putAll(model.getTextureSlots().values());
+                    textureSlots.putAll(model.textureSlots().values());
                 }
 
                 return models
                     .stream()
-                    .flatMap(it -> ((BlockModelInvoker) it).callGetElements().stream())
-                    .flatMap(element -> element.faces.values().stream())
+                    .map(BlockModel::geometry)
+                    .filter(Objects::nonNull)
+                    // TODO: proper handling of known and unknown UnbakedGeometry subtypes
+                    .flatMap(it -> ((SimpleUnbakedGeometry) it).elements().stream())
+                    .flatMap(element -> element.faces().values().stream())
                     .filter(face -> face.tintIndex() == 0)
                     .map(BlockElementFace::texture)
                     .map(texture -> texture.substring(1))

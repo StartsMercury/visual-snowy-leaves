@@ -1,8 +1,10 @@
 package io.github.startsmercury.visual_snowy_leaves.mixin.client.tint;
 
+import com.google.gson.JsonParseException;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.mojang.serialization.JsonOps;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.SpriteWhitener;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.VslConstants;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.util.SequencedCompletableFuture;
@@ -11,8 +13,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.renderer.block.model.BlockModelDefinition;
 import net.minecraft.client.renderer.texture.TextureAtlas;
-import net.minecraft.client.resources.model.BlockStateModelLoader;
-import net.minecraft.client.resources.model.ModelDiscovery;
+import net.minecraft.client.resources.model.BlockStateDefinitions;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.resources.ResourceLocation;
@@ -54,14 +55,14 @@ public abstract class ModelManagerMixin {
         final @Local(ordinal = 0, argsOnly = true) ResourceManager resourceManager,
         final @Local(ordinal = 0, argsOnly = true) Executor executor,
         final @Local(ordinal = 2) CompletableFuture<Map<ResourceLocation, UnbakedModel>> unbakedModelsFuture,
-        final @Local(ordinal = 5) CompletableFuture<ModelDiscovery> modelDiscoveryFuture
+        final @Local(ordinal = 5) CompletableFuture<ModelManager.ResolvedModels> modelDiscoveryFuture
     ) {
         final var blockstateResourcesFuture = CompletableFuture.supplyAsync(
             () -> BLOCKSTATE_LISTER.listMatchingResourceStacks(resourceManager),
             executor
         );
 
-        final var function = BlockStateModelLoader.definitionLocationToBlockMapper();
+        final var function = BlockStateDefinitions.definitionLocationToBlockStateMapper();
         final var visualSnowyLeaves = Minecraft.getInstance().getVisualSnowyLeaves();
         final var logger = visualSnowyLeaves.getLogger();
 
@@ -87,7 +88,7 @@ public abstract class ModelManagerMixin {
                         try (final var reader = resource.openAsReader()) {
                             final var jsonObject = GsonHelper.parse(reader);
                             final var blockModelDefinition =
-                                BlockModelDefinition.fromJsonElement(jsonObject);
+                                BlockModelDefinition.CODEC.parse(JsonOps.INSTANCE, jsonObject).getOrThrow(JsonParseException::new);
                             blockModelDefinitions.add(blockModelDefinition);
                         } catch (final Exception exception) {
                             logger.error(
