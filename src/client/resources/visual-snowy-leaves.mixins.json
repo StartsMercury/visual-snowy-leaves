@@ -6,6 +6,7 @@
         "extension.MinecraftMixin",
         "tint.BlockColorsAccessor",
         "tint.BlockModelInvoker",
+        "tint.BlockModelWrapperMixin",
         "tint.ModelManagerMixin",
         "tint.SpriteContentsAccessor",
         "transition.minecraft.ClientChunkCache$StorageAccessor",
