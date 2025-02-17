@@ -5,6 +5,7 @@
     "client": [
         "extension.MinecraftMixin",
         "tint.BlockColorsAccessor",
+        "tint.BlockModelWrapperMixin",
         "tint.ModelManagerMixin",
         "tint.SpriteContentsAccessor",
         "transition.minecraft.ClientChunkCache$StorageAccessor",
