@@ -18,6 +18,7 @@ import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
+import org.lwjgl.system.MemoryUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -170,7 +171,30 @@ public final class SpriteWhitener {
             .map(SpriteContentsAccessor::getByMipLevel)
             .flatMap(Stream::of)
             .forEach(
-                image -> image.applyToAllPixels(rgba -> normalize(rgba, _rgbMultiplier))
+                image -> {
+                    final var format = image.format();
+
+                    if (format != NativeImage.Format.RGBA) {
+                        final var template = "function application only works on RGBA images; have %s";
+                        final var message = String.format(Locale.ROOT, template, format);
+                        throw new IllegalArgumentException(message);
+                    }
+
+                    final var pointer = image.getPointer();
+
+                    if (pointer == 0L) {
+                        throw new IllegalStateException("Image is not allocated.");
+                    }
+
+                    final var pixelCount = image.getWidth() * image.getHeight();
+                    final var buffer = MemoryUtil.memIntBuffer(pointer, pixelCount);
+
+                    for (var i = 0; i < pixelCount; ++i) {
+                        final var original = ARGB.fromABGR(buffer.get(i));
+                        final var modified = normalize(original, _rgbMultiplier);
+                        buffer.put(i, ARGB.toABGR(modified));
+                    }
+                }
             );
 
         final var optionalBlockHolder = BuiltInRegistries.BLOCK.get(blockKey);
