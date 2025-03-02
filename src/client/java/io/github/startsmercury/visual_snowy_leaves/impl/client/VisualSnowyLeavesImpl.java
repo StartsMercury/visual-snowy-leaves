@@ -10,20 +10,31 @@ import com.mojang.serialization.JsonOps;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.config.Config;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.SnowDataAware;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.util.Chunks;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.util.Reporter;
+import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
 import net.fabricmc.loader.api.FabricLoader;
+import net.fabricmc.loader.api.ModContainer;
+import net.fabricmc.loader.api.Version;
+import net.fabricmc.loader.api.metadata.ModMetadata;
+import net.minecraft.ChatFormatting;
+import net.minecraft.SharedConstants;
 import net.minecraft.Util;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.block.model.BlockStateModel;
+import net.minecraft.client.resources.model.UnbakedGeometry;
+import net.minecraft.network.chat.ClickEvent;
+import net.minecraft.network.chat.Component;
 import net.minecraft.util.GsonHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.NoSuchFileException;
-import java.nio.file.Path;
+import java.io.PrintWriter;
+import java.nio.file.*;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public final class VisualSnowyLeavesImpl {
@@ -35,11 +46,21 @@ public final class VisualSnowyLeavesImpl {
 
     private final Minecraft minecraft;
 
+    private final Reporter<Class<? extends BlockStateModel.Unbaked>> blockStateModelReporter;
+
+    private final Reporter<Class<? extends UnbakedGeometry>> geometryReporter;
+
+    private Path reportFile;
+
     public VisualSnowyLeavesImpl(final Minecraft minecraft) {
         this.config = Config.DEFAULT;
         this.fabricLoader = FabricLoader.getInstance();
         this.logger = LoggerFactory.getLogger(VslConstants.NAME);
         this.minecraft = minecraft;
+
+        final Function<? super Class<?>, String> classFormatter = Class::getName;
+        this.blockStateModelReporter = new Reporter<>(new ReferenceOpenHashSet<>(), classFormatter);
+        this.geometryReporter = new Reporter<>(new ReferenceOpenHashSet<>(), classFormatter);
 
         this.logger.info("{} is initialized!", VslConstants.NAME);
     }
@@ -244,5 +265,139 @@ public final class VisualSnowyLeavesImpl {
 
     public File getConfigFile() {
         return this.getConfigPath().toFile();
+    }
+
+    public Reporter<Class<? extends BlockStateModel.Unbaked>> getBlockStateModelRecRep() {
+        return this.blockStateModelReporter;
+    }
+
+    public Reporter<Class<? extends UnbakedGeometry>> getGeometryRecRep() {
+        return this.geometryReporter;
+    }
+
+    public void collectReports(final SpriteWhitener whitener) {
+        class PathBuf {
+            Path inner;
+        }
+
+        final PathBuf tempFile = new PathBuf();
+
+        try (final var printWriter = whitener.collectReports(() -> {
+            try {
+                tempFile.inner = Files.createTempFile(VslConstants.MODID, "reports.txt");
+
+                this.logger.info("[{}] Created new temporary report file", VslConstants.NAME);
+
+                final var template = "[{}] Created new temporary report file at {}";
+                this.logger.debug(template, VslConstants.NAME, tempFile);
+            } catch (final IOException cause) {
+                throw new IOException("Unable to create temporary report file", cause);
+            }
+
+            final var writer = new PrintWriter(Files.newBufferedWriter(tempFile.inner));
+
+            writer.print("Minecraft ");
+            try {
+                writer.println(SharedConstants.getCurrentVersion().getName());
+            } catch (final RuntimeException cause) {
+                writer.print('<');
+                writer.print(cause.getMessage());
+                writer.println('>');
+            }
+
+            final var version = this
+                .fabricLoader
+                .getModContainer(VslConstants.MODID)
+                .map(ModContainer::getMetadata)
+                .map(ModMetadata::getVersion)
+                .map(Version::getFriendlyString)
+                .orElse("<unknown>");
+            writer.print(VslConstants.NAME);
+            writer.print(' ');
+            writer.println(version);
+
+            writer.println();
+
+            return writer;
+        })) {
+            if (printWriter == null) {
+                final var template = "[{}] Skipping reporting, there is nothing to report";
+                this.logger.info(template, VslConstants.NAME);
+                return;
+            } else {
+                this.logger.info("[{}] Successfully wrote the temporary report", VslConstants.NAME);
+                printWriter.println("Submit this to the dedicated Google Forms:");
+                printWriter.println();
+                for (var i = 0; i < 3; i++) {
+                    printWriter.println("> https://forms.gle/UiwbEqhkTnrBC97C7");
+                }
+            }
+        } catch (final IOException cause) {
+            this.logger.error("[{}] Unable to write the temporary report", VslConstants.NAME, cause);
+            return;
+        }
+
+        final var path = this
+            .fabricLoader
+            .getGameDir()
+            .resolve("logs")
+            .resolve(VslConstants.MODID)
+            .resolve("reports.txt");
+
+        try {
+            final var loggingDirectory = path.getParent();
+            Files.createDirectory(loggingDirectory);
+            this.logger.info("[{}] Successfully created logging subdirectory", VslConstants.NAME);
+
+            final var template = "[{}] Successfully created logging subdirectory at {}";
+            this.logger.info(template, VslConstants.NAME, loggingDirectory);
+        } catch (final FileAlreadyExistsException ignored) {
+            this.logger.info("[{}] Logging subdirectory already exists", VslConstants.NAME);
+        } catch (final IOException cause) {
+            final var template = "[{}] Unable to create logging subdirectory";
+            this.logger.error(template, VslConstants.NAME, cause);
+            return;
+        }
+
+        try {
+            assert tempFile.inner != null;
+            Files.move(tempFile.inner, path, StandardCopyOption.REPLACE_EXISTING);
+            this.logger.info("[{}] Successfully committed report file changes", VslConstants.NAME);
+        } catch (final IOException cause) {
+            this.logger.error("[{}] Unable to commit changes to report file", VslConstants.NAME, cause);
+            return;
+        }
+
+        this.reportFile = path;
+    }
+
+    public boolean sendReportNotice() {
+        final var reportFile = this.reportFile;
+        if (reportFile == null) {
+            return false;
+        }
+
+        final var player = this.minecraft.player;
+        if (player == null) {
+            return false;
+        }
+
+        final var underlined = Component.literal("Click this message to view reports.txt")
+            .withStyle(arg -> arg.withUnderlined(true));
+        final var message = Component.translatable(
+            "["
+                + VslConstants.NAME
+                + "] Detected unsupported custom classes."
+                + " Some models may fail to be snowy. "
+        ).append(underlined)
+            .withStyle(arg -> arg
+                .applyFormat(ChatFormatting.RED)
+                .withClickEvent(new ClickEvent.OpenFile(reportFile))
+            );
+        player.displayClientMessage(message, false);
+
+        this.reportFile = null;
+
+        return true;
     }
 }

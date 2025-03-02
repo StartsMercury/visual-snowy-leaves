@@ -150,7 +150,8 @@ public abstract class ModelManagerMixin {
         final var atlasKey = TextureAtlas.LOCATION_BLOCKS;
 
         final var modifySpritesFuture = waitForAllFuture.thenRunAsync(() -> {
-            spriteWhitenerFuture.join().modifySprites(
+            final var spriteWhitener = spriteWhitenerFuture.join();
+            spriteWhitener.modifySprites(
                 this.blockColors,
                 unbakedModelsFuture.join(),
                 afterPreparationBarrierFuture
@@ -158,6 +159,8 @@ public abstract class ModelManagerMixin {
                     .atlasPreparations()
                     .get(atlasKey)
             );
+            visualSnowyLeaves.collectReports(spriteWhitener);
+            final var ignored = visualSnowyLeaves.sendReportNotice();
         }, applyExecutor);
 
         return CompletableFuture.allOf(

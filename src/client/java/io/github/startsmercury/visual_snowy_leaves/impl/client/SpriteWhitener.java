@@ -5,6 +5,7 @@ import com.google.common.collect.Multimap;
 import com.google.common.collect.Multimaps;
 import com.mojang.blaze3d.platform.NativeImage;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.util.ColorComponent;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.util.Reporter;
 import io.github.startsmercury.visual_snowy_leaves.mixin.client.tint.BlockColorsAccessor;
 import io.github.startsmercury.visual_snowy_leaves.mixin.client.tint.SpriteContentsAccessor;
 import net.minecraft.client.Minecraft;
@@ -12,27 +13,41 @@ import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.renderer.block.model.*;
 import net.minecraft.client.renderer.block.model.multipart.Selector;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
-import net.minecraft.client.resources.model.AtlasSet;
-import net.minecraft.client.resources.model.Material;
-import net.minecraft.client.resources.model.UnbakedModel;
+import net.minecraft.client.resources.model.*;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
+import net.minecraft.util.random.Weighted;
+import org.apache.commons.io.function.IOSupplier;
 import org.lwjgl.system.MemoryUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.IOException;
+import java.io.PrintWriter;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
 
 public final class SpriteWhitener {
-    private static final SpriteWhitener EMPTY = new SpriteWhitener(
-        LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME),
-        Multimaps.forMap(Map.of()),
-        Set.of()
-    );
+    private static final SpriteWhitener EMPTY;
+
+    static {
+        @SuppressWarnings({ "rawtypes", "unchecked" })
+        final var recRep = new Reporter(Set.of());
+
+        @SuppressWarnings("unchecked")
+        final var empty = new SpriteWhitener(
+            LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME),
+            Multimaps.forMap(Map.of()),
+            Set.of(),
+            recRep,
+            recRep
+        );
+
+        EMPTY = empty;
+    }
 
     public static SpriteWhitener createDefault() {
         return create(Minecraft.getInstance().getVisualSnowyLeaves());
@@ -42,7 +57,9 @@ public final class SpriteWhitener {
         return new SpriteWhitener(
             visualSnowyLeaves.getLogger(),
             HashMultimap.create(),
-            Set.copyOf(visualSnowyLeaves.getConfig().targetBlockKeys())
+            Set.copyOf(visualSnowyLeaves.getConfig().targetBlockKeys()),
+            visualSnowyLeaves.getBlockStateModelRecRep(),
+            visualSnowyLeaves.getGeometryRecRep()
         );
     }
 
@@ -56,14 +73,22 @@ public final class SpriteWhitener {
 
     private final Set<? extends ResourceLocation> targetBlockKeys;
 
+    private final Reporter<Class<? extends BlockStateModel.Unbaked>> blockStateModelReporter;
+
+    private final Reporter<Class<? extends UnbakedGeometry>> geometryReporter;
+
     private SpriteWhitener(
         final Logger logger,
         final Multimap<ResourceLocation, ResourceLocation> models,
-        final Set<? extends ResourceLocation> targetBlockKeys
+        final Set<? extends ResourceLocation> targetBlockKeys,
+        final Reporter<Class<? extends BlockStateModel.Unbaked>> blockStateModelReporter,
+        final Reporter<Class<? extends UnbakedGeometry>> geometryReporter
     ) {
         this.logger = logger;
         this.models = models;
         this.targetBlockKeys = targetBlockKeys;
+        this.blockStateModelReporter = blockStateModelReporter;
+        this.geometryReporter = geometryReporter;
     }
 
     public void analyzeModels(
@@ -79,12 +104,32 @@ public final class SpriteWhitener {
             .stream()
             .flatMap(it -> it.selectors().stream().map(Selector::variant));
 
-        final var variants = blockModelDefinition.variants().values().stream();
+        final var variants = blockModelDefinition
+            .simpleModels()
+            .stream()
+            .map(BlockModelDefinition.SimpleModelSelectors::models)
+            .map(Map::values)
+            .flatMap(Collection::stream);
 
         Stream.concat(multiPartVariants, variants)
-            .flatMap((variant) -> variant.variants().stream())
+            .flatMap(this::flattenToVariants)
             .map(Variant::modelLocation)
             .forEach(model -> this.models.put(blockKey, model));
+    }
+
+    public Stream<Variant> flattenToVariants(final BlockStateModel.Unbaked unbaked) {
+        return switch (unbaked) {
+            case SingleVariant.Unbaked(final var variant) -> Stream.of(variant);
+            case WeightedVariants.Unbaked(final var entries) -> entries
+                .unwrap()
+                .stream()
+                .map(Weighted::value)
+                .flatMap(this::flattenToVariants);
+            default -> {
+                blockStateModelReporter.report(unbaked.getClass());
+                yield Stream.empty();
+            }
+        };
     }
 
     public void modifySprites(
@@ -136,8 +181,7 @@ public final class SpriteWhitener {
                     .stream()
                     .map(BlockModel::geometry)
                     .filter(Objects::nonNull)
-                    // TODO: proper handling of known and unknown UnbakedGeometry subtypes
-                    .flatMap(it -> ((SimpleUnbakedGeometry) it).elements().stream())
+                    .flatMap(this::flattenToElements)
                     .flatMap(element -> element.faces().values().stream())
                     .filter(face -> face.tintIndex() == 0)
                     .map(BlockElementFace::texture)
@@ -219,6 +263,16 @@ public final class SpriteWhitener {
         blockColors.register(SnowableBlockColor.setMultiplier(blockColor, _rgbMultiplier), block);
     }
 
+    private Stream<BlockElement> flattenToElements(final UnbakedGeometry geometry) {
+        return switch (geometry) {
+            case SimpleUnbakedGeometry(final var elements) -> elements.stream();
+            default -> {
+                this.geometryReporter.report(geometry.getClass());
+                yield Stream.empty();
+            }
+        };
+    }
+
     private static Material resolveSlotContent(
         final Map<? super String, ? extends TextureSlots.SlotContents> textureSlots,
         TextureSlots.SlotContents slotContents
@@ -297,5 +351,22 @@ public final class SpriteWhitener {
         final var sb = ColorComponent.div(b, z);
 
         return ARGB.color(a, sr, sg, sb);
+    }
+
+    public PrintWriter collectReports(final IOSupplier<PrintWriter> writerProvider) throws IOException {
+        if (!(this.blockStateModelReporter.consumeChanged() | this.geometryReporter.consumeChanged())) {
+            return null;
+        }
+
+        final var writer = writerProvider.get();
+
+        if (!(
+            this.geometryReporter.collectReport(writer, "Unrecognized Unbaked Geometry classes:")
+                | this.blockStateModelReporter.collectReport(writer, "Unrecognized Unbaked BlockStateModel classes:"))
+        ) {
+            return null;
+        }
+
+        return writer;
     }
 }

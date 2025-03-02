@@ -4,6 +4,7 @@
     "compatibilityLevel": "JAVA_17",
     "client": [
         "extension.MinecraftMixin",
+        "report.ClientPacketListenerMixin",
         "tint.BlockColorsAccessor",
         "tint.BlockModelWrapperMixin",
         "tint.ModelManagerMixin",
