@@ -64,7 +64,7 @@ dependencies {
     modRuntimeOnly(fabricApi.module("fabric-key-binding-api-v1", "0.119.1+1.21.5"))
     modRuntimeOnly(fabricApi.module("fabric-lifecycle-events-v1", "0.119.1+1.21.5"))
 
-    modCompileOnly("maven.modrinth:sodium:mc1.21.4-0.6.6-fabric")
+    modCompileOnly("maven.modrinth:sodium:mc1.21.4-0.6.10-fabric")
 }
 
 tasks.withType<ProcessResources> {
