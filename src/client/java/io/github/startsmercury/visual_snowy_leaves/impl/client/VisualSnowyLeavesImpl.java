@@ -298,7 +298,7 @@ public final class VisualSnowyLeavesImpl {
 
             writer.print("Minecraft ");
             try {
-                writer.println(SharedConstants.getCurrentVersion().getName());
+                writer.println(SharedConstants.getCurrentVersion().name());
             } catch (final RuntimeException cause) {
                 writer.print('<');
                 writer.print(cause.getMessage());
