@@ -35,11 +35,14 @@ public final class VisualSnowyLeavesImpl {
 
     private final Minecraft minecraft;
 
+    private final SpriteWhitener.Context spriteWhitenerContext;
+
     public VisualSnowyLeavesImpl(final Minecraft minecraft) {
         this.config = Config.DEFAULT;
         this.fabricLoader = FabricLoader.getInstance();
         this.logger = LoggerFactory.getLogger(VslConstants.NAME);
         this.minecraft = minecraft;
+        this.spriteWhitenerContext = new SpriteWhitener.Context(minecraft);
 
         this.logger.info("{} is initialized!", VslConstants.NAME);
     }
@@ -244,5 +247,9 @@ public final class VisualSnowyLeavesImpl {
 
     public File getConfigFile() {
         return this.getConfigPath().toFile();
+    }
+
+    public SpriteWhitener.Context getSpriteWhitenerContext() {
+        return this.spriteWhitenerContext;
     }
 }
