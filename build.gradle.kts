@@ -1,12 +1,12 @@
 object Constants {
-    const val VERSION = "0.4.5"
+    const val VERSION = "0.5.0"
 
     const val VERSION_JAVA = 21
     const val VERSION_MINECRAFT = "1.21.4"
 }
 
 plugins {
-    id("fabric-loom") version "1.10.4"
+    id("fabric-loom") version "1.10.5"
 }
 
 base {
@@ -55,7 +55,7 @@ repositories {
 dependencies {
     minecraft("com.mojang:minecraft:${Constants.VERSION_MINECRAFT}")
     mappings(loom.officialMojangMappings())
-    modImplementation("net.fabricmc:fabric-loader:0.16.10")
+    modImplementation("net.fabricmc:fabric-loader:0.16.13")
 
     modImplementation(fabricApi.module("fabric-resource-loader-v0", "0.119.0+1.21.4"))
 
