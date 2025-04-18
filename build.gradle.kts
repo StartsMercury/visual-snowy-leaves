@@ -111,3 +111,11 @@ fun createVersionString(): String {
 
     return builder.toString()
 }
+
+loom {
+    runConfigs {
+        val client by existing {
+            vmArg("-Dmixin.debug=true")
+        }
+    }
+}
