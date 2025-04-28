@@ -1,5 +1,5 @@
 object Constants {
-    const val VERSION = "0.5.0"
+    const val VERSION = "0.5.1"
 
     const val VERSION_JAVA = 21
     const val VERSION_MINECRAFT = "25w17a"
@@ -59,7 +59,7 @@ dependencies {
 
     modImplementation(fabricApi.module("fabric-resource-loader-v0", "0.121.1+1.21.6"))
 
-    modImplementation("com.terraformersmc:modmenu:14.0.0-rc.2")
+    modCompileOnly("com.terraformersmc:modmenu:14.0.0-rc.2")
     modRuntimeOnly(fabricApi.module("fabric-screen-api-v1", "0.121.1+1.21.6"))
     modRuntimeOnly(fabricApi.module("fabric-key-binding-api-v1", "0.121.1+1.21.6"))
     modRuntimeOnly(fabricApi.module("fabric-lifecycle-events-v1", "0.121.1+1.21.6"))
