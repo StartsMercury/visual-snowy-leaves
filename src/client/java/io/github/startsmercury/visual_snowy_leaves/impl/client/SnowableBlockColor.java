@@ -58,20 +58,11 @@ public record SnowableBlockColor(BlockColor blockColor, Int2IntMap correctionMul
 
         final var config = vslAware.getVisualSnowyLeaves().getConfig();
 
-        switch (config.snowyMode()) {
-            case NEVER:
-                return ARGB.multiply(base, correctionMultiplier);
-            case SNOWING:
-                break;
-            case ALWAYS:
-                return COLOR_WHITE;
-        }
-
-        if (!isSnowyAt(blockAndTintGetter, blockPos)) {
+        if (config.disabled() || config.requireSnowyBiomes() && !isSnowyAt(blockAndTintGetter, blockPos)) {
             return ARGB.multiply(base, correctionMultiplier);
         }
 
-        if (!(blockAndTintGetter instanceof final SnowDataAware snowDataAware)) {
+        if (!(config.requireSnowyWeather() && blockAndTintGetter instanceof final SnowDataAware snowDataAware)) {
             return COLOR_WHITE;
         }
 

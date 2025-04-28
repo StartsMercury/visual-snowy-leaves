@@ -1,7 +1,10 @@
 package io.github.startsmercury.visual_snowy_leaves.impl.client.config;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.resources.ResourceLocation;
@@ -16,8 +19,11 @@ import static io.github.startsmercury.visual_snowy_leaves.impl.client.config.Lea
 
 public record Config(
     int version,
+    boolean disabled,
     RebuildInterval rebuildInterval,
-    SnowyMode snowyMode,
+    boolean requireSnowyBiomes,
+    boolean requireSnowyWeather,
+    @Deprecated(forRemoval = true) SnowyMode snowyMode,
     Set<ResourceLocation> targetBlockKeys,
     TransitionDuration transitionDuration
 ) {
@@ -39,7 +45,7 @@ public record Config(
 
     public static final int MINIMUM_VERSION = 0;
 
-    public static final int CURRENT_VERSION = 1;
+    public static final int CURRENT_VERSION = 2;
 
     public static final RebuildInterval DEFAULT_REBUILD_INTERVAL = RebuildInterval.fromTicks(20);
 
@@ -89,10 +95,28 @@ public record Config(
                     Config::version
                 ),
                 fieldBuilder.create(
+                    Codec.BOOL,
+                    "disabled",
+                    false,
+                    Config::disabled
+                ),
+                fieldBuilder.create(
                     RebuildInterval.CODEC,
                     "rebuildInterval",
                     DEFAULT_REBUILD_INTERVAL,
                     Config::rebuildInterval
+                ),
+                fieldBuilder.create(
+                    Codec.BOOL,
+                    "requireSnowyBiomes",
+                    true,
+                    Config::requireSnowyBiomes
+                ),
+                fieldBuilder.create(
+                    Codec.BOOL,
+                    "requireSnowyWeather",
+                    true,
+                    Config::requireSnowyWeather
                 ),
                 fieldBuilder.create(
                     SnowyMode.CODEC,
@@ -121,7 +145,10 @@ public record Config(
 
     public static final Config DEFAULT = new Config(
         CURRENT_VERSION,
+        false,
         DEFAULT_REBUILD_INTERVAL,
+        true,
+        true,
         DEFAULT_SNOWY_MODE,
         DEFAULT_TARGET_BLOCK_KEYS,
         DEFAULT_TRANSITION_DURATION
@@ -133,13 +160,31 @@ public record Config(
         }
 
         final var version = Math.max(this.version, MINIMUM_VERSION);
+        var disabled = this.disabled;
         var rebuildInterval = this.rebuildInterval;
+        var requireSnowyBiomes = this.requireSnowyBiomes;
+        var requireSnowyWeather = this.requireSnowyWeather;
         var snowyMode = this.snowyMode;
         var targetBlockKeys = new HashSet<>(this.targetBlockKeys);
         var transitionDuration = this.transitionDuration;
 
         switch (version) {
             case 0 -> targetBlockKeys.add(PALE_OAK);
+            case 1 -> {
+                switch (snowyMode) {
+                    case NEVER -> disabled = true;
+                    case SNOWING -> {
+                        disabled = false;
+                        requireSnowyBiomes = true;
+                        requireSnowyWeather = true;
+                    }
+                    case ALWAYS -> {
+                        disabled = false;
+                        requireSnowyBiomes = false;
+                        requireSnowyWeather = false;
+                    }
+                }
+            }
             default -> {
                 final var message = "Upgrade is not yet implemented for config version "
                     + version
@@ -150,10 +195,28 @@ public record Config(
 
         return new Config(
             CURRENT_VERSION,
+            disabled,
             rebuildInterval,
+            requireSnowyBiomes,
+            requireSnowyWeather,
             snowyMode,
             Set.copyOf(targetBlockKeys),
             transitionDuration
         );
+    }
+
+    public DataResult<JsonElement> encodeAsJson() {
+        final var version = this.version;
+
+        return Config.CODEC.encodeStart(JsonOps.INSTANCE, this).map((final var json) -> {
+            if (json instanceof final JsonObject object) {
+                switch (version) {
+                    case 0, 1 -> {}
+                    case 2 -> object.remove("snowyMode");
+                }
+            }
+
+            return json;
+        });
     }
 }

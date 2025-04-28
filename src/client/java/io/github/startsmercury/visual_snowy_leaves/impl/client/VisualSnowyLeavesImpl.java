@@ -112,9 +112,18 @@ public final class VisualSnowyLeavesImpl {
             );
         }
 
-        if (oldConfig.snowyMode() != config.snowyMode()) {
+        final boolean filterChanged = oldConfig.disabled()
+            // disabled -> enabled
+            ? !config.disabled()
+            // enabled -> disabled
+            : config.disabled()
+                // enabled -> enabled(M)
+                || oldConfig.requireSnowyBiomes() != config.requireSnowyBiomes()
+                || oldConfig.requireSnowyWeather() != config.requireSnowyWeather();
+
+        if (filterChanged) {
             this.logger.debug(
-                "[{}] Snowing mode changed, requesting lazy rebuild to all chunks...",
+                "[{}] Snowy conditions changed, requesting lazy rebuild to all chunks...",
                 VslConstants.NAME
             );
 
@@ -229,7 +238,7 @@ public final class VisualSnowyLeavesImpl {
         final var path = this.fabricLoader.getConfigDir().resolve(VslConstants.CONFIG_NAME);
 
         final JsonObject json;
-        switch (Config.CODEC.encodeStart(JsonOps.INSTANCE, this.config)) {
+        switch (this.config.encodeAsJson()) {
             case DataResult.Success<JsonElement>(final var value, final var lifecycle):
                 json = (JsonObject) value;
                 break;
