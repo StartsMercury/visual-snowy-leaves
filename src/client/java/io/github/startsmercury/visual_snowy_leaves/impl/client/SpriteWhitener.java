@@ -191,7 +191,7 @@ public final class SpriteWhitener {
                 @SuppressWarnings({ "unchecked", "rawtypes" })
                 final var models = (List<BlockModel>) (List) Stream.iterate(
                     (UnbakedModel) blockModel,
-                    it -> it instanceof BlockModel && it.parent() != null,
+                    it -> it != null && it.parent() != null,
                     it -> modelResources.get(it.parent())
                 ).toList();
 
