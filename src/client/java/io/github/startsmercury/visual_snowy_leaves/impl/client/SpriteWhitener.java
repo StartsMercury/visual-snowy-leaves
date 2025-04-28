@@ -339,7 +339,7 @@ public final class SpriteWhitener {
 
     private static int getArgbOfMaxLightness(final int[] argbArray) {
         var best = 0;
-        var result = 0xFFFFFFFF;
+        var value = 0;
 
         for (final var argb : argbArray) {
             final var a = ARGB.alpha(argb);
@@ -347,15 +347,20 @@ public final class SpriteWhitener {
             final var g = ARGB.green(argb);
             final var b = ARGB.blue(argb);
 
-            final var key = a * a + r * r + g * g + b * b;
-
-            if (key > best) {
-                best = key;
-                result = argb;
+            if (a < best) {
+                continue;
             }
+
+            final var key = Math.max(Math.max(r, g), b);
+
+            if (a > best || key > value) {
+                value = key;
+            }
+
+            best = a;
         }
 
-        return result;
+        return ARGB.color(best, value, value, value);
     }
 
     private int normalize(final int argb, final int _xyz) {
