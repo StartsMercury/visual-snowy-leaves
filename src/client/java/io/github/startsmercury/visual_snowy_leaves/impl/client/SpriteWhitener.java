@@ -297,6 +297,7 @@ public final class SpriteWhitener {
             return;
         }
 
+        multipliers.remove(-1);
         final var block = blockHolder.value();
         final var id = BuiltInRegistries.BLOCK.getId(block);
         final var blockColor = Objects.requireNonNullElse(
