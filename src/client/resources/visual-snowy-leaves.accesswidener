@@ -1,5 +1,7 @@
 accessWidener v2 named
 
+accessible method net/minecraft/client/gui/components/AbstractSelectionList addEntry (Lnet/minecraft/client/gui/components/AbstractSelectionList$Entry;)I
+accessible class  net/minecraft/client/gui/components/OptionsList$Entry
 accessible class  net/minecraft/client/multiplayer/ClientChunkCache$Storage
 accessible class  net/minecraft/client/renderer/block/model/TextureSlots$Reference
 accessible class  net/minecraft/client/renderer/block/model/TextureSlots$Value
@@ -7,3 +9,5 @@ accessible method net/minecraft/client/resources/model/BlockStateDefinitions def
 accessible field  net/minecraft/client/resources/model/BlockStateModelLoader BLOCKSTATE_LISTER Lnet/minecraft/resources/FileToIdConverter;
 accessible class  net/minecraft/client/resources/model/ModelManager$ReloadState
 accessible class  net/minecraft/client/resources/model/ModelManager$ResolvedModels
+accessible method net/minecraft/resources/ResourceLocation <init> (Ljava/lang/String;Ljava/lang/String;)V
+accessible method net/minecraft/resources/ResourceLocation validNamespaceChar (C)Z

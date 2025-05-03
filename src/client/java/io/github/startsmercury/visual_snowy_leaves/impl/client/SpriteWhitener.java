@@ -34,8 +34,10 @@ import net.minecraft.client.resources.model.WeightedVariants;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.util.ARGB;
+import net.minecraft.util.CommonColors;
 import net.minecraft.util.random.Weighted;
 import org.apache.commons.io.function.IOSupplier;
+import org.jetbrains.annotations.Nullable;
 import org.lwjgl.system.MemoryUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -283,7 +285,7 @@ public final class SpriteWhitener {
 
             return new AbstractInt2IntMap.BasicEntry(index, _rgbMultiplier);
         }).collect(Collectors.toMap(Int2IntMap.Entry::getIntKey, Map.Entry::getValue, (x, y) -> x, Int2IntOpenHashMap::new));
-        multipliers.defaultReturnValue(0xFFFFFFFF);
+        multipliers.defaultReturnValue(CommonColors.WHITE);
 
         final var optionalBlockHolder = BuiltInRegistries.BLOCK.get(blockKey);
         if (optionalBlockHolder.isEmpty()) {
@@ -317,7 +319,7 @@ public final class SpriteWhitener {
         };
     }
 
-    private static Material resolveSlotContent(
+    private static @Nullable Material resolveSlotContent(
         final Map<? super String, ? extends TextureSlots.SlotContents> textureSlots,
         TextureSlots.SlotContents slotContents
     ) {
@@ -334,7 +336,7 @@ public final class SpriteWhitener {
         }
     }
 
-    private static BlockModel asBlockModelOrElseNull(final UnbakedModel unbakedModel) {
+    private static @Nullable BlockModel asBlockModelOrElseNull(final UnbakedModel unbakedModel) {
         return unbakedModel instanceof final BlockModel blockModel ? blockModel : null;
     }
 
@@ -381,7 +383,7 @@ public final class SpriteWhitener {
         return ARGB.color(a, sr, sg, sb);
     }
 
-    public PrintWriter collectReports(final IOSupplier<PrintWriter> writerProvider) throws IOException {
+    public @Nullable PrintWriter collectReports(final IOSupplier<PrintWriter> writerProvider) throws IOException {
         if (!(this.blockStateModelReporter.consumeChanged() | this.geometryReporter.consumeChanged())) {
             return null;
         }

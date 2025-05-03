@@ -7,6 +7,7 @@ import it.unimi.dsi.fastutil.ints.Int2IntMap;
 import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.core.BlockPos;
 import net.minecraft.util.ARGB;
+import net.minecraft.util.CommonColors;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
@@ -14,8 +15,6 @@ import org.jetbrains.annotations.Nullable;
 import java.util.Objects;
 
 public record SnowableBlockColor(BlockColor blockColor, Int2IntMap correctionMultipliers) implements BlockColor {
-    public static final int COLOR_WHITE = 0xFFFFFFFF;
-
     private static boolean isSnowyAt(
         final @Nullable BlockAndTintGetter blockAndTintGetter,
         final @Nullable BlockPos blockPos
@@ -48,7 +47,7 @@ public record SnowableBlockColor(BlockColor blockColor, Int2IntMap correctionMul
         final var base = this.blockColor.getColor(blockState, blockAndTintGetter, blockPos, i);
         final var correctionMultiplier = this.correctionMultipliers.get(i);
 
-        if (correctionMultiplier == COLOR_WHITE) {
+        if (correctionMultiplier == CommonColors.WHITE) {
             return base;
         }
 
@@ -63,7 +62,7 @@ public record SnowableBlockColor(BlockColor blockColor, Int2IntMap correctionMul
         }
 
         if (!(config.requireSnowyWeather() && blockAndTintGetter instanceof final SnowDataAware snowDataAware)) {
-            return COLOR_WHITE;
+            return CommonColors.WHITE;
         }
 
         final var curr = snowDataAware.visual_snowy_leaves$getSnowData().getAccumulatedTicks();

@@ -1,15 +1,12 @@
 package io.github.startsmercury.visual_snowy_leaves.impl.client.config;
 
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.DataResult;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.VslConstants;
-import net.minecraft.SharedConstants;
-
-import java.time.Duration;
-
 import static io.github.startsmercury.visual_snowy_leaves.impl.client.VslConstants.Duration.ONE_TICK;
 
-public final class TransitionDuration implements Comparable<TransitionDuration> {
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.DataResult;
+import java.time.Duration;
+
+public final class TransitionDuration extends Tick32<TransitionDuration> {
     public static final Codec<TransitionDuration> CODEC;
     private static final Duration MAX_DURATION;
     public static final TransitionDuration MAX_VALUE;
@@ -19,17 +16,17 @@ public final class TransitionDuration implements Comparable<TransitionDuration> 
         MIN_VALUE = TransitionDuration.fromTicksUnchecked(0);
         MAX_VALUE = TransitionDuration.fromTicksUnchecked(Integer.divideUnsigned(-1, 255 * 255));
 
-        MAX_DURATION = ONE_TICK.multipliedBy(MAX_VALUE.ticks);
+        MAX_DURATION = ONE_TICK.multipliedBy(MAX_VALUE.asTicks());
         CODEC = Codec.STRING.comapFlatMap(
             input -> {
                 try {
-                    final var ticks = Math.min(TickUtil.parse(input), MAX_VALUE.ticks);
+                    final var ticks = Math.min(TickUtil.parse(input), MAX_VALUE.asTicks());
                     return DataResult.success(new TransitionDuration(ticks));
                 } catch (final TickParseException cause) {
                     return DataResult.error(cause::getMessage);
                 }
             },
-            self -> TickUtil.format(self.ticks, true)
+            self -> TickUtil.format(self.asTicks(), true)
         );
     }
 
@@ -59,8 +56,6 @@ public final class TransitionDuration implements Comparable<TransitionDuration> 
         return new TransitionDuration(ticks);
     }
 
-    private final int ticks;
-
     /**
      * Creates a new transition duration.
      *
@@ -71,36 +66,17 @@ public final class TransitionDuration implements Comparable<TransitionDuration> 
     @Deprecated
     @SuppressWarnings("DeprecatedIsStillUsed")
     private TransitionDuration(final int ticks) {
-        this.ticks = ticks;
-    }
-
-    public long asNanos() {
-        return Integer.toUnsignedLong(this.ticks) * VslConstants.NANOS_PER_TICK;
-    }
-
-    public long asMillis() {
-        return Integer.toUnsignedLong(this.ticks) * VslConstants.MILLIS_PER_TICK;
-    }
-
-    public int asTicks() {
-        return this.ticks;
-    }
-
-    public int asSeconds() {
-        return Integer.divideUnsigned(this.ticks, SharedConstants.TICKS_PER_SECOND);
-    }
-
-    public int asMinutes() {
-        return Integer.divideUnsigned(this.ticks, SharedConstants.TICKS_PER_MINUTE);
-    }
-
-    public int asHours() {
-        return Integer.divideUnsigned(this.ticks, VslConstants.TICKS_PER_HOUR);
+        super(ticks);
     }
 
     @Override
-    public int compareTo(final TransitionDuration rhs) {
-        return Integer.compareUnsigned(this.ticks, rhs.ticks);
+    public TransitionDuration withTicks(final int ticks) {
+        return new TransitionDuration(ticks);
+    }
+
+    @Override
+    protected boolean isInstance(final Object obj) {
+        return obj instanceof TransitionDuration;
     }
 
     @Override
@@ -108,14 +84,9 @@ public final class TransitionDuration implements Comparable<TransitionDuration> 
         if (this == obj) {
             return true;
         } else if (obj instanceof final TransitionDuration other) {
-            return this.ticks == other.ticks;
+            return this.equals(other);
         } else {
             return false;
         }
-    }
-
-    @Override
-    public int hashCode() {
-        return Integer.hashCode(this.ticks);
     }
 }

@@ -2,12 +2,13 @@ package io.github.startsmercury.visual_snowy_leaves.impl.client;
 
 import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.core.BlockPos;
+import net.minecraft.util.CommonColors;
 import net.minecraft.world.level.BlockAndTintGetter;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.Nullable;
 
 public record ConstantBlockColor(int argb) implements BlockColor {
-    public static final ConstantBlockColor WHITE = new ConstantBlockColor(0xFFFFFFFF);
+    public static final ConstantBlockColor WHITE = new ConstantBlockColor(CommonColors.WHITE);
 
     @Override
     public int getColor(

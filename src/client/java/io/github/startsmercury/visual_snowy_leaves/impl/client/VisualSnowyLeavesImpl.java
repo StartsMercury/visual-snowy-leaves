@@ -25,6 +25,7 @@ import net.minecraft.client.resources.model.UnbakedGeometry;
 import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.GsonHelper;
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +51,7 @@ public final class VisualSnowyLeavesImpl {
 
     private final Reporter<Class<? extends UnbakedGeometry>> geometryReporter;
 
-    private Path reportFile;
+    private @Nullable Path reportFile;
 
     public VisualSnowyLeavesImpl(final Minecraft minecraft) {
         this.config = Config.DEFAULT;
@@ -232,7 +233,7 @@ public final class VisualSnowyLeavesImpl {
         return true;
     }
 
-    private void saveConfig() {
+    public void saveConfig() {
         this.logger.debug("[{}] Saving config...", VslConstants.NAME);
 
         final var path = this.fabricLoader.getConfigDir().resolve(VslConstants.CONFIG_NAME);
@@ -286,14 +287,15 @@ public final class VisualSnowyLeavesImpl {
 
     public void collectReports(final SpriteWhitener whitener) {
         class PathBuf {
-            Path inner;
+            @Nullable Path inner;
         }
 
         final PathBuf tempFile = new PathBuf();
 
         try (final var printWriter = whitener.collectReports(() -> {
+            final Path path;
             try {
-                tempFile.inner = Files.createTempFile(VslConstants.MODID, "reports.txt");
+                path = Files.createTempFile(VslConstants.MODID, "reports.txt");
 
                 this.logger.info("[{}] Created new temporary report file", VslConstants.NAME);
 
@@ -303,7 +305,8 @@ public final class VisualSnowyLeavesImpl {
                 throw new IOException("Unable to create temporary report file", cause);
             }
 
-            final var writer = new PrintWriter(Files.newBufferedWriter(tempFile.inner));
+            final var writer = new PrintWriter(Files.newBufferedWriter(path));
+            tempFile.inner = path;
 
             writer.print("Minecraft ");
             try {

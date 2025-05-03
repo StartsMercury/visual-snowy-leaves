@@ -14,6 +14,7 @@ import net.minecraft.client.renderer.item.BlockModelWrapper;
 import net.minecraft.core.IdMapper;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.ARGB;
+import net.minecraft.util.CommonColors;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
@@ -73,7 +74,7 @@ public abstract class BlockModelWrapperMixin {
         snowableBlockColorRef.set(snowableBlockColor);
 
         if (this.tints.isEmpty()) {
-            this.tints = List.of(new Constant(0xFFFFFFF));
+            this.tints = List.of(new Constant(CommonColors.WHITE));
         }
     }
 

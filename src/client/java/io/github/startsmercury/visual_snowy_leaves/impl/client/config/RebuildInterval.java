@@ -2,10 +2,8 @@ package io.github.startsmercury.visual_snowy_leaves.impl.client.config;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.VslConstants;
-import net.minecraft.SharedConstants;
 
-public final class RebuildInterval implements Comparable<RebuildInterval> {
+public final class RebuildInterval extends Tick32<RebuildInterval> {
     public static final Codec<RebuildInterval> CODEC = Codec.STRING.comapFlatMap(
         input -> {
             try {
@@ -14,46 +12,27 @@ public final class RebuildInterval implements Comparable<RebuildInterval> {
                 return DataResult.error(cause::getMessage);
             }
         },
-        self -> TickUtil.format(self.ticks, true)
+        self -> TickUtil.format(self.asTicks(), true)
     );
+
+    public static final RebuildInterval ZERO = RebuildInterval.fromTicks(0);
 
     public static RebuildInterval fromTicks(final int ticks) {
         return new RebuildInterval(ticks);
     }
 
-    private final int ticks;
-
     private RebuildInterval(final int ticks) {
-        this.ticks = ticks;
-    }
-
-    public long asNanos() {
-        return Integer.toUnsignedLong(this.ticks) * VslConstants.NANOS_PER_TICK;
-    }
-
-    public long asMillis() {
-        return Integer.toUnsignedLong(this.ticks) * VslConstants.MILLIS_PER_TICK;
-    }
-
-    public int asTicks() {
-        return this.ticks;
-    }
-
-    public int asSeconds() {
-        return Integer.divideUnsigned(this.ticks, SharedConstants.TICKS_PER_SECOND);
-    }
-
-    public int asMinutes() {
-        return Integer.divideUnsigned(this.ticks, SharedConstants.TICKS_PER_MINUTE);
-    }
-
-    public int asHours() {
-        return Integer.divideUnsigned(this.ticks, VslConstants.TICKS_PER_HOUR);
+        super(ticks);
     }
 
     @Override
-    public int compareTo(final RebuildInterval rhs) {
-        return Integer.compareUnsigned(this.ticks, rhs.ticks);
+    public RebuildInterval withTicks(final int ticks) {
+        return new RebuildInterval(ticks);
+    }
+
+    @Override
+    protected boolean isInstance(final Object obj) {
+        return obj instanceof RebuildInterval;
     }
 
     @Override
@@ -61,14 +40,9 @@ public final class RebuildInterval implements Comparable<RebuildInterval> {
         if (this == obj) {
             return true;
         } else if (obj instanceof final RebuildInterval other) {
-            return this.ticks == other.ticks;
+            return this.equals(other);
         } else {
             return false;
         }
-    }
-
-    @Override
-    public int hashCode() {
-        return Integer.hashCode(this.ticks);
     }
 }
