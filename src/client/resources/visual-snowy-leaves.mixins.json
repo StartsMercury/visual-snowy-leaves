@@ -12,6 +12,7 @@
         "transition.minecraft.ClientChunkCache$StorageAccessor",
         "transition.minecraft.ClientChunkCacheAccessor",
         "transition.minecraft.ClientLevelMixin",
+        "transition.minecraft.FallingBlockRenderStateMixin",
         "transition.minecraft.LevelReaderMixin",
         "transition.minecraft.RenderSectionRegionMixin",
         "transition.sodium.LevelSliceMixin"
