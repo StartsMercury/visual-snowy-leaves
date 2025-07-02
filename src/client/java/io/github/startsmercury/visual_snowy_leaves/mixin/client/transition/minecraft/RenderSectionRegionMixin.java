@@ -6,18 +6,18 @@ import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.SnowAwa
 import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.SnowDataAware;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.VisualSnowyLeavesAware;
 import net.minecraft.client.multiplayer.ClientLevel;
-import net.minecraft.client.renderer.chunk.RenderChunkRegion;
+import net.minecraft.client.renderer.chunk.RenderSectionRegion;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 
-@Mixin(RenderChunkRegion.class)
-public class RenderChunkRegionMixin implements SnowAware, SnowDataAware, VisualSnowyLeavesAware {
+@Mixin(RenderSectionRegion.class)
+public class RenderSectionRegionMixin implements SnowAware, SnowDataAware, VisualSnowyLeavesAware {
     @Final
     @Shadow
-    protected Level level;
+    private Level level;
 
     @Override
     @SuppressWarnings("AddedMixinMembersNamePattern")

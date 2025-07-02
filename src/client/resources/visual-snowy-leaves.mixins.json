@@ -13,7 +13,7 @@
         "transition.minecraft.ClientChunkCacheAccessor",
         "transition.minecraft.ClientLevelMixin",
         "transition.minecraft.LevelReaderMixin",
-        "transition.minecraft.RenderChunkRegionMixin",
+        "transition.minecraft.RenderSectionRegionMixin",
         "transition.sodium.LevelSliceMixin"
     ],
     "injectors": {
