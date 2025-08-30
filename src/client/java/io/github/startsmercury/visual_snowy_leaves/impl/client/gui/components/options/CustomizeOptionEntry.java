@@ -52,21 +52,16 @@ public class CustomizeOptionEntry extends LabeledOptionEntry {
     }
 
     @Override
-    public void render(
+    public void renderContent(
         final GuiGraphics guiGraphics,
-        final int index,
-        final int rowTop,
-        final int rowLeft,
-        final int rowWidth,
-        final int itemHeight,
         final int mouseX,
         final int mouseY,
         final boolean hovered,
         final float deltaTicks
     ) {
-        this.renderLabel(guiGraphics, rowTop, rowLeft);
-        this.button.setX(rowLeft + rowWidth - BUTTON_WIDTH - 2 * OptionsList.ITEM_INSET);
-        this.button.setY(rowTop);
+        this.renderLabel(guiGraphics, this.getContentY(), this.getContentX());
+        this.button.setX(this.getContentRight() - BUTTON_WIDTH);
+        this.button.setY(this.getContentY());
         this.button.render(guiGraphics, mouseX, mouseY, deltaTicks);
     }
 }

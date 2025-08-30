@@ -1,8 +1,8 @@
 package io.github.startsmercury.visual_snowy_leaves.impl.client.gui.screens;
 
 import com.mojang.blaze3d.platform.InputConstants;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.gui.components.suggest.InputSuggestions;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.gui.components.TargetBlocksList;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.gui.components.suggest.InputSuggestions;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Set;
@@ -91,7 +91,7 @@ public final class TargetBlocksScreen extends Screen {
     protected void init() {
         this.layout.addTitleHeader(this.title, this.font);
         assert this.minecraft != null;
-        this.list = this.layout.addToContents(new TargetBlocksList(this, this.minecraft, this.font, this.width, this.height,43, 24, 0));
+        this.list = this.layout.addToContents(new TargetBlocksList(this, this.minecraft, this.font, this.width, this.height,43, 24));
 
         for (final var target : this.targets) {
             this.list.addKey(target);
@@ -125,7 +125,6 @@ public final class TargetBlocksScreen extends Screen {
         final var rows = this.layout.addToFooter(LinearLayout.vertical().spacing(4));
         rows.defaultCellSetting().alignVerticallyMiddle();
         rows.addChild(new StringWidget(BUTTON_ROW_WIDTH, 10, INPUT, this.font))
-            .alignLeft()
             .setColor(CommonColors.LIGHT_GRAY);
         rows.addChild(inputEdit);
         rows.addChild(buttonsRow);
@@ -211,10 +210,10 @@ public final class TargetBlocksScreen extends Screen {
         return suggestions.mouseScrolled(g) || super.mouseScrolled(d, e, f, g);
     }
 
-    public boolean mouseClicked(double d, double e, int i) {
+    public boolean mouseClicked(double d, double e, int i, boolean bl) {
         final var suggestions = this.suggestions;
         assert suggestions != null;
-        return suggestions.mouseClicked(d, e, i) || super.mouseClicked(d, e, i);
+        return suggestions.mouseClicked(d, e, i) || super.mouseClicked(d, e, i, bl);
     }
 
     @Override

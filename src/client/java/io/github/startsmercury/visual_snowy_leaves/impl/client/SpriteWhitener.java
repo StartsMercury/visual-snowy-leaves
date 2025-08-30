@@ -14,6 +14,19 @@ import it.unimi.dsi.fastutil.ints.Int2IntOpenHashMap;
 import it.unimi.dsi.fastutil.ints.Int2ReferenceMap;
 import it.unimi.dsi.fastutil.ints.Int2ReferenceOpenHashMap;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+import java.util.Objects;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.renderer.block.model.BlockElement;
@@ -26,7 +39,7 @@ import net.minecraft.client.renderer.block.model.SingleVariant;
 import net.minecraft.client.renderer.block.model.TextureSlots;
 import net.minecraft.client.renderer.block.model.Variant;
 import net.minecraft.client.renderer.block.model.multipart.Selector;
-import net.minecraft.client.resources.model.AtlasSet;
+import net.minecraft.client.renderer.texture.TextureAtlasSprite;
 import net.minecraft.client.resources.model.Material;
 import net.minecraft.client.resources.model.UnbakedGeometry;
 import net.minecraft.client.resources.model.UnbakedModel;
@@ -41,19 +54,6 @@ import org.jetbrains.annotations.Nullable;
 import org.lwjgl.system.MemoryUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
-import java.util.stream.Stream;
 
 public final class SpriteWhitener {
     private static final SpriteWhitener EMPTY;
@@ -160,7 +160,7 @@ public final class SpriteWhitener {
     public void modifySprites(
         final BlockColors blockColors,
         final Map<ResourceLocation, UnbakedModel> modelResources,
-        final AtlasSet.StitchResult atlas
+        final Function<ResourceLocation, TextureAtlasSprite> atlas
     ) {
         final var blockColorsAccessor = (BlockColorsAccessor) blockColors;
 
@@ -180,7 +180,7 @@ public final class SpriteWhitener {
     private void modifySpritesOf(
         final BlockColors blockColors,
         final Map<ResourceLocation, UnbakedModel> modelResources,
-        final AtlasSet.StitchResult atlas,
+        final Function<ResourceLocation, TextureAtlasSprite> atlas,
         final Logger logger,
         final ResourceLocation blockKey
     ) {
@@ -219,7 +219,7 @@ public final class SpriteWhitener {
                                     return null;
                                 }
 
-                                final var sprite = atlas.getSprite(material.texture());
+                                final var sprite = atlas.apply(material.texture());
                                 if (sprite == null) {
                                     return null;
                                 }

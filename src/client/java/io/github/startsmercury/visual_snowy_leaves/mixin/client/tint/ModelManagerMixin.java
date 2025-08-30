@@ -1,18 +1,23 @@
 package io.github.startsmercury.visual_snowy_leaves.mixin.client.tint;
 
+import static net.minecraft.client.resources.model.BlockStateModelLoader.BLOCKSTATE_LISTER;
+
 import com.google.gson.JsonParseException;
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.serialization.JsonOps;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.SpriteWhitener;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.VslConstants;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.util.SequencedCompletableFuture;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.util.UnknownBlockStateDefinitionException;
+import java.util.ArrayList;
+import java.util.Map;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
+import java.util.concurrent.Executor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.renderer.block.model.BlockModelDefinition;
-import net.minecraft.client.renderer.texture.TextureAtlas;
+import net.minecraft.client.renderer.texture.SpriteLoader;
 import net.minecraft.client.resources.model.BlockStateDefinitions;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.client.resources.model.UnbakedModel;
@@ -23,15 +28,7 @@ import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-
-import java.util.ArrayList;
-import java.util.Map;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CompletionException;
-import java.util.concurrent.Executor;
-import java.util.function.Consumer;
-
-import static net.minecraft.client.resources.model.BlockStateModelLoader.BLOCKSTATE_LISTER;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(ModelManager.class)
 public abstract class ModelManagerMixin {
@@ -39,21 +36,11 @@ public abstract class ModelManagerMixin {
     @Final
     private BlockColors blockColors;
 
-    @WrapOperation(
-        method = "reload",
-        at = @At(
-            value = "INVOKE",
-            target = "Ljava/util/concurrent/CompletableFuture;thenAcceptAsync(Ljava/util/function/Consumer;Ljava/util/concurrent/Executor;)Ljava/util/concurrent/CompletableFuture;",
-            ordinal = 0
-        )
-    )
-    private CompletableFuture<Void> modifySprites(
-        final CompletableFuture<ModelManager.ReloadState> afterPreparationBarrierFuture,
-        final Consumer<? super ModelManager.ReloadState> apply,
-        final Executor applyExecutor,
-        final Operation<CompletableFuture<Void>> op,
-        final @Local(ordinal = 0, argsOnly = true) ResourceManager resourceManager,
+    @ModifyVariable(method = "reload", at = @At("STORE"), ordinal = 7)
+    private CompletableFuture<SpriteLoader.Preparations> modifySprites(
+        final CompletableFuture<SpriteLoader.Preparations> spritePreparationsFuture,
         final @Local(ordinal = 0, argsOnly = true) Executor executor,
+        final @Local(ordinal = 0) ResourceManager resourceManager,
         final @Local(ordinal = 2) CompletableFuture<Map<ResourceLocation, UnbakedModel>> unbakedModelsFuture,
         final @Local(ordinal = 5) CompletableFuture<ModelManager.ResolvedModels> modelDiscoveryFuture
     ) {
@@ -141,31 +128,23 @@ public abstract class ModelManagerMixin {
             // Redundancy: already done in first `allOf`
             spriteWhitenerFuture,
             // No comment.
-            afterPreparationBarrierFuture,
+            // afterPreparationBarrierFuture,
+            spritePreparationsFuture,
             // Redundancy: already done in second `allOf`
             unbakedModelsFuture
         );
 
-        @SuppressWarnings("deprecation")
-        final var atlasKey = TextureAtlas.LOCATION_BLOCKS;
-
-        final var modifySpritesFuture = waitForAllFuture.thenRunAsync(() -> {
+        return waitForAllFuture.thenApplyAsync(_void -> {
             final var spriteWhitener = spriteWhitenerFuture.join();
+            final var spritePreparations = spritePreparationsFuture.join();
             spriteWhitener.modifySprites(
                 this.blockColors,
                 unbakedModelsFuture.join(),
-                afterPreparationBarrierFuture
-                    .join()
-                    .atlasPreparations()
-                    .get(atlasKey)
+                spritePreparations::getSprite
             );
             visualSnowyLeaves.collectReports(spriteWhitener);
             final var ignored = visualSnowyLeaves.sendReportNotice();
-        }, applyExecutor);
-
-        return CompletableFuture.allOf(
-            modifySpritesFuture,
-            op.call(afterPreparationBarrierFuture, apply, applyExecutor)
-        );
+            return spritePreparations;
+        }, executor);
     }
 }

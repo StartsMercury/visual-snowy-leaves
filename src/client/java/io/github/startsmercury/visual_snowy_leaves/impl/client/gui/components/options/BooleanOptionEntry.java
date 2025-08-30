@@ -40,21 +40,16 @@ public final class BooleanOptionEntry extends LabeledOptionEntry {
     }
 
     @Override
-    public void render(
+    public void renderContent(
         final GuiGraphics guiGraphics,
-        final int index,
-        final int rowTop,
-        final int rowLeft,
-        final int rowWidth,
-        final int itemHeight,
         final int mouseX,
         final int mouseY,
         final boolean hovered,
         final float deltaTicks
     ) {
-        this.renderLabel(guiGraphics, rowTop, rowLeft);
-        this.checkbox.setX(rowLeft + rowWidth - CHECKBOX_WIDTH - 2 * OptionsList.ITEM_INSET);
-        this.checkbox.setY(rowTop);
+        this.renderLabel(guiGraphics, this.getContentY(), this.getContentX());
+        this.checkbox.setX(this.getContentRight() - CHECKBOX_WIDTH);
+        this.checkbox.setY(this.getContentY());
         this.checkbox.render(guiGraphics, mouseX, mouseY, deltaTicks);
     }
 }

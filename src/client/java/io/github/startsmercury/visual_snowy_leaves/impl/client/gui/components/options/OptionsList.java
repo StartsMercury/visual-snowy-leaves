@@ -10,7 +10,6 @@ import io.github.startsmercury.visual_snowy_leaves.impl.client.config.Transition
 import io.github.startsmercury.visual_snowy_leaves.impl.client.gui.screens.TargetBlocksScreen;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import java.util.List;
-import java.util.Objects;
 import java.util.Set;
 import java.util.function.BooleanSupplier;
 import java.util.function.Consumer;
@@ -19,6 +18,7 @@ import net.minecraft.ChatFormatting;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ContainerObjectSelectionList;
+import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.navigation.ScreenRectangle;
 import net.minecraft.client.gui.screens.inventory.tooltip.BelowOrAboveWidgetTooltipPositioner;
 import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositioner;
@@ -144,7 +144,7 @@ public class OptionsList extends ContainerObjectSelectionList<OptionEntry> {
                 this.getRowLeft(),
                 getRowTop(this.children().indexOf(this.relevant)),
                 this.getWidth(),
-                this.itemHeight
+                this.defaultEntryHeight
             ));
         } else {
             final var hovered = this.getHovered();
@@ -167,15 +167,23 @@ public class OptionsList extends ContainerObjectSelectionList<OptionEntry> {
     }
 
     @Override
+    public void setFocused(@Nullable final GuiEventListener guiEventListener) {
+        final var previous = this.getSelected();
+        super.setFocused(guiEventListener);
+        if (guiEventListener != null && this.getSelected() == null) {
+            this.setSelected(previous);
+        }
+        System.out.println(this.getSelected());
+    }
+
+    @Override
     public void mouseMoved(final double mouseX, final double mouseY) {
         this.relevant = null;
     }
 
     @Override
-    protected boolean isSelectedItem(final int i) {
-        // Reintroduces the background for the focused entry.
-        return this.minecraft.getLastInputType().isKeyboard()
-            && Objects.equals(this.getSelected(), this.children().get(i));
+    protected boolean entriesCanBeSelected() {
+        return true;
     }
 
     private void addCategoryEntry(final String id, final @Nullable Component details) {

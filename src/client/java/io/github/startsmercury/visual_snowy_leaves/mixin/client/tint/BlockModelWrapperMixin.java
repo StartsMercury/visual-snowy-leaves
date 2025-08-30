@@ -5,6 +5,7 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.SnowableBlockColor;
+import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.color.item.Constant;
@@ -15,7 +16,6 @@ import net.minecraft.core.IdMapper;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.CommonColors;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
@@ -27,8 +27,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
-
-import java.util.List;
 
 @Mixin(BlockModelWrapper.class)
 public abstract class BlockModelWrapperMixin {
@@ -92,7 +90,6 @@ public abstract class BlockModelWrapperMixin {
         final CallbackInfo ci,
         final @Local(ordinal = 0, argsOnly = true) ItemStack itemStack,
         final @Local(ordinal = 0, argsOnly = true) @Nullable ClientLevel clientLevel,
-        final @Local(ordinal = 0, argsOnly = true) @Nullable LivingEntity livingEntity,
         final @Share("tintLayers") LocalRef<int[]> tintLayersRef,
         final @Share("snowableBlockColor") LocalRef<SnowableBlockColor> snowableBlockColorRef
     ) {

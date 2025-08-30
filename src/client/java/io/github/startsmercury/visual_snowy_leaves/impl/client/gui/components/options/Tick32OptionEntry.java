@@ -53,21 +53,16 @@ public final class Tick32OptionEntry<T extends Tick32<T>> extends LabeledOptionE
     }
 
     @Override
-    public void render(
+    public void renderContent(
         final GuiGraphics guiGraphics,
-        final int index,
-        final int rowTop,
-        final int rowLeft,
-        final int rowWidth,
-        final int itemHeight,
         final int mouseX,
         final int mouseY,
         final boolean hovered,
         final float deltaTicks
     ) {
-        this.renderLabel(guiGraphics, rowTop, rowLeft);
-        this.input.setX(rowLeft + rowWidth - INPUT_WIDTH - 2 * OptionsList.ITEM_INSET);
-        this.input.setY(rowTop);
+        this.renderLabel(guiGraphics, this.getContentY(), this.getContentX());
+        this.input.setX(this.getContentRight() - INPUT_WIDTH);
+        this.input.setY(this.getContentY());
         this.input.render(guiGraphics, mouseX, mouseY, deltaTicks);
     }
 }

@@ -21,41 +21,42 @@ public class TargetBlocksList extends ObjectSelectionList<TargetBlocksList.Entry
     private static final ResourceLocation SLOT_SPRITE = ResourceLocation.withDefaultNamespace("container/slot");
 
     public class Entry extends ObjectSelectionList.Entry<Entry> {
+        private final int index;
+
+        private Entry(final int index) {
+            this.index = index;
+        }
+
         @Override
-        public void render(
+        public void renderContent(
             final GuiGraphics guiGraphics,
-            final int index,
-            final int rowTop,
-            final int rowLeft,
-            final int rowWidth,
-            final int itemHeight,
             final int mouseX,
             final int mouseY,
             final boolean hovered,
             final float deltaTicks
         ) {
-            final var id = TargetBlocksList.this.targets.get(index);
+            final var id = TargetBlocksList.this.targets.get(this.index);
 
             BuiltInRegistries.BLOCK.getOptional(id).ifPresentOrElse(block -> {
                 final var item = block.asItem();
                 final var stack = new ItemStack(item);
-                this.blitSlot(guiGraphics, rowLeft, rowTop, stack);
+                this.blitSlot(guiGraphics, this.getContentX(), this.getContentY(), stack);
 
                 final var name = item != Items.AIR ? stack.getHoverName() : block.getName();
                 final var color = stack.getRarity().color().getColor();
-                guiGraphics.drawString(TargetBlocksList.this.font, name, rowLeft + 18 + 5, rowTop + 1, color == null ? CommonColors.WHITE : 0xFF000000 | color);
-                guiGraphics.drawString(TargetBlocksList.this.font, id.toString(), rowLeft + 18 + 5, rowTop + 11, CommonColors.GRAY);
+                guiGraphics.drawString(TargetBlocksList.this.font, name, this.getContentX() + 18 + 5, this.getContentY() + 1, color == null ? CommonColors.WHITE : 0xFF000000 | color);
+                guiGraphics.drawString(TargetBlocksList.this.font, id.toString(), this.getContentX() + 18 + 5, this.getContentY() + 11, CommonColors.GRAY);
             }, () -> {
-                this.blitSlotBg(guiGraphics, rowLeft + 1, rowTop + 1);
+                this.blitSlotBg(guiGraphics, this.getContentX() + 1, this.getContentY() + 1);
                 final var name = new ItemStack(Items.AIR).getHoverName();
-                guiGraphics.drawString(TargetBlocksList.this.font, name, rowLeft + 18 + 5, rowTop + 1, CommonColors.DARK_GRAY);
-                guiGraphics.drawString(TargetBlocksList.this.font, id.toString(), rowLeft + 18 + 5, rowTop + 11, CommonColors.GRAY);
+                guiGraphics.drawString(TargetBlocksList.this.font, name, this.getContentX() + 18 + 5, this.getContentY() + 1, CommonColors.DARK_GRAY);
+                guiGraphics.drawString(TargetBlocksList.this.font, id.toString(), this.getContentX() + 18 + 5, this.getContentY() + 11, CommonColors.GRAY);
             });
         }
 
         @Override
         public Component getNarration() {
-            final var id = TargetBlocksList.this.targets.get(TargetBlocksList.this.children().indexOf(this));
+            final var id = TargetBlocksList.this.targets.get(this.index);
 
             final var name = BuiltInRegistries.BLOCK.getOptional(id).map(block -> {
                 final var item = block.asItem();
@@ -74,9 +75,9 @@ public class TargetBlocksList extends ObjectSelectionList<TargetBlocksList.Entry
         }
 
         @Override
-        public boolean mouseClicked(final double mouseX, final double mouseY, final int button) {
+        public boolean mouseClicked(final double mouseX, final double mouseY, final int button, final boolean bl) {
             TargetBlocksList.this.setSelected(this);
-            return super.mouseClicked(mouseX, mouseY, button);
+            return super.mouseClicked(mouseX, mouseY, button, bl);
         }
 
         private void blitSlot(final GuiGraphics guiGraphics, final int x, final int y, final ItemStack itemStack) {
@@ -103,10 +104,9 @@ public class TargetBlocksList extends ObjectSelectionList<TargetBlocksList.Entry
         final int width,
         final int height,
         final int y,
-        final int itemHeight,
         final int headerHeight
     ) {
-        super(minecraft, width, height, y, itemHeight, headerHeight);
+        super(minecraft, width, height, y, headerHeight);
 
         this.screen = screen;
         this.font = font;
@@ -118,7 +118,7 @@ public class TargetBlocksList extends ObjectSelectionList<TargetBlocksList.Entry
 
     public boolean addKey(final ResourceLocation key) {
         if (this.targets.add(key)) {
-            this.addEntry(new Entry());
+            this.addEntry(new Entry(this.children().size()));
             return true;
         } else {
             return false;
@@ -132,7 +132,7 @@ public class TargetBlocksList extends ObjectSelectionList<TargetBlocksList.Entry
 
     private boolean removeKeyAt(final Entry entry) {
         entry.setFocused(false);
-        return this.removeKeyAt(this.children().indexOf(entry));
+        return this.removeKeyAt(entry.index);
     }
 
     private boolean removeKeyAt(final int index) {
@@ -146,7 +146,7 @@ public class TargetBlocksList extends ObjectSelectionList<TargetBlocksList.Entry
         if (n == 0) {
             this.setSelected(null);
         } else {
-            final var entry = getEntry(index < n ? index : index - 1);
+            final var entry = this.children().get(index < n ? index : index - 1);
             centerScrollOn(entry);
             this.setSelected(entry);
         }
