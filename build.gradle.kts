@@ -2,7 +2,7 @@ object Constants {
     const val VERSION = "0.5.1"
 
     const val VERSION_JAVA = 21
-    const val VERSION_MINECRAFT = "1.21.7"
+    const val VERSION_MINECRAFT = "1.21.8"
 }
 
 plugins {
