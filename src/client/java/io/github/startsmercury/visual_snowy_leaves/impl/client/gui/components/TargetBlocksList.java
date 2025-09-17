@@ -8,6 +8,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.ObjectSelectionList;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
@@ -69,15 +71,15 @@ public class TargetBlocksList extends ObjectSelectionList<TargetBlocksList.Entry
         }
 
         @Override
-        public boolean keyPressed(final int keyCode, final int scanCode, final int modifiers) {
-            if (keyCode != InputConstants.KEY_DELETE) return false;
+        public boolean keyPressed(final KeyEvent event) {
+            if (event.key() != InputConstants.KEY_DELETE) return false;
             return TargetBlocksList.this.removeKeyAt(this);
         }
 
         @Override
-        public boolean mouseClicked(final double mouseX, final double mouseY, final int button, final boolean bl) {
+        public boolean mouseClicked(final MouseButtonEvent event, final boolean bl) {
             TargetBlocksList.this.setSelected(this);
-            return super.mouseClicked(mouseX, mouseY, button, bl);
+            return super.mouseClicked(event, bl);
         }
 
         private void blitSlot(final GuiGraphics guiGraphics, final int x, final int y, final ItemStack itemStack) {

@@ -1,10 +1,9 @@
 package io.github.startsmercury.visual_snowy_leaves.impl.client.gui.components.suggest;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.brigadier.suggestion.Suggestion;
 import java.util.List;
 import net.minecraft.client.gui.GuiGraphics;
-import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
 import net.minecraft.client.renderer.Rect2i;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
@@ -150,7 +149,7 @@ public class SuggestionsList {
         }
     }
 
-    public boolean mouseClicked(final int mouseX, final int mouseY, final int button) {
+    public boolean mouseClicked(final int mouseX, final int mouseY) {
         if (!this.rect.contains(mouseX, mouseY)) return false;
 
         final var i = (mouseY - this.rect.getY()) / ITEM_HEIGHT + this.offset;
@@ -178,30 +177,24 @@ public class SuggestionsList {
         }
     }
 
-    public boolean keyPressed(final int keyCode, final int scanCode, final int modifiers) {
-        switch (keyCode) {
-            case InputConstants.KEY_UP -> {
-                this.cycle(-1);
-                this.tabCycles = false;
+    public boolean keyPressed(final KeyEvent event) {
+        if (event.isUp()) {
+            this.cycle(-1);
+            this.tabCycles = false;
+        } else if (event.isDown()) {
+            this.cycle(1);
+            this.tabCycles = false;
+        } else if (event.isCycleFocus()) {
+            if (this.tabCycles) {
+                this.cycle(event.hasShiftDown() ? -1 : 1);
             }
-            case InputConstants.KEY_DOWN -> {
-                this.cycle(1);
-                this.tabCycles = false;
-            }
-            case InputConstants.KEY_TAB -> {
-                if (this.tabCycles) {
-                    this.cycle(Screen.hasShiftDown() ? -1 : 1);
-                }
 
-                this.useSuggestion();
-            }
-            case InputConstants.KEY_ESCAPE -> {
-                this.suggestions.hide();
-                this.suggestions.input.setSuggestion(null);
-            }
-            default -> {
-                return false;
-            }
+            this.useSuggestion();
+        } else if (event.isEscape()) {
+            this.suggestions.hide();
+            this.suggestions.input.setSuggestion(null);
+        } else {
+            return false;
         }
 
         return true;

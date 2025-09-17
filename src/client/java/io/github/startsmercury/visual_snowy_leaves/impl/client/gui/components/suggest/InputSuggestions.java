@@ -17,6 +17,8 @@ import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.commands.SharedSuggestionProvider;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.CommonComponents;
@@ -82,11 +84,11 @@ public class InputSuggestions {
         this.allowHiding = allowHiding;
     }
 
-    public boolean keyPressed(final int keyCode, final int scanCode, final int modifiers) {
-        if (this.suggestions != null && this.suggestions.keyPressed(keyCode, scanCode, modifiers)) {
+    public boolean keyPressed(final KeyEvent event) {
+        if (this.suggestions != null && this.suggestions.keyPressed(event)) {
             return true;
         } else if (this.screen.getFocused() != this.input
-            || keyCode != InputConstants.KEY_TAB
+            || !event.isCycleFocus()
             || this.allowHiding && this.suggestions == null
         ) {
             return false;
@@ -101,9 +103,9 @@ public class InputSuggestions {
             && this.suggestions.mouseScrolled(Mth.clamp(scrollAmount, -1.0D, 1.0D));
     }
 
-    public boolean mouseClicked(final double mouseX, final double mouseY, final int button) {
+    public boolean mouseClicked(final MouseButtonEvent event) {
         return this.suggestions != null
-            && this.suggestions.mouseClicked((int) mouseX, (int) mouseY, button);
+            && this.suggestions.mouseClicked((int) event.x(), (int) event.y());
     }
 
     public void showSuggestions(final boolean bl) {

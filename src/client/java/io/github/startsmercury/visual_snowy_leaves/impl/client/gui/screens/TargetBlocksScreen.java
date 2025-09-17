@@ -16,6 +16,8 @@ import net.minecraft.client.gui.layouts.EqualSpacingLayout;
 import net.minecraft.client.gui.layouts.HeaderAndFooterLayout;
 import net.minecraft.client.gui.layouts.LinearLayout;
 import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.input.KeyEvent;
+import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
@@ -185,19 +187,19 @@ public final class TargetBlocksScreen extends Screen {
     }
 
     @Override
-    public boolean keyPressed(final int keyCode, final int scanCode, final int modifiers) {
+    public boolean keyPressed(final KeyEvent event) {
         final var suggestions = this.suggestions;
         assert suggestions != null;
 
-        if (suggestions.keyPressed(keyCode, scanCode, modifiers)) {
+        if (suggestions.keyPressed(event)) {
             return true;
-        } else if (super.keyPressed(keyCode, scanCode, modifiers)) {
+        } else if (super.keyPressed(event)) {
             return true;
-        } else if (keyCode == InputConstants.KEY_RETURN || keyCode == InputConstants.KEY_NUMPADENTER) {
+        } else if (event.isConfirmation()) {
             final var addButton = this.addButton;
             assert addButton != null;
             if (addButton.isActive()) {
-                addButton.onPress();
+                addButton.onPress(event);
                 return true;
             }
         }
@@ -210,10 +212,11 @@ public final class TargetBlocksScreen extends Screen {
         return suggestions.mouseScrolled(g) || super.mouseScrolled(d, e, f, g);
     }
 
-    public boolean mouseClicked(double d, double e, int i, boolean bl) {
+    @Override
+    public boolean mouseClicked(final MouseButtonEvent mouseButtonEvent, final boolean bl) {
         final var suggestions = this.suggestions;
         assert suggestions != null;
-        return suggestions.mouseClicked(d, e, i) || super.mouseClicked(d, e, i, bl);
+        return suggestions.mouseClicked(mouseButtonEvent) && super.mouseClicked(mouseButtonEvent, bl);
     }
 
     @Override
