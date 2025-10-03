@@ -173,7 +173,6 @@ public class OptionsList extends ContainerObjectSelectionList<OptionEntry> {
         if (guiEventListener != null && this.getSelected() == null) {
             this.setSelected(previous);
         }
-        System.out.println(this.getSelected());
     }
 
     @Override
