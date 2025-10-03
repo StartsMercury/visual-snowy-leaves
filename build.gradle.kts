@@ -60,10 +60,10 @@ dependencies {
     modImplementation("net.fabricmc:fabric-loader:0.17.2")
 
     modImplementation("com.terraformersmc:modmenu:15.0.0")
-    modRuntimeOnly(fabricApi.module("fabric-lifecycle-events-v1", "0.133.13+1.21.9"))
-    modRuntimeOnly(fabricApi.module("fabric-key-binding-api-v1", "0.133.13+1.21.9"))
-    modRuntimeOnly(fabricApi.module("fabric-resource-loader-v0", "0.133.13+1.21.9"))
-    modRuntimeOnly(fabricApi.module("fabric-screen-api-v1", "0.133.13+1.21.9"))
+    modRuntimeOnly(fabricApi.module("fabric-lifecycle-events-v1", "0.134.0+1.21.9"))
+    modRuntimeOnly(fabricApi.module("fabric-key-binding-api-v1", "0.134.0+1.21.9"))
+    modRuntimeOnly(fabricApi.module("fabric-resource-loader-v0", "0.134.0+1.21.9"))
+    modRuntimeOnly(fabricApi.module("fabric-screen-api-v1", "0.134.0+1.21.9"))
 
     modCompileOnly("maven.modrinth:sodium:mc1.21.6-0.6.13-fabric")
 }
