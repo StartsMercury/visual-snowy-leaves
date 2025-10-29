@@ -65,7 +65,7 @@ dependencies {
     modRuntimeOnly(fabricApi.module("fabric-resource-loader-v0", "0.136.0+1.21.10"))
     modRuntimeOnly(fabricApi.module("fabric-screen-api-v1", "0.136.0+1.21.10"))
 
-    modCompileOnly("maven.modrinth:sodium:mc1.21.9-0.7.0-fabric")
+    modCompileOnly("maven.modrinth:sodium:mc1.21.10-0.7.2-fabric")
 }
 
 tasks.withType<ProcessResources> {
