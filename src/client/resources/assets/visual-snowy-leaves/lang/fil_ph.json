@@ -1,0 +1,48 @@
+{
+    "modmenu.nameTranslation.visual-snowy-leaves": "Visual Snowy Leaves",
+    "modmenu.descriptionTranslation.visual-snowy-leaves": "Gaganang maniyebeng dahon para sa iyo, kahit saan man (lalo sa mga server).",
+
+
+
+    "visual-snowy-leaves.config.title": "Kumpigurasyon Visual Snowy Leaves",
+
+
+    "visual-snowy-leaves.config.option.category.toggles": "Mga Toggle",
+    "visual-snowy-leaves.config.option.category.toggles.long": "Kategoryang Toggle",
+
+    "visual-snowy-leaves.config.option.enabled": "Paganahin",
+    "visual-snowy-leaves.config.option.enabled.description": "Magpapakita ng epekto ng pagniniyebe sa dahon base sa iilang kondisyon.",
+
+    "visual-snowy-leaves.config.option.disabled": "Huwag Paganahin ang Visual Snowy Leaves",
+    "visual-snowy-leaves.config.option.disabled.description": "Hindi magniniyebe ang mga dahon.",
+
+    "visual-snowy-leaves.config.option.requireSnowyBiomes": "Kailangan ang Maniyebeng Biyoma",
+    "visual-snowy-leaves.config.option.requireSnowyBiomes.description": "Magniniyebe lamang ang mga dahon ng maniyebeng biyoma.",
+
+    "visual-snowy-leaves.config.option.requireSnowyWeather": "Kailangan ang Maniyebeng Panahon",
+    "visual-snowy-leaves.config.option.requireSnowyWeather.description": "Magniniyebe lamang ang mga dahon kapag umuulan o nagniniyebe.",
+
+
+    "visual-snowy-leaves.config.option.category.time": "Oras",
+    "visual-snowy-leaves.config.option.category.time.long": "Kategoryang Oras",
+    "visual-snowy-leaves.config.option.category.time.description": "Mga balyung nakahanay bilang: oras, colon, minuto, colon, segundo, plus, tick. Ang oras ay maaring ipagpaliban nang una, saka ang minuto; maaari ring ipagpaliban ang tick.",
+
+    "visual-snowy-leaves.config.option.rebuildInterval": "Rebuild Interval",
+    "visual-snowy-leaves.config.option.rebuildInterval.description": "Ang pagitan sa bawat paghiling na ma-rebuild ang mga chunk habang may transition.",
+
+    "visual-snowy-leaves.config.option.transitionDuration": "Tagal ng Transition",
+    "visual-snowy-leaves.config.option.transitionDuration.description": "Tagal ng mga dahong matapos ang transition.",
+
+
+    "visual-snowy-leaves.config.option.category.advance": "Eksperto",
+    "visual-snowy-leaves.config.option.category.advance.long": "Kategoryang Eksperto",
+    "visual-snowy-leaves.config.option.category.advance.description": "Ang kada ekspertong opsiyon ay mangangailangan ng ibang screen upang mapasadya.",
+    "visual-snowy-leaves.config.option.advance.customize": "Pasadyain",
+
+    "visual-snowy-leaves.config.option.targetBlockKeys": "Mga Maaapektong Bloke",
+    "visual-snowy-leaves.config.option.targetBlockKeys.description": "Mga blokeng maaaring maapektuhan ng pagniniyebe. Mas nakaaangkop sa mga dahong grayscale ang texture na nakabase sa tinting system.",
+    "visual-snowy-leaves.config.targetBlocks.title": "Kompigurahin ang Mga Maaapektong Bloke",
+    "visual-snowy-leaves.config.targetBlocks.add": "Dagdagin",
+    "visual-snowy-leaves.config.targetBlocks.remove": "Tanggalin",
+    "visual-snowy-leaves.config.targetBlocks.input": "Magdagdag ng Bloke"
+}

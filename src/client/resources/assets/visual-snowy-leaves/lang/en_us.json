@@ -1,26 +1,44 @@
 {
+    "modmenu.nameTranslation.visual-snowy-leaves": "Visual Snowy Leaves",
+    "modmenu.descriptionTranslation.visual-snowy-leaves": "Snowy leaves that works for you, everywhere (especially servers).",
+
+
+
     "visual-snowy-leaves.config.title": "Visual Snowy Leaves Config",
-    "visual-snowy-leaves.config.option.advance.customize": "Customize",
-    "visual-snowy-leaves.config.option.category.advance": "Advance",
-    "visual-snowy-leaves.config.option.category.advance.long": "Advance Category",
-    "visual-snowy-leaves.config.option.category.advance.description": "Each advance option requires a separate screen to customize.",
+
+
+    "visual-snowy-leaves.config.option.category.toggles": "Toggles",
+    "visual-snowy-leaves.config.option.category.toggles.long": "Toggles Category",
+
+    "visual-snowy-leaves.config.option.enabled": "Enabled",
+    "visual-snowy-leaves.config.option.enabled.description": "Applies snowy effects on leaves based on specific conditions.",
+
+    "visual-snowy-leaves.config.option.disabled": "Disable Visual Snowy Leaves",
+    "visual-snowy-leaves.config.option.disabled.description": "Leaves will not turn snowy.",
+
+    "visual-snowy-leaves.config.option.requireSnowyBiomes": "Require Snowy Biomes",
+    "visual-snowy-leaves.config.option.requireSnowyBiomes.description": "Leaves will only turn snowy in biomes that snow.",
+
+    "visual-snowy-leaves.config.option.requireSnowyWeather": "Require Snowy Weather",
+    "visual-snowy-leaves.config.option.requireSnowyWeather.description": "Leaves will only turn snowy when it's raining or snowing.",
+
+
     "visual-snowy-leaves.config.option.category.time": "Time",
     "visual-snowy-leaves.config.option.category.time.long": "Time Category",
     "visual-snowy-leaves.config.option.category.time.description": "Values are formatted as: hours, colon, minutes, colon, seconds, plus, ticks. Hours may be omitted first, then minutes; ticks may be omitted.",
-    "visual-snowy-leaves.config.option.category.toggles": "Toggles",
-    "visual-snowy-leaves.config.option.category.toggles.long": "Toggles Category",
-    "visual-snowy-leaves.config.option.enabled": "Enabled",
-    "visual-snowy-leaves.config.option.enabled.description": "Applies snowy effects on leaves based on specific conditions.",
-    "visual-snowy-leaves.config.option.disabled": "Disable Visual Snowy Leaves",
-    "visual-snowy-leaves.config.option.disabled.description": "Leaves will not turn snowy.",
-    "visual-snowy-leaves.config.option.requireSnowyBiomes": "Require Snowy Biomes",
-    "visual-snowy-leaves.config.option.requireSnowyBiomes.description": "Leaves will only turn snowy in biomes that snow.",
-    "visual-snowy-leaves.config.option.requireSnowyWeather": "Require Snowy Weather",
-    "visual-snowy-leaves.config.option.requireSnowyWeather.description": "Leaves will only turn snowy when it's raining or snowing.",
+
     "visual-snowy-leaves.config.option.rebuildInterval": "Rebuild Interval",
     "visual-snowy-leaves.config.option.rebuildInterval.description": "The delay between requests for chunks to be rebuild during transition.",
+
     "visual-snowy-leaves.config.option.transitionDuration": "Transition Duration",
     "visual-snowy-leaves.config.option.transitionDuration.description": "The time it takes for leaves to transition.",
+
+
+    "visual-snowy-leaves.config.option.category.advance": "Advance",
+    "visual-snowy-leaves.config.option.category.advance.long": "Advance Category",
+    "visual-snowy-leaves.config.option.category.advance.description": "Each advance option requires a separate screen to customize.",
+    "visual-snowy-leaves.config.option.advance.customize": "Customize",
+
     "visual-snowy-leaves.config.option.targetBlockKeys": "Affected Blocks",
     "visual-snowy-leaves.config.option.targetBlockKeys.description": "Blocks affected by snowy effects. Best applicable to leaves with grayscale textures based on the tinting system.",
     "visual-snowy-leaves.config.targetBlocks.title": "Configure Affected Blocks",

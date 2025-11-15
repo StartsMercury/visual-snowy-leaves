@@ -1,0 +1,48 @@
+{
+    "modmenu.nameTranslation.visual-snowy-leaves": "Visual Snowy Leaves",
+    "modmenu.descriptionTranslation.visual-snowy-leaves": "Gaganang maniyebeng dahon para sa iyo, kahit saan man (lalo sa mga pansilbi).",
+
+
+
+    "visual-snowy-leaves.config.title": "Pagsasaayos ng Visual Snowy Leaves",
+
+
+    "visual-snowy-leaves.config.option.category.toggles": "Mga Pihitan",
+    "visual-snowy-leaves.config.option.category.toggles.long": "Uring Pihitan",
+
+    "visual-snowy-leaves.config.option.enabled": "Paganahin",
+    "visual-snowy-leaves.config.option.enabled.description": "Magpapakita ng bisa ng pagniniyebe sa dahon batay sa iilang kalagayan.",
+
+    "visual-snowy-leaves.config.option.disabled": "Huwag Paganahin ang Visual Snowy Leaves",
+    "visual-snowy-leaves.config.option.disabled.description": "Hindi magniniyebe ang mga dahon.",
+
+    "visual-snowy-leaves.config.option.requireSnowyBiomes": "Kailangan ang Maniyebeng Biyoma",
+    "visual-snowy-leaves.config.option.requireSnowyBiomes.description": "Magniniyebe lamang ang mga dahon ng maniyebeng biyoma.",
+
+    "visual-snowy-leaves.config.option.requireSnowyWeather": "Kailangan ang Maniyebeng Panahon",
+    "visual-snowy-leaves.config.option.requireSnowyWeather.description": "Magniniyebe lamang ang mga dahon kapag umuulan o nagniniyebe.",
+
+
+    "visual-snowy-leaves.config.option.category.time": "Oras",
+    "visual-snowy-leaves.config.option.category.time.long": "Uring Oras",
+    "visual-snowy-leaves.config.option.category.time.description": "Mga halagang nakahanay bilang: oras, tutuldok, sandali, tutuldok, saglit, tandang dagdag, kudlit. Unang maaaring ipagpaliban ang oras, sunod ang sandali; maaari ring ipagpaliban ang kudlit.",
+
+    "visual-snowy-leaves.config.option.rebuildInterval": "Pagitan ng Pagbabalibuo",
+    "visual-snowy-leaves.config.option.rebuildInterval.description": "Ang pagitan sa bawat paghiling na mamuling mabuo ang mga tipak habang may isapagbabago.",
+
+    "visual-snowy-leaves.config.option.transitionDuration": "Tagal ng Isapagbabago",
+    "visual-snowy-leaves.config.option.transitionDuration.description": "Tagal ng mga dahong matapos ang isapagbabago.",
+
+
+    "visual-snowy-leaves.config.option.category.advance": "Dalubhasa",
+    "visual-snowy-leaves.config.option.category.advance.long": "Uring Dalubhasa",
+    "visual-snowy-leaves.config.option.category.advance.description": "Mangangailangan ang bawat dalubhasang kapilian ng ibang tabing upang mapasadya.",
+    "visual-snowy-leaves.config.option.advance.customize": "Pasadyain",
+
+    "visual-snowy-leaves.config.option.targetBlockKeys": "Blokeng Mangasasalanta",
+    "visual-snowy-leaves.config.option.targetBlockKeys.description": "Mangasasalantang bloke sa pagniniyebe. Higit na nakaaangkop sa mga dahong abong-sukatang gisok na nakabatay sa sistema ng pagtitinta.",
+    "visual-snowy-leaves.config.targetBlocks.title": "Pagsasayos ng Mga Bloke Masasalanta",
+    "visual-snowy-leaves.config.targetBlocks.add": "Dagdagin",
+    "visual-snowy-leaves.config.targetBlocks.remove": "Tanggalin",
+    "visual-snowy-leaves.config.targetBlocks.input": "Magdagdag ng Bloke"
+}
