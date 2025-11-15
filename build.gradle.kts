@@ -57,7 +57,7 @@ dependencies {
 
     minecraft("com.mojang:minecraft:${Constants.VERSION_MINECRAFT}")
     mappings(loom.officialMojangMappings())
-    modImplementation("net.fabricmc:fabric-loader:0.17.3")
+    modImplementation("net.fabricmc:fabric-loader:0.18.0")
 
     modImplementation("com.terraformersmc:modmenu:16.0.0-rc.1")
     modRuntimeOnly(fabricApi.module("fabric-lifecycle-events-v1", "0.136.0+1.21.10"))
