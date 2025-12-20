@@ -21,7 +21,7 @@ import net.minecraft.client.renderer.texture.SpriteLoader;
 import net.minecraft.client.resources.model.BlockStateDefinitions;
 import net.minecraft.client.resources.model.ModelManager;
 import net.minecraft.client.resources.model.UnbakedModel;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.server.packs.resources.ResourceManager;
 import net.minecraft.util.GsonHelper;
 import org.spongepowered.asm.mixin.Final;
@@ -41,7 +41,7 @@ public abstract class ModelManagerMixin {
         final CompletableFuture<SpriteLoader.Preparations> spritePreparationsFuture,
         final @Local(ordinal = 0, argsOnly = true) Executor executor,
         final @Local(ordinal = 0) ResourceManager resourceManager,
-        final @Local(ordinal = 2) CompletableFuture<Map<ResourceLocation, UnbakedModel>> unbakedModelsFuture,
+        final @Local(ordinal = 2) CompletableFuture<Map<Identifier, UnbakedModel>> unbakedModelsFuture,
         final @Local(ordinal = 5) CompletableFuture<ModelManager.ResolvedModels> modelDiscoveryFuture
     ) {
         final var blockstateResourcesFuture = CompletableFuture.supplyAsync(
@@ -55,7 +55,7 @@ public abstract class ModelManagerMixin {
 
         final var blockModelDefinitionsFuture = blockstateResourcesFuture.thenCompose(map -> {
             final var list = new ArrayList<
-                CompletableFuture<Map.Entry<ResourceLocation, ArrayList<BlockModelDefinition>>>
+                CompletableFuture<Map.Entry<Identifier, ArrayList<BlockModelDefinition>>>
             >(map.size());
 
             for (final var entry : map.entrySet()) {
@@ -101,7 +101,7 @@ public abstract class ModelManagerMixin {
                     logger.debug(
                         "[{}] Discovered unknown block state definition {}, ignoring",
                         VslConstants.NAME,
-                        cause.getResourceLocation()
+                        cause.getIdentifier()
                     );
                 } else {
                     logger.error("[{}] Uncaught exception", VslConstants.NAME, throwable);

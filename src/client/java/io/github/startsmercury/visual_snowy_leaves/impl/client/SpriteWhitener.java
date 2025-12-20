@@ -45,7 +45,7 @@ import net.minecraft.client.resources.model.UnbakedGeometry;
 import net.minecraft.client.resources.model.UnbakedModel;
 import net.minecraft.client.resources.model.WeightedVariants;
 import net.minecraft.core.registries.BuiltInRegistries;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.CommonColors;
 import net.minecraft.util.random.Weighted;
@@ -94,9 +94,9 @@ public final class SpriteWhitener {
 
     private final Logger logger;
 
-    private final Multimap<ResourceLocation, ResourceLocation> models;
+    private final Multimap<Identifier, Identifier> models;
 
-    private final Set<? extends ResourceLocation> targetBlockKeys;
+    private final Set<? extends Identifier> targetBlockKeys;
 
     private final Reporter<Class<? extends BlockStateModel.Unbaked>> blockStateModelReporter;
 
@@ -104,8 +104,8 @@ public final class SpriteWhitener {
 
     private SpriteWhitener(
         final Logger logger,
-        final Multimap<ResourceLocation, ResourceLocation> models,
-        final Set<? extends ResourceLocation> targetBlockKeys,
+        final Multimap<Identifier, Identifier> models,
+        final Set<? extends Identifier> targetBlockKeys,
         final Reporter<Class<? extends BlockStateModel.Unbaked>> blockStateModelReporter,
         final Reporter<Class<? extends UnbakedGeometry>> geometryReporter
     ) {
@@ -117,7 +117,7 @@ public final class SpriteWhitener {
     }
 
     public void analyzeModels(
-        final ResourceLocation blockKey,
+        final Identifier blockKey,
         final BlockModelDefinition blockModelDefinition
     ) {
         if (!this.targetBlockKeys.contains(blockKey)) {
@@ -159,8 +159,8 @@ public final class SpriteWhitener {
 
     public void modifySprites(
         final BlockColors blockColors,
-        final Map<ResourceLocation, UnbakedModel> modelResources,
-        final Function<ResourceLocation, TextureAtlasSprite> atlas
+        final Map<Identifier, UnbakedModel> modelResources,
+        final Function<Identifier, TextureAtlasSprite> atlas
     ) {
         final var blockColorsAccessor = (BlockColorsAccessor) blockColors;
 
@@ -179,10 +179,10 @@ public final class SpriteWhitener {
 
     private void modifySpritesOf(
         final BlockColors blockColors,
-        final Map<ResourceLocation, UnbakedModel> modelResources,
-        final Function<ResourceLocation, TextureAtlasSprite> atlas,
+        final Map<Identifier, UnbakedModel> modelResources,
+        final Function<Identifier, TextureAtlasSprite> atlas,
         final Logger logger,
-        final ResourceLocation blockKey
+        final Identifier blockKey
     ) {
         final var layers = Set.copyOf(this.models.get(blockKey))
             .stream()

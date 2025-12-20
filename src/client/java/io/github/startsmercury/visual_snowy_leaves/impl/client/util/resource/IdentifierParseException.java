@@ -2,7 +2,7 @@ package io.github.startsmercury.visual_snowy_leaves.impl.client.util.resource;
 
 import org.jetbrains.annotations.Nullable;
 
-public class ResourceLocationParseException extends Exception {
+public class IdentifierParseException extends Exception {
     public interface Kind {
         record DuplicateSeparator(int first, int second) implements Kind {}
         record InvalidNamespaceChar(int index, char ch) implements Kind {}
@@ -14,7 +14,7 @@ public class ResourceLocationParseException extends Exception {
     private final int endIndex;
     private final Kind kind;
 
-    protected ResourceLocationParseException(
+    protected IdentifierParseException(
         final @Nullable String message,
         final String string,
         final int beginIndex,
@@ -28,7 +28,7 @@ public class ResourceLocationParseException extends Exception {
         this.kind = kind;
     }
 
-    protected ResourceLocationParseException(
+    protected IdentifierParseException(
         final @Nullable String message,
         final @Nullable Throwable cause,
         final String string,

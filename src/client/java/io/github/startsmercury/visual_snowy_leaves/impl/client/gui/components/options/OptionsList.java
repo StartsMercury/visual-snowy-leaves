@@ -25,7 +25,7 @@ import net.minecraft.client.gui.screens.inventory.tooltip.ClientTooltipPositione
 import net.minecraft.client.gui.screens.inventory.tooltip.DefaultTooltipPositioner;
 import net.minecraft.client.resources.language.I18n;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.FormattedCharSequence;
 import org.jetbrains.annotations.Nullable;
 
@@ -55,7 +55,7 @@ public class OptionsList extends ContainerObjectSelectionList<OptionEntry> {
     private boolean requireSnowyBiomes;
     private boolean requireSnowyWeather;
     private final SnowyMode snowyMode;
-    private Set<ResourceLocation> targetBlockKeys;
+    private Set<Identifier> targetBlockKeys;
     private TransitionDuration transitionDuration;
 
     public OptionsList(final OptionEntry.Context context, final Config initialConfig, final int width, final int height, final int y) {

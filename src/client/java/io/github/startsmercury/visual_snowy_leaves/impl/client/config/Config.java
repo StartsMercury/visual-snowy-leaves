@@ -7,7 +7,7 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -24,11 +24,11 @@ public record Config(
     boolean requireSnowyBiomes,
     boolean requireSnowyWeather,
     @Deprecated(forRemoval = true) SnowyMode snowyMode,
-    Set<ResourceLocation> targetBlockKeys,
+    Set<Identifier> targetBlockKeys,
     TransitionDuration transitionDuration
 ) {
-    public static final Codec<Set<ResourceLocation>> TARGET_BLOCK_KEYS_CODEC =
-        Codec.list(ResourceLocation.CODEC).comapFlatMap(
+    public static final Codec<Set<Identifier>> TARGET_BLOCK_KEYS_CODEC =
+        Codec.list(Identifier.CODEC).comapFlatMap(
             list -> {
                 try {
                     return DataResult.success(Set.copyOf(list));
@@ -51,7 +51,7 @@ public record Config(
 
     public static final SnowyMode DEFAULT_SNOWY_MODE = SnowyMode.SNOWING;
 
-    public static final Set<ResourceLocation> DEFAULT_TARGET_BLOCK_KEYS = Set.of(
+    public static final Set<Identifier> DEFAULT_TARGET_BLOCK_KEYS = Set.of(
         OAK, SPRUCE, BIRCH, JUNGLE, ACACIA, DARK_OAK, MANGROVE, PALE_OAK
     );
 

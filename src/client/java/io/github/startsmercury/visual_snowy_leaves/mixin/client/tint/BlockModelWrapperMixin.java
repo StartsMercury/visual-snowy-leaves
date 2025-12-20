@@ -19,6 +19,7 @@ import net.minecraft.util.CommonColors;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.Nullable;
+import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Mutable;
@@ -41,9 +42,10 @@ public abstract class BlockModelWrapperMixin {
     @Inject(
         method = "update",
         at = @At(
-                value = "FIELD",
-                target = "Lnet/minecraft/client/renderer/item/BlockModelWrapper;tints:Ljava/util/List;",
-            ordinal = 0
+            value = "FIELD",
+            target = "Lnet/minecraft/client/renderer/item/BlockModelWrapper;tints:Ljava/util/List;",
+            ordinal = 0,
+            opcode = Opcodes.GETFIELD
         )
     )
     private void captureTintLayers(

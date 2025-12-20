@@ -9,5 +9,5 @@ accessible method net/minecraft/client/resources/model/BlockStateDefinitions def
 accessible field  net/minecraft/client/resources/model/BlockStateModelLoader BLOCKSTATE_LISTER Lnet/minecraft/resources/FileToIdConverter;
 accessible class  net/minecraft/client/resources/model/ModelManager$ReloadState
 accessible class  net/minecraft/client/resources/model/ModelManager$ResolvedModels
-accessible method net/minecraft/resources/ResourceLocation <init> (Ljava/lang/String;Ljava/lang/String;)V
-accessible method net/minecraft/resources/ResourceLocation validNamespaceChar (C)Z
+accessible method net/minecraft/resources/Identifier <init> (Ljava/lang/String;Ljava/lang/String;)V
+accessible method net/minecraft/resources/Identifier validNamespaceChar (C)Z

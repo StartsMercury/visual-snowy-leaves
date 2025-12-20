@@ -1,38 +1,38 @@
 package io.github.startsmercury.visual_snowy_leaves.impl.client.util.resource;
 
-import static net.minecraft.resources.ResourceLocation.DEFAULT_NAMESPACE;
-import static net.minecraft.resources.ResourceLocation.validPathChar;
+import static net.minecraft.resources.Identifier.DEFAULT_NAMESPACE;
+import static net.minecraft.resources.Identifier.validPathChar;
 
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 
-public final class ResourceLocationParser {
-    private static ResourceLocation createUntrusted(
+public final class IdentifierParser {
+    private static Identifier createUntrusted(
         final String namespaceSrc,
         final int beginNamespace,
         final int endNamespace,
         final String pathSrc,
         final int beginPath,
         final int endPath
-    ) throws ResourceLocationParseException {
+    ) throws IdentifierParseException {
         assertValidNamespace(namespaceSrc, beginNamespace, endNamespace);
         assertValidPath(pathSrc, beginPath, endPath);
         final var namespace = namespaceSrc.substring(beginNamespace, endNamespace);
         final var path = pathSrc.substring(beginPath, endPath);
-        return new ResourceLocation(namespace, path);
+        return new Identifier(namespace, path);
     }
 
-    public static ResourceLocation fromNamespaceAndPath(final String namespace, final String path) throws ResourceLocationParseException {
+    public static Identifier fromNamespaceAndPath(final String namespace, final String path) throws IdentifierParseException {
         return fromNamespaceAndPath(namespace, 0, namespace.length(), path, 0, path.length());
     }
 
-    public static ResourceLocation fromNamespaceAndPath(
+    public static Identifier fromNamespaceAndPath(
         final String namespaceSrc,
         final int beginNamespace,
         final int endNamespace,
         final String pathSrc,
         final int beginPath,
         final int endPath
-    ) throws ResourceLocationParseException {
+    ) throws IdentifierParseException {
         return createUntrusted(
             namespaceSrc,
             beginNamespace,
@@ -43,34 +43,34 @@ public final class ResourceLocationParser {
         );
     }
 
-    public static ResourceLocation parse(final String string) throws ResourceLocationParseException {
+    public static Identifier parse(final String string) throws IdentifierParseException {
         return bySeparator(string, ':');
     }
 
-    public static ResourceLocation parse(
+    public static Identifier parse(
         final String string,
         final int beginIndex,
         final int endIndex
-    ) throws ResourceLocationParseException {
+    ) throws IdentifierParseException {
         return bySeparator(string, ':', beginIndex, endIndex);
     }
 
-    public static ResourceLocation withDefaultNamespace(final String string, final int beginIndex, final int endIndex) throws ResourceLocationParseException {
+    public static Identifier withDefaultNamespace(final String string, final int beginIndex, final int endIndex) throws IdentifierParseException {
         assertValidPath(string, beginIndex, endIndex);
         final var path = string.substring(beginIndex, endIndex);
-        return new ResourceLocation(DEFAULT_NAMESPACE, path);
+        return new Identifier(DEFAULT_NAMESPACE, path);
     }
 
-    public static ResourceLocation bySeparator(final String string, final char ch) throws ResourceLocationParseException {
+    public static Identifier bySeparator(final String string, final char ch) throws IdentifierParseException {
         return bySeparator(string, ch, 0, string.length());
     }
 
-    public static ResourceLocation bySeparator(
+    public static Identifier bySeparator(
         final String string,
         final char ch,
         final int beginIndex,
         final int endIndex
-    ) throws ResourceLocationParseException {
+    ) throws IdentifierParseException {
         final var delimiter = string.indexOf(ch, beginIndex, endIndex);
         if (delimiter < 0) {
             return withDefaultNamespace(string, beginIndex, endIndex);
@@ -79,12 +79,12 @@ public final class ResourceLocationParser {
         if (!validPathChar(ch)) {
             final var second = string.indexOf(ch, delimiter + 1, endIndex);
             if (second >= 0) {
-                throw new ResourceLocationParseException(
+                throw new IdentifierParseException(
                     "Duplicate non [a-z0-9/._-] delimiting character",
                     string,
                     beginIndex,
                     endIndex,
-                    new ResourceLocationParseException.Kind.DuplicateSeparator(delimiter, second)
+                    new IdentifierParseException.Kind.DuplicateSeparator(delimiter, second)
                 );
             }
         }
@@ -100,16 +100,16 @@ public final class ResourceLocationParser {
         final String string,
         final int beginIndex,
         final int endIndex
-    ) throws ResourceLocationParseException {
+    ) throws IdentifierParseException {
         for (var i = beginIndex; i < endIndex; i++) {
             final var ch = string.charAt(i);
-            if (ResourceLocation.validNamespaceChar(ch)) continue;
-            throw new ResourceLocationParseException(
+            if (Identifier.validNamespaceChar(ch)) continue;
+            throw new IdentifierParseException(
                 "Non [a-z0-9_.-] character in namespace of location",
                 string,
                 beginIndex,
                 endIndex,
-                new ResourceLocationParseException.Kind.InvalidNamespaceChar(i, ch)
+                new IdentifierParseException.Kind.InvalidNamespaceChar(i, ch)
             );
         }
     }
@@ -118,19 +118,19 @@ public final class ResourceLocationParser {
         final String string,
         final int beginIndex,
         final int endIndex
-    ) throws ResourceLocationParseException {
+    ) throws IdentifierParseException {
         for (var i = beginIndex; i < endIndex; i++) {
             final var ch = string.charAt(i);
-            if (ResourceLocation.validPathChar(ch)) continue;
-            throw new ResourceLocationParseException(
+            if (Identifier.validPathChar(ch)) continue;
+            throw new IdentifierParseException(
                 "Non [a-z0-9/._-] character in path of location",
                 string,
                 beginIndex,
                 endIndex,
-                new ResourceLocationParseException.Kind.InvalidPathChar(i, ch)
+                new IdentifierParseException.Kind.InvalidPathChar(i, ch)
             );
         }
     }
 
-    private ResourceLocationParser() {}
+    private IdentifierParser() {}
 }

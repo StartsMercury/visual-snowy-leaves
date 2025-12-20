@@ -1,13 +1,11 @@
 package io.github.startsmercury.visual_snowy_leaves.impl.client.gui.screens;
 
-import com.mojang.blaze3d.platform.InputConstants;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.gui.components.TargetBlocksList;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.gui.components.suggest.InputSuggestions;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.Set;
 import java.util.function.Consumer;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.EditBox;
@@ -22,8 +20,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.CommonComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.util.CommonColors;
+import net.minecraft.resources.Identifier;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import org.jetbrains.annotations.Nullable;
@@ -37,7 +34,7 @@ public final class TargetBlocksScreen extends Screen {
     private static final Component REMOVE = Component.translatable("visual-snowy-leaves.config.targetBlocks.remove");
     private static final Component INPUT = Component.translatable("visual-snowy-leaves.config.targetBlocks.input");
 
-    private static final Comparator<? super ResourceLocation> BLOCKS_BY_NAME_OR_ID = Comparator.comparing(ResourceLocation::getNamespace)
+    private static final Comparator<? super Identifier> BLOCKS_BY_NAME_OR_ID = Comparator.comparing(Identifier::getNamespace)
         .thenComparing(
             id -> BuiltInRegistries.BLOCK
                 .getOptional(id)
@@ -50,15 +47,15 @@ public final class TargetBlocksScreen extends Screen {
                 : rhs.isEmpty() ? -1
                 : lhs.get().compareTo(rhs.get())
         )
-        .thenComparing(ResourceLocation::getPath);
+        .thenComparing(Identifier::getPath);
 
     private final HeaderAndFooterLayout layout = new HeaderAndFooterLayout(this, 33, 78);
 
-    private final Consumer<? super Set<ResourceLocation>> callback;
+    private final Consumer<? super Set<Identifier>> callback;
 
     private final ConfigScreen lastScreen;
 
-    private final ResourceLocation[] targets;
+    private final Identifier[] targets;
 
     @Nullable
     private Button addButton;
@@ -77,14 +74,14 @@ public final class TargetBlocksScreen extends Screen {
 
     public TargetBlocksScreen(
         final ConfigScreen lastScreen,
-        final Set<? extends ResourceLocation> targets,
-        final Consumer<? super Set<ResourceLocation>> callback
+        final Set<? extends Identifier> targets,
+        final Consumer<? super Set<Identifier>> callback
     ) {
         super(TITLE);
 
         this.callback = callback;
         this.lastScreen = lastScreen;
-        this.targets = targets.toArray(ResourceLocation[]::new);
+        this.targets = targets.toArray(Identifier[]::new);
 
         Arrays.sort(this.targets, BLOCKS_BY_NAME_OR_ID);
     }
@@ -107,7 +104,7 @@ public final class TargetBlocksScreen extends Screen {
             }
         };
         this.addButton = Button.builder(ADD, button -> {
-            final var id = ResourceLocation.tryParse(inputEdit.getValue());
+            final var id = Identifier.tryParse(inputEdit.getValue());
             if (id == null) return;
             this.list.addKey(id);
             button.active = false;
@@ -126,8 +123,8 @@ public final class TargetBlocksScreen extends Screen {
 
         final var rows = this.layout.addToFooter(LinearLayout.vertical().spacing(4));
         rows.defaultCellSetting().alignVerticallyMiddle();
-        rows.addChild(new StringWidget(BUTTON_ROW_WIDTH, 10, INPUT, this.font))
-            .setColor(CommonColors.LIGHT_GRAY);
+        rows.addChild(new StringWidget(BUTTON_ROW_WIDTH, 10, INPUT, this.font));
+// FIXME            .setColor(CommonColors.LIGHT_GRAY);
         rows.addChild(inputEdit);
         rows.addChild(buttonsRow);
 
@@ -149,6 +146,7 @@ public final class TargetBlocksScreen extends Screen {
         this.suggestions.updateSuggestInfo();
     }
 
+    @Override
     protected Component getUsageNarration() {
         final var suggestions = this.suggestions;
         assert suggestions != null;
@@ -157,10 +155,11 @@ public final class TargetBlocksScreen extends Screen {
             : super.getUsageNarration();
     }
 
-    public void resize(final Minecraft minecraft, final int width, final int height) {
+    @Override
+    public void resize(final int width, final int height) {
         assert this.inputEdit != null;
         final String string = this.inputEdit.getValue();
-        this.init(minecraft, width, height);
+        this.init(width, height);
         this.inputEdit.setValue(string);
 
         final var suggestions = this.suggestions;
@@ -206,6 +205,7 @@ public final class TargetBlocksScreen extends Screen {
         return false;
     }
 
+    @Override
     public boolean mouseScrolled(double d, double e, double f, double g) {
         final var suggestions = this.suggestions;
         assert suggestions != null;
@@ -245,6 +245,7 @@ public final class TargetBlocksScreen extends Screen {
         return this.list != null && this.list.getSelected() != null;
     }
 
+    @Override
     public void render(
         final GuiGraphics guiGraphics,
         final int mouseX,

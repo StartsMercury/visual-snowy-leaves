@@ -2,12 +2,11 @@ package io.github.startsmercury.visual_snowy_leaves.impl.client.gui.components.s
 
 import com.google.common.base.Strings;
 import com.google.common.collect.Lists;
-import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.brigadier.suggestion.Suggestion;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.util.resource.ResourceLocationParseException;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.util.resource.ResourceLocationParser;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.util.resource.IdentifierParseException;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.util.resource.IdentifierParser;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
@@ -45,7 +44,7 @@ public class InputSuggestions {
     final int suggestionLineLimit;
 
     private String currentValue = "";
-    private @Nullable ResourceLocationParseException currentException;
+    private @Nullable IdentifierParseException currentException;
     private @Nullable CompletableFuture<Suggestions> pendingSuggestions;
     private @Nullable SuggestionsList suggestions;
     private boolean allowSuggestions;
@@ -194,9 +193,9 @@ public class InputSuggestions {
             this.currentValue = value;
 
             try {
-                ResourceLocationParser.parse(value);
+                IdentifierParser.parse(value);
                 this.input.setTextColor(EditBox.DEFAULT_TEXT_COLOR);
-            } catch (final ResourceLocationParseException cause) {
+            } catch (final IdentifierParseException cause) {
                 this.currentException = cause;
                 this.input.setTextColor(CommonColors.RED);
             }

@@ -2,7 +2,7 @@ object Constants {
     const val VERSION = "0.5.4"
 
     const val VERSION_JAVA = 21
-    const val VERSION_MINECRAFT = "1.21.10"
+    const val VERSION_MINECRAFT = "1.21.11"
 }
 
 plugins {
@@ -53,8 +53,6 @@ repositories {
 }
 
 dependencies {
-    compileOnly("com.google.code.findbugs:jsr305:3.0.2")
-
     minecraft("com.mojang:minecraft:${Constants.VERSION_MINECRAFT}")
     mappings(loom.officialMojangMappings())
     modImplementation("net.fabricmc:fabric-loader:0.18.3")

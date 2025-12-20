@@ -13,14 +13,14 @@ import net.minecraft.client.input.MouseButtonEvent;
 import net.minecraft.client.renderer.RenderPipelines;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.network.chat.Component;
-import net.minecraft.resources.ResourceLocation;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.CommonColors;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.Nullable;
 
 public class TargetBlocksList extends ObjectSelectionList<TargetBlocksList.Entry> {
-    private static final ResourceLocation SLOT_SPRITE = ResourceLocation.withDefaultNamespace("container/slot");
+    private static final Identifier SLOT_SPRITE = Identifier.withDefaultNamespace("container/slot");
 
     public class Entry extends ObjectSelectionList.Entry<Entry> {
         private final int index;
@@ -93,7 +93,7 @@ public class TargetBlocksList extends ObjectSelectionList<TargetBlocksList.Entry
         }
     }
 
-    private final ObjectArrayList<ResourceLocation> targets = new ObjectArrayList<>();
+    private final ObjectArrayList<Identifier> targets = new ObjectArrayList<>();
 
     private final Font font;
 
@@ -114,11 +114,11 @@ public class TargetBlocksList extends ObjectSelectionList<TargetBlocksList.Entry
         this.font = font;
     }
 
-    public Set<ResourceLocation> build() {
+    public Set<Identifier> build() {
         return Set.copyOf(this.targets);
     }
 
-    public boolean addKey(final ResourceLocation key) {
+    public boolean addKey(final Identifier key) {
         if (this.targets.add(key)) {
             this.addEntry(new Entry(this.children().size()));
             return true;
