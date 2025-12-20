@@ -15,7 +15,7 @@ public class SnowData {
     }
 
     public void onTransitionDurationChange(final int oldTicks, final int newTicks) {
-        if (newTicks == 0) {
+        if (oldTicks == 0 || newTicks == 0) {
             this.accumulatedTicks = 0;
             return;
         }
