@@ -65,8 +65,13 @@ public record SnowableBlockColor(BlockColor blockColor, Int2IntMap correctionMul
             return CommonColors.WHITE;
         }
 
-        final var curr = snowDataAware.visual_snowy_leaves$getSnowData().getAccumulatedTicks();
         final var max = config.transitionDuration().asTicks();
+
+        if (max == 0) {
+            return ARGB.multiply(base, correctionMultiplier);
+        }
+
+        final var curr = snowDataAware.visual_snowy_leaves$getSnowData().getAccumulatedTicks();
 
         final var r = ARGB.red(correctionMultiplier) * ARGB.red(base);
         final var g = ARGB.green(correctionMultiplier) * ARGB.green(base);
