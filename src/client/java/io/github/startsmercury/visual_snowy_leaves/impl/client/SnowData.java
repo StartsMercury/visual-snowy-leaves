@@ -1,8 +1,10 @@
 package io.github.startsmercury.visual_snowy_leaves.impl.client;
 
 import io.github.startsmercury.visual_snowy_leaves.impl.client.config.Config;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.GameRendererExtension;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.VisualSnowyLeavesAware;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.util.Chunks;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.multiplayer.ClientLevel;
 
 public class SnowData {
@@ -45,7 +47,8 @@ public class SnowData {
             }
         }
 
-        Chunks.requestRebuildAll(level);
+//        Chunks.requestRebuildAll(level);
+        final var gameRenderer = Minecraft.getInstance().gameRenderer;
 
         this.ticksSinceBuildRequest = 0;
     }

@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonWriter;
+import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.config.Config;
@@ -25,7 +26,7 @@ import net.minecraft.network.chat.ClickEvent;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.GsonHelper;
 import net.minecraft.util.Util;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -39,6 +40,18 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public final class VisualSnowyLeavesImpl {
+    @Nullable
+    private static GpuBuffer snowProgress;
+
+    public static void setSnowProgress(final GpuBuffer buffer) {
+        snowProgress = buffer;
+    }
+
+    @Nullable
+    public static GpuBuffer getSnowProgress() {
+        return snowProgress;
+    }
+
     private Config config;
 
     private final FabricLoader fabricLoader;

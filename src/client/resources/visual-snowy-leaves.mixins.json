@@ -7,17 +7,29 @@
         "report.ClientPacketListenerMixin",
         "tint.BlockColorsAccessor",
         "tint.BlockModelWrapperMixin",
+        "tint.ModelBlockRendererMixin",
         "tint.ModelManagerMixin",
         "tint.SpriteContentsAccessor",
         "transition.minecraft.ClientChunkCache$StorageAccessor",
         "transition.minecraft.ClientChunkCacheAccessor",
         "transition.minecraft.ClientLevelMixin",
         "transition.minecraft.FallingBlockRenderStateMixin",
+        "transition.minecraft.GameRendererMixin",
         "transition.minecraft.LevelReaderMixin",
+        "transition.minecraft.MovingBlockRenderStateMixin",
+        "transition.minecraft.RenderPipelinesMixin",
         "transition.minecraft.RenderSectionRegionMixin",
-        "transition.sodium.LevelSliceMixin"
+        "transition.minecraft.RenderSystemMixin",
+        "vertex.BufferBuilderMixin",
+        "vertex.DefaultVertexFormatMixin",
+        "vertex.SheetedDecalTextureGeneratorMixin",
+        "vertex.VertexConsumerMixin",
+        "vertex.VertexMultiConsumer$MultipleMixin"
     ],
     "injectors": {
         "defaultRequire": 1
-    }
+    },
+    "mixins": [
+        "vertex.VertexMultiConsumer$DoubleMixin"
+    ]
 }

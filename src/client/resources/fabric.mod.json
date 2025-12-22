@@ -39,6 +39,9 @@
             }
         },
         "loom:injected_interfaces": {
+            "net/minecraft/class_4588": [
+                "io/github/startsmercury/visual_snowy_leaves/impl/client/extension/compile/VertexConsumerExtension"
+            ],
             "net/minecraft/class_310": [
                 "io/github/startsmercury/visual_snowy_leaves/impl/client/extension/compile/CompileVisualSnowyLeavesAware"
             ]
