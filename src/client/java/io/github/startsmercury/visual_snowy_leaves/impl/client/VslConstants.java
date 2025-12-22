@@ -1,8 +1,7 @@
 package io.github.startsmercury.visual_snowy_leaves.impl.client;
 
-import net.minecraft.SharedConstants;
-
 import java.util.regex.Pattern;
+import net.minecraft.SharedConstants;
 
 public final class VslConstants {
     public static final class Duration {

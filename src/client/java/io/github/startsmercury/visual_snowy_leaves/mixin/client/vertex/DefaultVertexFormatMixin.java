@@ -17,10 +17,10 @@ public abstract class DefaultVertexFormatMixin {
             ordinal = 0
         )
     )
-    private static VertexFormat.Builder inject(final VertexFormat.Builder builder) {
-        return builder.add(
-            VslVertexFormatElement.VslIndex.name(),
-            VslVertexFormatElement.VslIndex.value()
-        );
+    private static VertexFormat.Builder addToBlockVertexFormat(VertexFormat.Builder builder) {
+        for (final var element : VslVertexFormatElement.values()) {
+            builder = builder.add(element.name(), element.value());
+        }
+        return builder;
     }
 }

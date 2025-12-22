@@ -9,7 +9,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.ComponentUtils;
 import net.minecraft.util.CommonColors;
 import net.minecraft.world.phys.Vec2;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class SuggestionsList {
     static final int ITEM_HEIGHT = 12;

@@ -11,7 +11,7 @@ import net.minecraft.client.gui.components.EditBox;
 import net.minecraft.network.chat.Component;
 import net.minecraft.util.CommonColors;
 import net.minecraft.util.FormattedCharSequence;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public final class Tick32OptionEntry<T extends Tick32<T>> extends LabeledOptionEntry {
     private static final int INPUT_WIDTH = 70;

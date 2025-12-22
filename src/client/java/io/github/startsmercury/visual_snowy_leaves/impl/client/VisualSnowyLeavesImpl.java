@@ -9,10 +9,22 @@ import com.mojang.blaze3d.buffers.GpuBuffer;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.config.Config;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.SnowDataAware;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.SnowProgressAware;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.util.Chunks;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.util.Reporter;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
+import java.io.File;
+import java.io.IOException;
+import java.io.PrintWriter;
+import java.nio.file.FileAlreadyExistsException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.Path;
+import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.Version;
@@ -29,15 +41,6 @@ import net.minecraft.util.Util;
 import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.file.*;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public final class VisualSnowyLeavesImpl {
     @Nullable
@@ -120,7 +123,7 @@ public final class VisualSnowyLeavesImpl {
                 VslConstants.NAME
             );
 
-            ((SnowDataAware) level).visual_snowy_leaves$getSnowData().onTransitionDurationChange(
+            ((SnowProgressAware) level).visual_snowy_leaves$getSnowProgress().onTransitionDurationChange(
                 oldConfig.transitionDuration().asTicks(),
                 config.transitionDuration().asTicks()
             );
@@ -132,8 +135,7 @@ public final class VisualSnowyLeavesImpl {
             // enabled -> disabled
             : config.disabled()
                 // enabled -> enabled(M)
-                || oldConfig.requireSnowyBiomes() != config.requireSnowyBiomes()
-                || oldConfig.requireSnowyWeather() != config.requireSnowyWeather();
+                || oldConfig.requireSnowyBiomes() != config.requireSnowyBiomes();
 
         if (filterChanged) {
             this.logger.debug(
@@ -141,6 +143,7 @@ public final class VisualSnowyLeavesImpl {
                 VslConstants.NAME
             );
 
+            // `VslIndex` gets outdated when we toggle `requireSnowyBiomes`
             Chunks.requestRebuildAll(level);
         }
     }

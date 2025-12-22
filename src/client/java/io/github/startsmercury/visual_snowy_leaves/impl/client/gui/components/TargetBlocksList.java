@@ -17,7 +17,7 @@ import net.minecraft.resources.Identifier;
 import net.minecraft.util.CommonColors;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class TargetBlocksList extends ObjectSelectionList<TargetBlocksList.Entry> {
     private static final Identifier SLOT_SPRITE = Identifier.withDefaultNamespace("container/slot");

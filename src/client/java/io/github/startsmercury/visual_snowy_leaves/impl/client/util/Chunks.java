@@ -1,7 +1,7 @@
 package io.github.startsmercury.visual_snowy_leaves.impl.client.util;
 
-import io.github.startsmercury.visual_snowy_leaves.mixin.client.transition.minecraft.ClientChunkCache$StorageAccessor;
-import io.github.startsmercury.visual_snowy_leaves.mixin.client.transition.minecraft.ClientChunkCacheAccessor;
+import io.github.startsmercury.visual_snowy_leaves.mixin.client.chunks.ClientChunkCache$StorageAccessor;
+import io.github.startsmercury.visual_snowy_leaves.mixin.client.chunks.ClientChunkCacheAccessor;
 import net.minecraft.client.multiplayer.ClientLevel;
 
 public final class Chunks {

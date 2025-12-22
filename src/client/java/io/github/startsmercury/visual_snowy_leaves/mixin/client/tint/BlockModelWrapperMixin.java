@@ -4,13 +4,12 @@ import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalRef;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.SnowableBlockColor;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.color.MultipliedBlockColor;
 import java.util.List;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColor;
 import net.minecraft.client.color.item.Constant;
 import net.minecraft.client.color.item.ItemTintSource;
-import net.minecraft.client.multiplayer.ClientLevel;
 import net.minecraft.client.renderer.item.BlockModelWrapper;
 import net.minecraft.core.IdMapper;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -18,7 +17,7 @@ import net.minecraft.util.ARGB;
 import net.minecraft.util.CommonColors;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.objectweb.asm.Opcodes;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -51,7 +50,7 @@ public abstract class BlockModelWrapperMixin {
     private void captureTintLayers(
         final CallbackInfo callback,
         final @Local(ordinal = 0, argsOnly = true) ItemStack itemStack,
-        final @Share("snowableBlockColor") LocalRef<SnowableBlockColor> snowableBlockColorRef
+        final @Share("multipliedBlockColor") LocalRef<@Nullable MultipliedBlockColor> multipliedBlockColorRef
     ) {
         final var config = Minecraft.getInstance().getVisualSnowyLeaves().getConfig();
 
@@ -67,11 +66,11 @@ public abstract class BlockModelWrapperMixin {
 
         final var blockColor = this.blockColors.byId(BuiltInRegistries.BLOCK.getId(block));
 
-        if ((!(blockColor instanceof final SnowableBlockColor snowableBlockColor))) {
+        if ((!(blockColor instanceof final MultipliedBlockColor multipliedBlockColor))) {
             return;
         }
 
-        snowableBlockColorRef.set(snowableBlockColor);
+        multipliedBlockColorRef.set(multipliedBlockColor);
 
         if (this.tints.isEmpty()) {
             this.tints = List.of(new Constant(CommonColors.WHITE));
@@ -90,18 +89,16 @@ public abstract class BlockModelWrapperMixin {
     @Inject(method = "update", at = @At("RETURN"))
     private void modifyTintLayers(
         final CallbackInfo ci,
-        final @Local(ordinal = 0, argsOnly = true) ItemStack itemStack,
-        final @Local(ordinal = 0, argsOnly = true) @Nullable ClientLevel clientLevel,
         final @Share("tintLayers") LocalRef<int[]> tintLayersRef,
-        final @Share("snowableBlockColor") LocalRef<SnowableBlockColor> snowableBlockColorRef
+        final @Share("multipliedBlockColor") LocalRef<@Nullable MultipliedBlockColor> multipliedBlockColorRef
     ) {
-        final var snowableBlockColor = snowableBlockColorRef.get();
-        if (snowableBlockColor == null) {
+        final var multipliedBlockColor = multipliedBlockColorRef.get();
+        if (multipliedBlockColor == null) {
             return;
         }
 
         final var tintLayers = tintLayersRef.get();
-        final var multipliers = snowableBlockColor.correctionMultipliers();
+        final var multipliers = multipliedBlockColor.correctionMultipliers();
 
         for (var i = 0; i < tintLayers.length; i++) {
             tintLayers[i] = ARGB.multiply(tintLayers[0], multipliers.get(i));

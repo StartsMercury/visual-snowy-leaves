@@ -1,5 +1,7 @@
 package io.github.startsmercury.visual_snowy_leaves.impl.client.config;
 
+import static io.github.startsmercury.visual_snowy_leaves.impl.client.config.Leaves.*;
+
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.Codec;
@@ -7,15 +9,12 @@ import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import com.mojang.serialization.MapCodec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
-import net.minecraft.resources.Identifier;
-
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.function.Function;
-
-import static io.github.startsmercury.visual_snowy_leaves.impl.client.config.Leaves.*;
+import net.minecraft.resources.Identifier;
 
 public record Config(
     int version,

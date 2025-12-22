@@ -2,10 +2,9 @@ package io.github.startsmercury.visual_snowy_leaves.mixin.client.vertex;
 
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.compile.VertexConsumerExtension;
+import java.util.function.Consumer;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-
-import java.util.function.Consumer;
 
 @Mixin(targets = "com.mojang.blaze3d.vertex.VertexMultiConsumer$Multiple")
 public abstract class VertexMultiConsumer$MultipleMixin implements VertexConsumer, VertexConsumerExtension {

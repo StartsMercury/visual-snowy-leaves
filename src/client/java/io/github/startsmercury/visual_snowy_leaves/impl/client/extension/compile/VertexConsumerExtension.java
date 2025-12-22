@@ -15,7 +15,7 @@ public interface VertexConsumerExtension {
      *
      * @return Should vertex brightness be stored in the alpha channel.
      */
-    default boolean visual_snowy_leaves$alphaAsAo() {
+    default boolean visual_snowy_leaves$alphaAsBrightness() {
         return false;
     }
 
