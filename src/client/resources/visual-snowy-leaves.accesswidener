@@ -1,4 +1,4 @@
-accessWidener v2 named
+accessWidener v2 official
 
 accessible method net/minecraft/client/gui/components/AbstractSelectionList addEntry (Lnet/minecraft/client/gui/components/AbstractSelectionList$Entry;)I
 accessible class  net/minecraft/client/gui/components/OptionsList$Entry

@@ -51,37 +51,37 @@ public record SnowableBlockColor(BlockColor blockColor, Int2IntMap correctionMul
             return base;
         }
 
-        if (!(blockAndTintGetter instanceof final VisualSnowyLeavesAware vslAware)) {
+//        if (!(blockAndTintGetter instanceof final VisualSnowyLeavesAware vslAware)) {
             return ARGB.multiply(base, correctionMultiplier);
-        }
-
-        final var config = vslAware.getVisualSnowyLeaves().getConfig();
-
-        if (config.disabled() || config.requireSnowyBiomes() && !isSnowyAt(blockAndTintGetter, blockPos)) {
-            return ARGB.multiply(base, correctionMultiplier);
-        }
-
-        if (!(config.requireSnowyWeather() && blockAndTintGetter instanceof final SnowDataAware snowDataAware)) {
-            return CommonColors.WHITE;
-        }
-
-        final var max = config.transitionDuration().asTicks();
-
-        if (max == 0) {
-            return ARGB.multiply(base, correctionMultiplier);
-        }
-
-        final var curr = snowDataAware.visual_snowy_leaves$getSnowData().getAccumulatedTicks();
-
-        final var r = ARGB.red(correctionMultiplier) * ARGB.red(base);
-        final var g = ARGB.green(correctionMultiplier) * ARGB.green(base);
-        final var b = ARGB.blue(correctionMultiplier) * ARGB.blue(base);
-
-        return ARGB.color(
-            ARGB.alpha(base),
-            Integer.divideUnsigned(max * r + curr * (255 * 255 - r), 255 * max),
-            Integer.divideUnsigned(max * g + curr * (255 * 255 - g), 255 * max),
-            Integer.divideUnsigned(max * b + curr * (255 * 255 - b), 255 * max)
-        );
+//        }
+//
+//        final var config = vslAware.getVisualSnowyLeaves().getConfig();
+//
+//        if (config.disabled() || config.requireSnowyBiomes() && !isSnowyAt(blockAndTintGetter, blockPos)) {
+//            return ARGB.multiply(base, correctionMultiplier);
+//        }
+//
+//        if (!(config.requireSnowyWeather() && blockAndTintGetter instanceof final SnowDataAware snowDataAware)) {
+//            return CommonColors.WHITE;
+//        }
+//
+//        final var max = config.transitionDuration().asTicks();
+//
+//        if (max == 0) {
+//            return ARGB.multiply(base, correctionMultiplier);
+//        }
+//
+//        final var curr = snowDataAware.visual_snowy_leaves$getSnowData().getAccumulatedTicks();
+//
+//        final var r = ARGB.red(correctionMultiplier) * ARGB.red(base);
+//        final var g = ARGB.green(correctionMultiplier) * ARGB.green(base);
+//        final var b = ARGB.blue(correctionMultiplier) * ARGB.blue(base);
+//
+//        return ARGB.color(
+//            ARGB.alpha(base),
+//            Integer.divideUnsigned(max * r + curr * (255 * 255 - r), 255 * max),
+//            Integer.divideUnsigned(max * g + curr * (255 * 255 - g), 255 * max),
+//            Integer.divideUnsigned(max * b + curr * (255 * 255 - b), 255 * max)
+//        );
     }
 }

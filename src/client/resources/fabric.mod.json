@@ -26,9 +26,6 @@
     "entrypoints": {
         "client": [
             "io.github.startsmercury.visual_snowy_leaves.impl.client.entrypoint.VisualSnowyLeavesFabric"
-        ],
-        "modmenu": [
-            "io.github.startsmercury.visual_snowy_leaves.impl.client.entrypoint.VisualSnowyLeavesModMenu"
         ]
     },
     "custom": {
@@ -39,7 +36,10 @@
             }
         },
         "loom:injected_interfaces": {
-            "net/minecraft/class_310": [
+            "com/mojang/blaze3d/vertex/VertexConsumer": [
+                "io/github/startsmercury/visual_snowy_leaves/impl/client/extension/compile/VertexConsumerExtension"
+            ],
+            "net/minecraft/client/Minecraft": [
                 "io/github/startsmercury/visual_snowy_leaves/impl/client/extension/compile/CompileVisualSnowyLeavesAware"
             ]
         }

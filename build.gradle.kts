@@ -1,12 +1,12 @@
 object Constants {
     const val VERSION = "0.5.4"
 
-    const val VERSION_JAVA = 21
-    const val VERSION_MINECRAFT = "1.21.11"
+    const val VERSION_JAVA = 25
+    const val VERSION_MINECRAFT = "26.1-snapshot-1"
 }
 
 plugins {
-    id("net.fabricmc.fabric-loom-remap") version "1.14.7"
+    id("net.fabricmc.fabric-loom") version "1.14.7"
 }
 
 base {
@@ -54,23 +54,22 @@ repositories {
 
 dependencies {
     minecraft("com.mojang:minecraft:${Constants.VERSION_MINECRAFT}")
-    mappings(loom.officialMojangMappings())
-    modImplementation("net.fabricmc:fabric-loader:0.18.3")
+    implementation("net.fabricmc:fabric-loader:0.18.3")
 
-    modImplementation("com.terraformersmc:modmenu:17.0.0-alpha.1")
-    modRuntimeOnly(fabricApi.module("fabric-lifecycle-events-v1", "0.140.0+1.21.11"))
-    modRuntimeOnly(fabricApi.module("fabric-key-binding-api-v1", "0.140.0+1.21.11"))
-    modRuntimeOnly(fabricApi.module("fabric-resource-loader-v0", "0.140.0+1.21.11"))
-    modRuntimeOnly(fabricApi.module("fabric-screen-api-v1", "0.140.0+1.21.11"))
+    // implementation("com.terraformersmc:modmenu:17.0.0-alpha.1")
+    runtimeOnly(fabricApi.module("fabric-lifecycle-events-v1", "0.140.1+26.1"))
+    runtimeOnly(fabricApi.module("fabric-key-binding-api-v1", "0.140.1+26.1"))
+    runtimeOnly(fabricApi.module("fabric-resource-loader-v0", "0.140.1+26.1"))
+    runtimeOnly(fabricApi.module("fabric-screen-api-v1", "0.140.1+26.1"))
 
-    modCompileOnly("maven.modrinth:sodium:mc1.21.10-0.7.3-fabric")
+    // compileOnly("maven.modrinth:sodium:mc1.21.10-0.7.3-fabric")
 }
 
 tasks.withType<ProcessResources> {
     val data = mapOf(
         "version" to Constants.VERSION,
         "version_java" to Constants.VERSION_JAVA,
-        "version_minecraft" to Constants.VERSION_MINECRAFT,
+        "version_minecraft" to "26.1-alpha.1",
     )
 
     inputs.properties(data)

@@ -38,12 +38,7 @@ public class ClientLevelMixin implements SnowDataAware, VisualSnowyLeavesAware {
         method = "tick(Ljava/util/function/BooleanSupplier;)V",
         at = @At(
             value = "INVOKE",
-            target = """
-                Lnet/minecraft/util/profiling/Profiler;         \
-                get(                                            \
-                                                                \
-                ) Lnet/minecraft/util/profiling/ProfilerFiller; \
-            """,
+            target = "Lnet/minecraft/client/multiplayer/ClientLevel;tickTime()V",
             ordinal = 0
         )
     )
