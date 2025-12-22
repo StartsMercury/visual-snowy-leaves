@@ -7,8 +7,8 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.mojang.serialization.JsonOps;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.SpriteWhitener;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.VslConstants;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.util.SequencedCompletableFuture;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.util.UnknownBlockStateDefinitionException;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.resources.model.SequencedCompletableFuture;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.resources.model.UnknownBlockStateDefinitionException;
 import java.util.ArrayList;
 import java.util.Map;
 import java.util.concurrent.CompletableFuture;
@@ -109,8 +109,8 @@ public abstract class ModelManagerMixin {
             });
         });
 
-        final var spriteWhitenerFuture = modelDiscoveryFuture.thenCompose(modelDiscovery -> {
-            return blockModelDefinitionsFuture.thenApplyAsync(
+        final var spriteWhitenerFuture = modelDiscoveryFuture
+            .thenCompose(modelDiscovery -> blockModelDefinitionsFuture.thenApplyAsync(
                 entries -> {
                     final var spriteWhitener = SpriteWhitener.create(visualSnowyLeaves);
                     for (final var entry : entries) {
@@ -121,8 +121,7 @@ public abstract class ModelManagerMixin {
                     return spriteWhitener;
                 },
                 executor
-            );
-        });
+            ));
 
         final var waitForAllFuture = CompletableFuture.allOf(
             // Redundancy: already done in first `allOf`

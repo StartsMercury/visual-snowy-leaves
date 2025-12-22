@@ -5,8 +5,8 @@ import com.google.common.collect.Lists;
 import com.mojang.brigadier.suggestion.Suggestion;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.util.resource.IdentifierParseException;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.util.resource.IdentifierParser;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.resources.IdentifierParseException;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.resources.IdentifierParser;
 import java.util.List;
 import java.util.Locale;
 import java.util.concurrent.CompletableFuture;
@@ -25,7 +25,7 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.util.CommonColors;
 import net.minecraft.util.FormattedCharSequence;
 import net.minecraft.util.Mth;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public class InputSuggestions {
     private static final Pattern WHITESPACE_PATTERN = Pattern.compile("(\\s+)");

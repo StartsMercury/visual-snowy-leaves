@@ -10,7 +10,7 @@ import net.minecraft.client.gui.components.ContainerObjectSelectionList;
 import net.minecraft.client.gui.components.events.GuiEventListener;
 import net.minecraft.client.gui.narration.NarratableEntry;
 import net.minecraft.util.FormattedCharSequence;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 public abstract class OptionEntry extends ContainerObjectSelectionList.Entry<OptionEntry> {
     public record Context(ConfigScreen screen, Minecraft minecraft, Font font) {}

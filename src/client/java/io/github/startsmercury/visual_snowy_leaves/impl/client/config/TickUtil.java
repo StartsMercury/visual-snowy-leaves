@@ -1,7 +1,7 @@
 package io.github.startsmercury.visual_snowy_leaves.impl.client.config;
 
 import io.github.startsmercury.visual_snowy_leaves.impl.client.VslConstants;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.util.math.Saturating;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.math.Saturating;
 import net.minecraft.SharedConstants;
 
 public final class TickUtil {

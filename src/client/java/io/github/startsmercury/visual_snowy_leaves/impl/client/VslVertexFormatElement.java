@@ -8,7 +8,8 @@ public enum VslVertexFormatElement {
         0,
         VertexFormatElement.Type.INT,
         VertexFormatElement.Usage.GENERIC,
-        2
+        // Scalar element
+        1
     );
 
     private final VertexFormatElement value;

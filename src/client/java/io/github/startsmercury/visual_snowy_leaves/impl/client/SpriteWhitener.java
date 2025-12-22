@@ -2,9 +2,10 @@ package io.github.startsmercury.visual_snowy_leaves.impl.client;
 
 import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
-import com.google.common.collect.Multimaps;
 import com.mojang.blaze3d.platform.NativeImage;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.util.ColorComponent;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.color.ColorComponent;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.color.ConstantBlockColor;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.color.MultipliedBlockColor;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.util.Reporter;
 import io.github.startsmercury.visual_snowy_leaves.mixin.client.tint.BlockColorsAccessor;
 import io.github.startsmercury.visual_snowy_leaves.mixin.client.tint.SpriteContentsAccessor;
@@ -27,7 +28,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 import java.util.stream.Stream;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.color.block.BlockColors;
 import net.minecraft.client.renderer.block.model.BlockElement;
 import net.minecraft.client.renderer.block.model.BlockElementFace;
@@ -50,34 +50,17 @@ import net.minecraft.util.ARGB;
 import net.minecraft.util.CommonColors;
 import net.minecraft.util.random.Weighted;
 import org.apache.commons.io.function.IOSupplier;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 import org.lwjgl.system.MemoryUtil;
 import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-public final class SpriteWhitener {
-    private static final SpriteWhitener EMPTY;
-
-    static {
-        @SuppressWarnings({ "rawtypes", "unchecked" })
-        final var recRep = new Reporter(Set.of());
-
-        @SuppressWarnings("unchecked")
-        final var empty = new SpriteWhitener(
-            LoggerFactory.getLogger(Logger.ROOT_LOGGER_NAME),
-            Multimaps.forMap(Map.of()),
-            Set.of(),
-            recRep,
-            recRep
-        );
-
-        EMPTY = empty;
-    }
-
-    public static SpriteWhitener createDefault() {
-        return create(Minecraft.getInstance().getVisualSnowyLeaves());
-    }
-
+public record SpriteWhitener(
+    Logger logger,
+    Multimap<Identifier, Identifier> models,
+    Set<? extends Identifier> targetBlockKeys,
+    Reporter<Class<? extends BlockStateModel.Unbaked>> blockStateModelReporter,
+    Reporter<Class<? extends UnbakedGeometry>> geometryReporter
+) {
     public static SpriteWhitener create(final VisualSnowyLeavesImpl visualSnowyLeaves) {
         return new SpriteWhitener(
             visualSnowyLeaves.getLogger(),
@@ -86,34 +69,6 @@ public final class SpriteWhitener {
             visualSnowyLeaves.getBlockStateModelRecRep(),
             visualSnowyLeaves.getGeometryRecRep()
         );
-    }
-
-    public static SpriteWhitener getEmpty() {
-        return SpriteWhitener.EMPTY;
-    }
-
-    private final Logger logger;
-
-    private final Multimap<Identifier, Identifier> models;
-
-    private final Set<? extends Identifier> targetBlockKeys;
-
-    private final Reporter<Class<? extends BlockStateModel.Unbaked>> blockStateModelReporter;
-
-    private final Reporter<Class<? extends UnbakedGeometry>> geometryReporter;
-
-    private SpriteWhitener(
-        final Logger logger,
-        final Multimap<Identifier, Identifier> models,
-        final Set<? extends Identifier> targetBlockKeys,
-        final Reporter<Class<? extends BlockStateModel.Unbaked>> blockStateModelReporter,
-        final Reporter<Class<? extends UnbakedGeometry>> geometryReporter
-    ) {
-        this.logger = logger;
-        this.models = models;
-        this.targetBlockKeys = targetBlockKeys;
-        this.blockStateModelReporter = blockStateModelReporter;
-        this.geometryReporter = geometryReporter;
     }
 
     public void analyzeModels(
@@ -160,12 +115,12 @@ public final class SpriteWhitener {
     public void modifySprites(
         final BlockColors blockColors,
         final Map<Identifier, UnbakedModel> modelResources,
-        final Function<Identifier, TextureAtlasSprite> atlas
+        final Function<Identifier, @Nullable TextureAtlasSprite> atlas
     ) {
         final var blockColorsAccessor = (BlockColorsAccessor) blockColors;
 
         for (final var blockColor : blockColorsAccessor.getBlockColors()) {
-            if (blockColor instanceof final SnowableBlockColor snowable) {
+            if (blockColor instanceof final MultipliedBlockColor snowable) {
                 final var id = blockColorsAccessor.getBlockColors().getId(blockColor);
                 // It is possible for changes to persist without this:
                 blockColors.register(snowable.blockColor(), BuiltInRegistries.BLOCK.byId(id));
@@ -180,7 +135,7 @@ public final class SpriteWhitener {
     private void modifySpritesOf(
         final BlockColors blockColors,
         final Map<Identifier, UnbakedModel> modelResources,
-        final Function<Identifier, TextureAtlasSprite> atlas,
+        final Function<Identifier, @Nullable TextureAtlasSprite> atlas,
         final Logger logger,
         final Identifier blockKey
     ) {
@@ -190,8 +145,7 @@ public final class SpriteWhitener {
             .map(SpriteWhitener::asBlockModelOrElseNull)
             .filter(Objects::nonNull)
             .map(blockModel -> {
-                @SuppressWarnings({ "unchecked", "rawtypes" })
-                final var models = (List<BlockModel>) (List) Stream.iterate(
+                @SuppressWarnings({"unchecked", "rawtypes"}) final var models = (List<BlockModel>) (List) Stream.iterate(
                     (UnbakedModel) blockModel,
                     it -> it != null && it.parent() != null,
                     it -> modelResources.get(it.parent())
@@ -284,7 +238,13 @@ public final class SpriteWhitener {
                 });
 
             return new AbstractInt2IntMap.BasicEntry(index, _rgbMultiplier);
-        }).collect(Collectors.toMap(Int2IntMap.Entry::getIntKey, Map.Entry::getValue, (x, y) -> x, Int2IntOpenHashMap::new));
+        }).collect(Collectors.toMap(
+            Int2IntMap.Entry::getIntKey,
+            Map.Entry::getValue,
+            // Simple merge conflict resolution
+            (x, y) -> x,
+            Int2IntOpenHashMap::new
+        ));
         multipliers.defaultReturnValue(CommonColors.WHITE);
 
         final var optionalBlockHolder = BuiltInRegistries.BLOCK.get(blockKey);
@@ -306,7 +266,7 @@ public final class SpriteWhitener {
             ((BlockColorsAccessor) blockColors).getBlockColors().byId(id),
             ConstantBlockColor.WHITE
         );
-        blockColors.register(SnowableBlockColor.setMultiplier(blockColor, multipliers), block);
+        blockColors.register(MultipliedBlockColor.setMultiplier(blockColor, multipliers), block);
     }
 
     private Stream<BlockElement> flattenToElements(final UnbakedGeometry geometry) {
@@ -384,7 +344,8 @@ public final class SpriteWhitener {
     }
 
     public @Nullable PrintWriter collectReports(final IOSupplier<PrintWriter> writerProvider) throws IOException {
-        if (!(this.blockStateModelReporter.consumeChanged() | this.geometryReporter.consumeChanged())) {
+        if (!(this.blockStateModelReporter.consumeChanged() |
+              this.geometryReporter.consumeChanged())) {
             return null;
         }
 
@@ -392,7 +353,8 @@ public final class SpriteWhitener {
 
         if (!(
             this.geometryReporter.collectReport(writer, "Unrecognized Unbaked Geometry classes:")
-                | this.blockStateModelReporter.collectReport(writer, "Unrecognized Unbaked BlockStateModel classes:"))
+            |
+            this.blockStateModelReporter.collectReport(writer, "Unrecognized Unbaked BlockStateModel classes:"))
         ) {
             return null;
         }
