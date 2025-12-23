@@ -142,7 +142,7 @@ public class TargetBlocksList extends ObjectSelectionList<TargetBlocksList.Entry
             return false;
         }
         this.targets.remove(index);
-        this.children().removeLast();
+        removeEntry(this.children().getLast());
 
         final var n = this.children().size();
         if (n == 0) {

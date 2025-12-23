@@ -1,4 +1,4 @@
-package io.github.startsmercury.visual_snowy_leaves.impl.client.config;
+package io.github.startsmercury.visual_snowy_leaves.impl.client.config.time;
 
 import io.github.startsmercury.visual_snowy_leaves.impl.client.VslConstants;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.math.Saturating;

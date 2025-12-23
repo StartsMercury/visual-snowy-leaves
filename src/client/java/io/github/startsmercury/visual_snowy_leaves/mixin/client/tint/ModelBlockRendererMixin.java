@@ -62,13 +62,12 @@ public class ModelBlockRendererMixin {
         final @Local(ordinal = 0, argsOnly = true) BlockPos blockPos
     ) {
         final var vslConfig = Minecraft.getInstance().getVisualSnowyLeaves().getConfig();
-        if (
-            !vslConfig.requireSnowyBiomes()
-            || level instanceof final SnowAware snowAware
+        if (level instanceof final SnowAware snowAware
             && snowAware.visual_snowy_leaves$coldEnoughToSnow(blockPos)
-            && vslConfig
+            && (!vslConfig.requireSnowyBiomes() || vslConfig
                 .targetBlockKeys()
                 .contains(BuiltInRegistries.BLOCK.getKey(blockState.getBlock()))
+            )
         ) {
             instance.visual_snowy_leaves$beginIndex(VertexConsumerExtension.SNOW_MARKED);
         }

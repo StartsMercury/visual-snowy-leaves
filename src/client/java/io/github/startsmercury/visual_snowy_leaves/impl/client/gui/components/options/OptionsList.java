@@ -2,11 +2,13 @@ package io.github.startsmercury.visual_snowy_leaves.impl.client.gui.components.o
 
 import com.google.common.collect.ImmutableList;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.config.Config;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.config.FreshFreezeDelay;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.config.FullMeltDelay;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.config.RebuildInterval;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.config.SnowyMode;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.config.Tick32;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.config.TickUtil;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.config.TransitionDuration;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.config.time.Tick32;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.config.time.TickUtil;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.gui.screens.TargetBlocksScreen;
 import it.unimi.dsi.fastutil.booleans.BooleanConsumer;
 import java.util.List;
@@ -51,6 +53,8 @@ public class OptionsList extends ContainerObjectSelectionList<OptionEntry> {
     private OptionEntry relevant;
 
     private boolean disabled;
+    private FreshFreezeDelay freshFreezeDelay;
+    private FullMeltDelay fullMeltDelay;
     private RebuildInterval rebuildInterval;
     private boolean requireSnowyBiomes;
     private boolean requireSnowyWeather;
@@ -64,6 +68,8 @@ public class OptionsList extends ContainerObjectSelectionList<OptionEntry> {
         this.context = context;
 
         this.disabled = initialConfig.disabled();
+        this.freshFreezeDelay = initialConfig.freshFreezeDelay();
+        this.fullMeltDelay = initialConfig.fullMeltDelay();
         this.rebuildInterval = initialConfig.rebuildInterval();
         this.requireSnowyBiomes = initialConfig.requireSnowyBiomes();
         this.requireSnowyWeather = initialConfig.requireSnowyWeather();
@@ -77,8 +83,9 @@ public class OptionsList extends ContainerObjectSelectionList<OptionEntry> {
         this.addEntry("requireSnowyWeather", Config.DEFAULT.requireSnowyWeather(), () -> this.requireSnowyWeather, b -> this.requireSnowyWeather = b);
 
         this.addCategoryEntry("time", Component.literal("h:mm:ss+tt").withStyle(ChatFormatting.GRAY));
-        this.addEntry("rebuildInterval", Config.DEFAULT.rebuildInterval(), () -> this.rebuildInterval, t -> this.rebuildInterval = t);
+        this.addEntry("freshFreezeDelay", Config.DEFAULT.freshFreezeDelay(), () -> this.freshFreezeDelay, t -> this.freshFreezeDelay = t);
         this.addEntry("transitionDuration", Config.DEFAULT.transitionDuration(), () -> this.transitionDuration, t -> this.transitionDuration = t);
+        this.addEntry("fullMeltDelay", Config.DEFAULT.fullMeltDelay(), () -> this.fullMeltDelay, t -> this.fullMeltDelay = t);
 
         this.addCategoryEntry("advance", null);
         this.addEntry(
@@ -100,6 +107,8 @@ public class OptionsList extends ContainerObjectSelectionList<OptionEntry> {
         return new Config(
             Config.CURRENT_VERSION,
             this.disabled,
+            this.freshFreezeDelay,
+            this.fullMeltDelay,
             this.rebuildInterval,
             this.requireSnowyBiomes,
             this.requireSnowyWeather,

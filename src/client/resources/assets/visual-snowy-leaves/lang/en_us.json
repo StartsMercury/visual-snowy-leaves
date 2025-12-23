@@ -30,8 +30,14 @@
     "visual-snowy-leaves.config.option.rebuildInterval": "Rebuild Interval",
     "visual-snowy-leaves.config.option.rebuildInterval.description": "The delay between requests for chunks to be rebuild during transition.",
 
+    "visual-snowy-leaves.config.option.freshFreezeDelay": "Fresh Freeze Delay",
+    "visual-snowy-leaves.config.option.freshFreezeDelay.description": "The time it takes for fully green leaves to begin transitioning into their snowy color.",
+
     "visual-snowy-leaves.config.option.transitionDuration": "Transition Duration",
     "visual-snowy-leaves.config.option.transitionDuration.description": "The time it takes for leaves to transition.",
+
+    "visual-snowy-leaves.config.option.fullMeltDelay": "Full Melt Delay",
+    "visual-snowy-leaves.config.option.fullMeltDelay.description": "The time it takes for fully snowed leaves to begin transitioning into their vegetative color.",
 
 
     "visual-snowy-leaves.config.option.category.advance": "Advance",
@@ -44,5 +50,9 @@
     "visual-snowy-leaves.config.targetBlocks.title": "Configure Affected Blocks",
     "visual-snowy-leaves.config.targetBlocks.add": "Add",
     "visual-snowy-leaves.config.targetBlocks.remove": "Remove",
-    "visual-snowy-leaves.config.targetBlocks.input": "Add Block"
+    "visual-snowy-leaves.config.targetBlocks.input": "Add Block",
+
+
+
+    "visual-snowy-leaves.key.openModConfig": "Open Visual Snowy Leaves Config"
 }

@@ -7,7 +7,7 @@ public class VisualSnowyLeavesFabric implements ClientModInitializer {
     @Override
     public void onInitializeClient() {
         final var visualSnowyLeaves = Minecraft.getInstance().getVisualSnowyLeaves();
-
         visualSnowyLeaves.reloadConfig();
+        visualSnowyLeaves.registerKeyMappings();
     }
 }

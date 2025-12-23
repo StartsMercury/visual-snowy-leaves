@@ -1,9 +1,11 @@
-package io.github.startsmercury.visual_snowy_leaves.impl.client.config;
+package io.github.startsmercury.visual_snowy_leaves.impl.client.config.time;
 
 import io.github.startsmercury.visual_snowy_leaves.impl.client.VslConstants;
 import net.minecraft.SharedConstants;
 
 public abstract class Tick32<Self extends Tick32<Self>> implements Comparable<Self> {
+    public static final int MAX_VALUE = 0b11111111_11111111_11111111_11111111;
+
     private final int ticks;
 
     protected Tick32(final int ticks) {

@@ -30,8 +30,14 @@
     "visual-snowy-leaves.config.option.rebuildInterval": "Інтервал перебудови",
     "visual-snowy-leaves.config.option.rebuildInterval.description": "Затримка між запитами для блоків, які потрібно перебудувати під час переходу.",
 
+    "visual-snowy-leaves.config.option.freshFreezeDelay": "Fresh Freeze Delay",
+    "visual-snowy-leaves.config.option.freshFreezeDelay.description": "The time it takes for fully green leaves to begin transitioning into their snowy color.",
+
     "visual-snowy-leaves.config.option.transitionDuration": "Тривалість переходу",
     "visual-snowy-leaves.config.option.transitionDuration.description": "Час, необхідний для переходу листя.",
+
+    "visual-snowy-leaves.config.option.fullMeltDelay": "Full Melt Delay",
+    "visual-snowy-leaves.config.option.fullMeltDelay.description": "The time it takes for fully snowed leaves to begin transitioning into their vegetative color.",
 
 
     "visual-snowy-leaves.config.option.category.advance": "Розширені",
@@ -44,5 +50,9 @@
     "visual-snowy-leaves.config.targetBlocks.title": "Налаштування засніжених блоків",
     "visual-snowy-leaves.config.targetBlocks.add": "Додати",
     "visual-snowy-leaves.config.targetBlocks.remove": "Видалити",
-    "visual-snowy-leaves.config.targetBlocks.input": "Додати блок"
+    "visual-snowy-leaves.config.targetBlocks.input": "Додати блок",
+
+
+
+    "visual-snowy-leaves.key.openModConfig": "Open Visual Snowy Leaves Config"
 }

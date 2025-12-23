@@ -36,6 +36,11 @@ public class ClientLevelMixin implements SnowProgressAware, VisualSnowyLeavesAwa
         return this.snowProgress;
     }
 
+    @Inject(method = "<init>", at = @At("RETURN"))
+    private void initSnowProgress(final CallbackInfo callback) {
+        this.snowProgress.update(this.getVisualSnowyLeaves().getConfig());
+    }
+
     @Inject(
         method = "tick(Ljava/util/function/BooleanSupplier;)V",
         at = @At(
