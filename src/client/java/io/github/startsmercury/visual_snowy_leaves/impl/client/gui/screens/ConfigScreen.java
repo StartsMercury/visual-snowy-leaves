@@ -25,7 +25,7 @@ public class ConfigScreen extends Screen {
 
     private final Config initialConfig;
 
-    protected final Screen lastScreen;
+    protected final @Nullable Screen lastScreen;
 
     @Nullable
     private Button doneButton;
@@ -34,7 +34,7 @@ public class ConfigScreen extends Screen {
     private OptionsList list;
 
     public ConfigScreen(
-        final Screen lastScreen,
+        final @Nullable Screen lastScreen,
         final Config initialConfig,
         final Consumer<? super Config> configCallback
     ) {
@@ -56,8 +56,9 @@ public class ConfigScreen extends Screen {
             this.layout.getHeaderHeight()
         ));
         final var linearLayout = this.layout.addToFooter(LinearLayout.horizontal().spacing(8));
-        this.doneButton = linearLayout.addChild(Button.builder(CommonComponents.GUI_DONE, button -> this.onDone()).build());
-        linearLayout.addChild(Button.builder(CommonComponents.GUI_CANCEL, button -> this.onClose()).build());
+        this.doneButton = linearLayout.addChild(
+            Button.builder(CommonComponents.GUI_DONE, _ -> this.onClose()).width(200).build()
+        );
         this.layout.visitWidgets(this::addRenderableWidget);
         this.repositionElements();
     }
@@ -70,14 +71,13 @@ public class ConfigScreen extends Screen {
         }
     }
 
-    private void onDone() {
-        assert this.list != null;
-        this.configCallback.accept(this.list.build());
-        this.onClose();
-    }
-
     @Override
     public void onClose() {
+        if (!this.invalidEntries.isEmpty()) return;
+
+        assert this.list != null;
+        this.configCallback.accept(this.list.build());
+
         final var minecraft = this.minecraft;
         assert minecraft != null;
         minecraft.setScreen(this.lastScreen);

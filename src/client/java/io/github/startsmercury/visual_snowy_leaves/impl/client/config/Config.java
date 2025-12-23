@@ -19,7 +19,9 @@ import net.minecraft.resources.Identifier;
 public record Config(
     int version,
     boolean disabled,
-    RebuildInterval rebuildInterval,
+    FreshFreezeDelay freshFreezeDelay,
+    FullMeltDelay fullMeltDelay,
+    @Deprecated(forRemoval = true) RebuildInterval rebuildInterval,
     boolean requireSnowyBiomes,
     boolean requireSnowyWeather,
     @Deprecated(forRemoval = true) SnowyMode snowyMode,
@@ -44,7 +46,15 @@ public record Config(
 
     public static final int MINIMUM_VERSION = 0;
 
-    public static final int CURRENT_VERSION = 2;
+    public static final int CURRENT_VERSION = 3;
+
+    @SuppressWarnings("deprecation")
+    public static final FreshFreezeDelay DEFAULT_FRESH_FREEZE_DELAY =
+        FreshFreezeDelay.fromTicksUnchecked(100);
+
+    @SuppressWarnings("deprecation")
+    public static final FullMeltDelay DEFAULT_FULL_MELT_DELAY =
+        FullMeltDelay.fromTicksUnchecked(100);
 
     public static final RebuildInterval DEFAULT_REBUILD_INTERVAL = RebuildInterval.fromTicks(20);
 
@@ -100,6 +110,18 @@ public record Config(
                     Config::disabled
                 ),
                 fieldBuilder.create(
+                    FreshFreezeDelay.CODEC,
+                    "freshFreezeDelay",
+                    DEFAULT_FRESH_FREEZE_DELAY,
+                    Config::freshFreezeDelay
+                ),
+                fieldBuilder.create(
+                    FullMeltDelay.CODEC,
+                    "fullMeltDelay",
+                    DEFAULT_FULL_MELT_DELAY,
+                    Config::fullMeltDelay
+                ),
+                fieldBuilder.create(
                     RebuildInterval.CODEC,
                     "rebuildInterval",
                     DEFAULT_REBUILD_INTERVAL,
@@ -145,6 +167,8 @@ public record Config(
     public static final Config DEFAULT = new Config(
         CURRENT_VERSION,
         false,
+        DEFAULT_FRESH_FREEZE_DELAY,
+        DEFAULT_FULL_MELT_DELAY,
         DEFAULT_REBUILD_INTERVAL,
         true,
         true,
@@ -160,6 +184,8 @@ public record Config(
 
         final var version = Math.max(this.version, MINIMUM_VERSION);
         var disabled = this.disabled;
+        var freshFreezeDelay = this.freshFreezeDelay;
+        var fullMeltDelay = this.fullMeltDelay;
         var rebuildInterval = this.rebuildInterval;
         var requireSnowyBiomes = this.requireSnowyBiomes;
         var requireSnowyWeather = this.requireSnowyWeather;
@@ -184,6 +210,8 @@ public record Config(
                     }
                 }
             }
+            // Do nothing, we removed rebuildInterval at v3
+            case 2 -> {}
             default -> {
                 final var message = "Upgrade is not yet implemented for config version "
                     + version
@@ -195,6 +223,8 @@ public record Config(
         return new Config(
             CURRENT_VERSION,
             disabled,
+            freshFreezeDelay,
+            fullMeltDelay,
             rebuildInterval,
             requireSnowyBiomes,
             requireSnowyWeather,
@@ -210,8 +240,13 @@ public record Config(
         return Config.CODEC.encodeStart(JsonOps.INSTANCE, this).map((final var json) -> {
             if (json instanceof final JsonObject object) {
                 switch (version) {
-                    case 0, 1 -> {}
-                    case 2 -> object.remove("snowyMode");
+                    case 3:
+                        object.remove("rebuildInterval");
+                    case 2:
+                        object.remove("snowyMode");
+                    case 1:
+                    case 0:
+                        break;
                 }
             }
 

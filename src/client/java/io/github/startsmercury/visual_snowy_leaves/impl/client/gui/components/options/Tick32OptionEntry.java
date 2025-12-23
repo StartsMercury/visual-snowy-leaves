@@ -1,8 +1,8 @@
 package io.github.startsmercury.visual_snowy_leaves.impl.client.gui.components.options;
 
-import io.github.startsmercury.visual_snowy_leaves.impl.client.config.Tick32;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.config.TickParseException;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.config.TickUtil;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.config.time.Tick32;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.config.time.TickParseException;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.config.time.TickUtil;
 import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Supplier;
@@ -32,6 +32,11 @@ public final class Tick32OptionEntry<T extends Tick32<T>> extends LabeledOptionE
         this.input = new EditBox(context.font(), 0, 0, INPUT_WIDTH, PREFERRED_HEIGHT, label.copy().append("\n").append(narrateDefaults).append("\n"));
         this.input.setMaxLength(11);
         this.input.setResponder(string -> {
+            if (string.isBlank()) {
+                input.setTextColor(EditBox.DEFAULT_TEXT_COLOR);
+                context.screen().clearInvalid(this);
+                return;
+            }
             try {
                 setter.accept(value.withTicks(TickUtil.parse(string)));
                 input.setTextColor(EditBox.DEFAULT_TEXT_COLOR);

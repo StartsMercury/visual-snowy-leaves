@@ -2,16 +2,16 @@ package io.github.startsmercury.visual_snowy_leaves.impl.client.config;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.config.time.Tick28;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.config.time.Tick18;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.config.time.TickParseException;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.config.time.TickUtil;
 
-public final class TransitionDuration extends Tick28<TransitionDuration> {
-    public static final Codec<TransitionDuration> CODEC = Codec.STRING.comapFlatMap(
+public final class FullMeltDelay extends Tick18<FullMeltDelay> {
+    public static final Codec<FullMeltDelay> CODEC = Codec.STRING.comapFlatMap(
         input -> {
             try {
                 final var ticks = Math.min(TickUtil.parse(input), MAX_VALUE);
-                return DataResult.success(new TransitionDuration(ticks));
+                return DataResult.success(new FullMeltDelay(ticks));
             } catch (final TickParseException cause) {
                 return DataResult.error(cause::getMessage);
             }
@@ -19,46 +19,33 @@ public final class TransitionDuration extends Tick28<TransitionDuration> {
         self -> TickUtil.format(self.asTicks(), true)
     );
 
-    /**
-     * Creates transition ticks without validation.
-     *
-     * @param ticks  The raw ticks.
-     * @deprecated Input ticks must be nonnegative.
-     */
     @Deprecated
     @SuppressWarnings("DeprecatedIsStillUsed")
-    public static TransitionDuration fromTicksUnchecked(final int ticks) {
-        return new TransitionDuration(ticks);
+    public static FullMeltDelay fromTicksUnchecked(final int ticks) {
+        return new FullMeltDelay(ticks);
     }
 
-    /**
-     * Creates a new transition duration.
-     *
-     * @param ticks The duration in ticks.
-     * @deprecated Internals should prefer {@code tryFromTicks},
-     *     {@code fromTicksUnchecked}, or equivalent wrappers.
-     */
     @Deprecated
     @SuppressWarnings("DeprecatedIsStillUsed")
-    private TransitionDuration(final int ticks) {
+    private FullMeltDelay(final int ticks) {
         super(ticks);
     }
 
     @Override
-    public TransitionDuration withTicks(final int ticks) {
-        return new TransitionDuration(ticks);
+    public FullMeltDelay withTicks(final int ticks) {
+        return new FullMeltDelay(ticks);
     }
 
     @Override
     protected boolean isInstance(final Object obj) {
-        return obj instanceof TransitionDuration;
+        return obj instanceof FullMeltDelay;
     }
 
     @Override
     public boolean equals(final Object obj) {
         if (this == obj) {
             return true;
-        } else if (obj instanceof final TransitionDuration other) {
+        } else if (obj instanceof final FullMeltDelay other) {
             return this.equals(other);
         } else {
             return false;

@@ -216,7 +216,7 @@ public final class TargetBlocksScreen extends Screen {
     public boolean mouseClicked(final MouseButtonEvent mouseButtonEvent, final boolean bl) {
         final var suggestions = this.suggestions;
         assert suggestions != null;
-        return suggestions.mouseClicked(mouseButtonEvent) && super.mouseClicked(mouseButtonEvent, bl);
+        return suggestions.mouseClicked(mouseButtonEvent) || super.mouseClicked(mouseButtonEvent, bl);
     }
 
     @Override

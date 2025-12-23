@@ -57,8 +57,8 @@ dependencies {
     implementation("net.fabricmc:fabric-loader:0.18.3")
 
     // implementation("com.terraformersmc:modmenu:17.0.0-alpha.1")
-    runtimeOnly(fabricApi.module("fabric-lifecycle-events-v1", "0.140.1+26.1"))
-    runtimeOnly(fabricApi.module("fabric-key-binding-api-v1", "0.140.1+26.1"))
+    implementation(fabricApi.module("fabric-lifecycle-events-v1", "0.140.1+26.1"))
+    implementation(fabricApi.module("fabric-key-binding-api-v1", "0.140.1+26.1"))
     runtimeOnly(fabricApi.module("fabric-resource-loader-v0", "0.140.1+26.1"))
     runtimeOnly(fabricApi.module("fabric-screen-api-v1", "0.140.1+26.1"))
 

@@ -1,51 +1,60 @@
 package io.github.startsmercury.visual_snowy_leaves.impl.client;
 
 import io.github.startsmercury.visual_snowy_leaves.impl.client.config.Config;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.VisualSnowyLeavesAware;
 import net.minecraft.client.multiplayer.ClientLevel;
+import net.minecraft.util.Mth;
 
 public class SnowProgress {
-    private int accumulatedTicks;
+    private long accumulatedTicks;
+    private long minimum;
+    private long maximum;
 
-    public int getAccumulatedTicks() {
+    public long getAccumulatedTicks() {
         return this.accumulatedTicks;
     }
 
-    public void onTransitionDurationChange(final int oldTicks, final int newTicks) {
-        if (oldTicks == 0 || newTicks == 0) {
-            this.accumulatedTicks = 0;
-            return;
-        }
-        this.accumulatedTicks = (int) (
-            Integer.toUnsignedLong(this.accumulatedTicks)
-                * Integer.toUnsignedLong(newTicks)
-                / Integer.toUnsignedLong(oldTicks)
+    public void update(final Config config) {
+        this.update(
+            -Integer.toUnsignedLong(config.freshFreezeDelay().asTicks()),
+            Integer.toUnsignedLong(config.transitionDuration().asTicks())
+                + Integer.toUnsignedLong(config.fullMeltDelay().asTicks())
         );
     }
 
+    public void update(final long minimum, final long maximum) {
+        this.accumulatedTicks = this.maximum == 0 || maximum == 0 ? 0 : Mth.clamp(
+            Math.round((double) this.accumulatedTicks * maximum / this.maximum),
+            minimum,
+            maximum
+        );
+
+        this.minimum = minimum;
+        this.maximum = maximum;
+    }
+
     public void tick(final ClientLevel level) {
-        final var config = ((VisualSnowyLeavesAware) level).getVisualSnowyLeaves().getConfig();
-
         if (level.isRaining()) {
-            this.tickSnowinessIncrement(config);
+            this.tickSnowinessIncrement();
         } else {
-            this.tickSnowinessDecrement(config);
+            this.tickSnowinessDecrement();
         }
     }
 
-    public void tickSnowinessDecrement(final Config config) {
+    public void tickSnowinessDecrement() {
         final var accumulatedTicks = this.accumulatedTicks;
-        if (accumulatedTicks == 0) {
-            return;
+        if (accumulatedTicks > this.minimum) {
+            this.accumulatedTicks = accumulatedTicks - 1;
+        } else {
+            this.accumulatedTicks = this.minimum;
         }
-        this.accumulatedTicks = accumulatedTicks - 1;
     }
 
-    public void tickSnowinessIncrement(final Config config) {
+    public void tickSnowinessIncrement() {
         final var accumulatedTicks = this.accumulatedTicks;
-        if (Integer.compareUnsigned(accumulatedTicks, config.transitionDuration().asTicks()) >= 0) {
-            return;
+        if (this.accumulatedTicks < this.maximum) {
+            this.accumulatedTicks = accumulatedTicks + 1;
+        } else {
+            this.accumulatedTicks = this.maximum;
         }
-        this.accumulatedTicks = accumulatedTicks + 1;
     }
 }

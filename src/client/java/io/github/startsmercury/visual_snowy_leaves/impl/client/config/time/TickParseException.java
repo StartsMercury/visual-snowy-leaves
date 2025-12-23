@@ -1,4 +1,4 @@
-package io.github.startsmercury.visual_snowy_leaves.impl.client.config;
+package io.github.startsmercury.visual_snowy_leaves.impl.client.config.time;
 
 public class TickParseException extends RuntimeException {
     private final String input;

@@ -6,10 +6,12 @@ import com.google.gson.JsonParseException;
 import com.google.gson.JsonParser;
 import com.google.gson.stream.JsonWriter;
 import com.mojang.blaze3d.buffers.GpuBuffer;
+import com.mojang.blaze3d.platform.InputConstants;
 import com.mojang.serialization.DataResult;
 import com.mojang.serialization.JsonOps;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.config.Config;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.SnowProgressAware;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.gui.screens.ConfigScreen;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.util.Chunks;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.util.Reporter;
 import it.unimi.dsi.fastutil.objects.ReferenceOpenHashSet;
@@ -23,14 +25,18 @@ import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
+import net.fabricmc.fabric.api.client.keybinding.v1.KeyBindingHelper;
 import net.fabricmc.loader.api.FabricLoader;
 import net.fabricmc.loader.api.ModContainer;
 import net.fabricmc.loader.api.Version;
 import net.fabricmc.loader.api.metadata.ModMetadata;
 import net.minecraft.ChatFormatting;
 import net.minecraft.SharedConstants;
+import net.minecraft.client.KeyMapping;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.block.model.BlockStateModel;
 import net.minecraft.client.resources.model.UnbakedGeometry;
@@ -67,6 +73,8 @@ public final class VisualSnowyLeavesImpl {
 
     private final Reporter<Class<? extends UnbakedGeometry>> geometryReporter;
 
+    private final KeyMapping keyopenModConfig;
+
     private @Nullable Path reportFile;
 
     public VisualSnowyLeavesImpl(final Minecraft minecraft) {
@@ -78,6 +86,12 @@ public final class VisualSnowyLeavesImpl {
         final Function<? super Class<?>, String> classFormatter = Class::getName;
         this.blockStateModelReporter = new Reporter<>(new ReferenceOpenHashSet<>(), classFormatter);
         this.geometryReporter = new Reporter<>(new ReferenceOpenHashSet<>(), classFormatter);
+
+        this.keyopenModConfig = new KeyMapping(
+            "visual-snowy-leaves.key.openModConfig",
+            InputConstants.UNKNOWN.getValue(),
+            KeyMapping.Category.MISC
+        );
 
         this.logger.info("{} is initialized!", VslConstants.NAME);
     }
@@ -117,16 +131,16 @@ public final class VisualSnowyLeavesImpl {
             return;
         }
 
-        if (oldConfig.transitionDuration() != config.transitionDuration()) {
+        if (!Objects.equals(oldConfig.transitionDuration(), config.transitionDuration())
+            || !Objects.equals(oldConfig.freshFreezeDelay(), config.freshFreezeDelay())
+            || !Objects.equals(oldConfig.fullMeltDelay(), config.fullMeltDelay())
+        ) {
             this.logger.debug(
                 "[{}] Normalizing snowy progress using ratio and proportion...",
                 VslConstants.NAME
             );
 
-            ((SnowProgressAware) level).visual_snowy_leaves$getSnowProgress().onTransitionDurationChange(
-                oldConfig.transitionDuration().asTicks(),
-                config.transitionDuration().asTicks()
-            );
+            ((SnowProgressAware) level).visual_snowy_leaves$getSnowProgress().update(config);
         }
 
         final boolean filterChanged = oldConfig.disabled()
@@ -148,7 +162,7 @@ public final class VisualSnowyLeavesImpl {
         }
     }
 
-    public void openConfigFile() {
+    public void openModConfigFile() {
         this.logger.debug("[{}] Opening config...", VslConstants.NAME);
         Util.getPlatform().openFile(this.getConfigFile());
     }
@@ -157,7 +171,7 @@ public final class VisualSnowyLeavesImpl {
         if (this.loadConfig()) {
             this.saveConfig();
         } else {
-            this.openConfigFile();
+            this.openModConfigFile();
         }
     }
 
@@ -256,14 +270,10 @@ public final class VisualSnowyLeavesImpl {
 
         final JsonObject json;
         switch (this.config.encodeAsJson()) {
-            case DataResult.Success<JsonElement>(final var value, final var lifecycle):
+            case DataResult.Success<JsonElement>(final var value, _):
                 json = (JsonObject) value;
                 break;
-            case DataResult.Error<JsonElement>(
-                final var messageSupplier,
-                final var partialValue,
-                final var lifecycle
-            ):
+            case DataResult.Error<JsonElement>(final var messageSupplier, _, _):
                 final var message = messageSupplier.get();
                 this.logger.warn("[{}] Unable to encode config: {}", VslConstants.NAME, message);
                 return;
@@ -427,5 +437,36 @@ public final class VisualSnowyLeavesImpl {
         this.reportFile = null;
 
         return true;
+    }
+
+    public KeyMapping getKeyopenModConfig() {
+        return this.keyopenModConfig;
+    }
+
+    public void registerKeyMappings() {
+        if (this.fabricLoader.isModLoaded("fabric-key-binding-api-v1")
+            && this.fabricLoader.isModLoaded("fabric-lifecycle-events-v1")
+        ) {
+            KeyBindingHelper.registerKeyBinding(this.keyopenModConfig);
+            ClientTickEvents.END_CLIENT_TICK.register(minecraft -> {
+                if (this.keyopenModConfig.consumeClick()) {
+                    // Consume pending clicks
+                    while (this.keyopenModConfig.consumeClick()) {}
+
+                    this.openModConfigScreen(minecraft);
+                }
+            });
+        }
+    }
+
+    public void openModConfigScreen(final Minecraft minecraft) {
+        minecraft.setScreen(new ConfigScreen(
+            minecraft.screen,
+            this.getConfig(),
+            config -> {
+                this.setConfig(config);
+                this.saveConfig();
+            }
+        ));
     }
 }

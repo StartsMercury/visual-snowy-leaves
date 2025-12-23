@@ -2,7 +2,11 @@ package io.github.startsmercury.visual_snowy_leaves.impl.client.config;
 
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.DataResult;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.config.time.Tick32;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.config.time.TickParseException;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.config.time.TickUtil;
 
+@Deprecated(forRemoval = true)
 public final class RebuildInterval extends Tick32<RebuildInterval> {
     public static final Codec<RebuildInterval> CODEC = Codec.STRING.comapFlatMap(
         input -> {

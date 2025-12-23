@@ -30,8 +30,14 @@
     "visual-snowy-leaves.config.option.rebuildInterval": "Pagitan ng Pagbabalibuo",
     "visual-snowy-leaves.config.option.rebuildInterval.description": "Ang pagitan sa bawat paghiling na mamuling mabuo ang mga tipak habang may isapagbabago.",
 
+    "visual-snowy-leaves.config.option.freshFreezeDelay": "Antala ng Sariwang Yelo",
+    "visual-snowy-leaves.config.option.freshFreezeDelay.description": "Tagal bagong magsimulang mangagpalit ang tunay na berdeng dahon patungo sa kanilang maniyebeng anyo.",
+
     "visual-snowy-leaves.config.option.transitionDuration": "Tagal ng Isapagbabago",
-    "visual-snowy-leaves.config.option.transitionDuration.description": "Tagal ng mga dahong matapos ang isapagbabago.",
+    "visual-snowy-leaves.config.option.transitionDuration.description": "Tagal ng mga dahong matapos ang pagpapalit-anyo.",
+
+    "visual-snowy-leaves.config.option.fullMeltDelay": "Antala ng Buong Lusaw",
+    "visual-snowy-leaves.config.option.fullMeltDelay.description": "Tagal bagong magsimulang mangagpalit ang lubos niyelong dahon patungo sa kanilang magulay na anyo.",
 
 
     "visual-snowy-leaves.config.option.category.advance": "Dalubhasa",
@@ -44,5 +50,9 @@
     "visual-snowy-leaves.config.targetBlocks.title": "Pagsasayos ng Mga Bloke Masasalanta",
     "visual-snowy-leaves.config.targetBlocks.add": "Dagdagin",
     "visual-snowy-leaves.config.targetBlocks.remove": "Tanggalin",
-    "visual-snowy-leaves.config.targetBlocks.input": "Magdagdag ng Bloke"
+    "visual-snowy-leaves.config.targetBlocks.input": "Magdagdag ng Bloke",
+
+
+
+    "visual-snowy-leaves.key.openModConfig": "Buksan ang Pagsasaayos ng Visual Snowy Leaves"
 }
