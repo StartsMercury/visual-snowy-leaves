@@ -15,6 +15,7 @@
         "renderer.GameRendererMixin",
         "renderer.RenderPipelinesMixin",
         "report.ClientPacketListenerMixin",
+        "shader.ShaderManagerMixin",
         "tint.BlockColorsAccessor",
         "tint.BlockModelWrapperMixin",
         "tint.ModelBlockRendererMixin",
@@ -23,12 +24,10 @@
         "vertex.BufferBuilderMixin",
         "vertex.DefaultVertexFormatMixin",
         "vertex.VertexConsumerMixin",
+        "vertex.VertexMultiConsumer$DoubleMixin",
         "vertex.VertexMultiConsumer$MultipleMixin"
     ],
     "injectors": {
         "defaultRequire": 1
-    },
-    "mixins": [
-        "vertex.VertexMultiConsumer$DoubleMixin"
-    ]
+    }
 }
