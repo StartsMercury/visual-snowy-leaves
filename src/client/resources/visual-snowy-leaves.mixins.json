@@ -6,6 +6,8 @@
         "chunks.ClientChunkCache$StorageAccessor",
         "chunks.ClientChunkCacheAccessor",
         "extension.MinecraftMixin",
+        "fabric.indigo.AbstractRenderContextMixin",
+        "fabric.indigo.AbstractTerrainRenderContextMixin",
         "progress.ClientLevelMixin",
         "progress.FallingBlockRenderStateMixin",
         "progress.LevelReaderMixin",

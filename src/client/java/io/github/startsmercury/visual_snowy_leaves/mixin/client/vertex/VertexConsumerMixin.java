@@ -28,7 +28,7 @@ public interface VertexConsumerMixin extends VertexConsumerExtension {
         ),
         index = 3
     )
-    private int separateShadingAndAmbientOcclusion(
+    private int storeBrightnessInAlpha(
         final int color,
         final @Local(ordinal = 0, argsOnly = true) float[] brightness,
         final @Local(ordinal = 0, argsOnly = true) float red,

@@ -3,6 +3,7 @@ object Constants {
 
     const val VERSION_JAVA = 21
     const val VERSION_MINECRAFT = "1.21.11"
+    const val VERSION_FAPI = "0.140.2+1.21.11"
 }
 
 plugins {
@@ -57,11 +58,16 @@ dependencies {
     mappings(loom.officialMojangMappings())
     modImplementation("net.fabricmc:fabric-loader:0.18.3")
 
+    modImplementation(fabricApi.module("fabric-lifecycle-events-v1", Constants.VERSION_FAPI))
+    modImplementation(fabricApi.module("fabric-key-binding-api-v1", Constants.VERSION_FAPI))
+
+    modCompileOnly(fabricApi.module("fabric-rendering-v1", Constants.VERSION_FAPI))
+    modCompileOnly(fabricApi.module("fabric-renderer-indigo", Constants.VERSION_FAPI))
+    modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:0.140.2+1.21.11")
+
     modImplementation("com.terraformersmc:modmenu:17.0.0-alpha.1")
-    modImplementation(fabricApi.module("fabric-lifecycle-events-v1", "0.140.2+1.21.11"))
-    modImplementation(fabricApi.module("fabric-key-binding-api-v1", "0.140.2+1.21.11"))
-    modRuntimeOnly(fabricApi.module("fabric-resource-loader-v0", "0.140.2+1.21.11"))
-    modRuntimeOnly(fabricApi.module("fabric-screen-api-v1", "0.140.2+1.21.11"))
+    modRuntimeOnly(fabricApi.module("fabric-resource-loader-v0", Constants.VERSION_FAPI))
+    modRuntimeOnly(fabricApi.module("fabric-screen-api-v1", Constants.VERSION_FAPI))
 
     modImplementation("net.caffeinemc:sodium-fabric:0.8.2+mc1.21.11")
 }
