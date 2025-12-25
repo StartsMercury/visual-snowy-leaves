@@ -3,6 +3,7 @@ package io.github.startsmercury.visual_snowy_leaves.mixin.client.renderer;
 import com.llamalad7.mixinextras.sugar.Local;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.VslGlobalsUniform;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.SnowProgressAware;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.sodium.SodiumSnowProgress;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
@@ -65,6 +66,7 @@ public class GameRendererMixin {
         }
 
         this.globalsUniform.update(progress);
+        SodiumSnowProgress.set(progress);
     }
 
     @Inject(method = "close()V", at = @At("RETURN"))

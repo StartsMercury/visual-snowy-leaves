@@ -44,10 +44,10 @@ repositories {
     }
 
     maven {
-        name = "Modrinth Maven"
-	    url = uri("https://api.modrinth.com/maven")
+        name = "caffeinemcRepositoryReleases"
+	    url = uri("https://maven.caffeinemc.net/releases")
         content {
-            includeGroup("maven.modrinth")
+            includeGroup("net.caffeinemc")
         }
     }
 }
@@ -63,7 +63,7 @@ dependencies {
     modRuntimeOnly(fabricApi.module("fabric-resource-loader-v0", "0.140.2+1.21.11"))
     modRuntimeOnly(fabricApi.module("fabric-screen-api-v1", "0.140.2+1.21.11"))
 
-    modCompileOnly("maven.modrinth:sodium:mc1.21.10-0.7.3-fabric")
+    modImplementation("net.caffeinemc:sodium-fabric:0.8.2+mc1.21.11")
 }
 
 tasks.withType<ProcessResources> {

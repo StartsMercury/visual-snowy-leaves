@@ -71,9 +71,10 @@ public class ModelBlockRendererMixin {
             .contains(BuiltInRegistries.BLOCK.getKey(blockState.getBlock()))
         ) {
             instance.visual_snowy_leaves$beginIndex(VertexConsumerExtension.SNOW_MARKED);
+            original.call(instance, pose, quad, brightness, r, g, b, a, lightmapCoord, overlayCoords);
+            instance.visual_snowy_leaves$endIndex();
+        } else {
+            original.call(instance, pose, quad, brightness, r, g, b, a, lightmapCoord, overlayCoords);
         }
-
-        original.call(instance, pose, quad, brightness, r, g, b, a, lightmapCoord, overlayCoords);
-        instance.visual_snowy_leaves$endIndex();
     }
 }
