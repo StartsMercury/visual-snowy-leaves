@@ -73,7 +73,7 @@ public final class VisualSnowyLeavesImpl {
 
     private final Reporter<Class<? extends UnbakedGeometry>> geometryReporter;
 
-    private final KeyMapping keyopenModConfig;
+    private final KeyMapping keyOpenModConfig;
 
     private @Nullable Path reportFile;
 
@@ -87,7 +87,7 @@ public final class VisualSnowyLeavesImpl {
         this.blockStateModelReporter = new Reporter<>(new ReferenceOpenHashSet<>(), classFormatter);
         this.geometryReporter = new Reporter<>(new ReferenceOpenHashSet<>(), classFormatter);
 
-        this.keyopenModConfig = new KeyMapping(
+        this.keyOpenModConfig = new KeyMapping(
             "visual-snowy-leaves.key.openModConfig",
             InputConstants.UNKNOWN.getValue(),
             KeyMapping.Category.MISC
@@ -443,19 +443,19 @@ public final class VisualSnowyLeavesImpl {
         return true;
     }
 
-    public KeyMapping getKeyopenModConfig() {
-        return this.keyopenModConfig;
+    public KeyMapping getKeyOpenModConfig() {
+        return this.keyOpenModConfig;
     }
 
     public void registerKeyMappings() {
         if (this.fabricLoader.isModLoaded("fabric-key-binding-api-v1")
             && this.fabricLoader.isModLoaded("fabric-lifecycle-events-v1")
         ) {
-            KeyBindingHelper.registerKeyBinding(this.keyopenModConfig);
+            KeyBindingHelper.registerKeyBinding(this.keyOpenModConfig);
             ClientTickEvents.END_CLIENT_TICK.register(minecraft -> {
-                if (this.keyopenModConfig.consumeClick()) {
+                if (this.keyOpenModConfig.consumeClick()) {
                     // Consume pending clicks
-                    while (this.keyopenModConfig.consumeClick()) {}
+                    while (this.keyOpenModConfig.consumeClick()) {}
 
                     this.openModConfigScreen(minecraft);
                 }
