@@ -114,7 +114,7 @@ fun createVersionString(): String {
 loom {
     runConfigs {
         val client by existing {
-            vmArg("-Dmixin.debug=true")
+            vmArg("-Dmixin.debug.export=true")
         }
     }
 }
