@@ -46,9 +46,17 @@ repositories {
 
     maven {
         name = "caffeinemcRepositoryReleases"
-	    url = uri("https://maven.caffeinemc.net/releases")
+        url = uri("https://maven.caffeinemc.net/releases")
         content {
             includeGroup("net.caffeinemc")
+        }
+    }
+
+    maven {
+        name = "Modrinth Maven"
+        url = uri("https://api.modrinth.com/maven")
+        content {
+            includeGroup("maven.modrinth")
         }
     }
 }
@@ -74,6 +82,9 @@ dependencies {
 
     // Sodium's Renderer Support
     modCompileOnly("net.caffeinemc:sodium-fabric:0.8.2+mc1.21.11")
+
+    // Iris (Without) Shaders Support
+    modCompileOnly("maven.modrinth:iris:1.10.4+1.21.11-fabric")
 }
 
 tasks.withType<ProcessResources> {

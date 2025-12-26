@@ -8,6 +8,7 @@
         "extension.MinecraftMixin",
         "fabric.indigo.AbstractRenderContextMixin",
         "fabric.indigo.AbstractTerrainRenderContextMixin",
+        "iris.SodiumShaderMixin",
         "progress.ClientLevelMixin",
         "progress.FallingBlockRenderStateMixin",
         "progress.LevelReaderMixin",
