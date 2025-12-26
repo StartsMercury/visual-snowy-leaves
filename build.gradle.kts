@@ -53,23 +53,27 @@ repositories {
     }
 }
 
+// TODO separate compat test runs instead of manually changing deps...
 dependencies {
     minecraft("com.mojang:minecraft:${Constants.VERSION_MINECRAFT}")
     mappings(loom.officialMojangMappings())
     modImplementation("net.fabricmc:fabric-loader:0.18.3")
 
+    // Optional: Custom Key Mappings
     modImplementation(fabricApi.module("fabric-lifecycle-events-v1", Constants.VERSION_FAPI))
     modImplementation(fabricApi.module("fabric-key-binding-api-v1", Constants.VERSION_FAPI))
 
-    modCompileOnly(fabricApi.module("fabric-rendering-v1", Constants.VERSION_FAPI))
-    modCompileOnly(fabricApi.module("fabric-renderer-indigo", Constants.VERSION_FAPI))
-    modRuntimeOnly("net.fabricmc.fabric-api:fabric-api:0.140.2+1.21.11")
-
+    // Mod Menu Support
     modImplementation("com.terraformersmc:modmenu:17.0.0-alpha.1")
     modRuntimeOnly(fabricApi.module("fabric-resource-loader-v0", Constants.VERSION_FAPI))
     modRuntimeOnly(fabricApi.module("fabric-screen-api-v1", Constants.VERSION_FAPI))
 
-    modImplementation("net.caffeinemc:sodium-fabric:0.8.2+mc1.21.11")
+    // Fabric Renderer Indigo Support
+    modCompileOnly(fabricApi.module("fabric-rendering-v1", Constants.VERSION_FAPI))
+    modCompileOnly(fabricApi.module("fabric-renderer-indigo", Constants.VERSION_FAPI))
+
+    // Sodium's Renderer Support
+    modCompileOnly("net.caffeinemc:sodium-fabric:0.8.2+mc1.21.11")
 }
 
 tasks.withType<ProcessResources> {

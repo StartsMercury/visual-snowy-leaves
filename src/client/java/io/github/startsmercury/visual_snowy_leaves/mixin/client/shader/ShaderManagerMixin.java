@@ -48,7 +48,10 @@ public class ShaderManagerMixin {
                 .replace(
                     "Color *",
                     "vec4(" +
-                        "Color.a * (VslIndex != 1 ? Color.rgb : Progress + (1 - Progress) * Color.rgb)," +
+//                        "Color.a * (VslIndex != 1 ? Color.rgb : Progress + (1 - Progress) * Color.rgb)," +
+                        // FIXME temporary fix since I can't figure out the correct value to encode `1`
+                        //       in QuadEncoderMixin
+                        "Color.a * (VslIndex == 0 ? Color.rgb : Progress + (1 - Progress) * Color.rgb)," +
                         " 1.0" +
                     ") *"
                 );
