@@ -69,31 +69,4 @@ public class QuadEncoderMixin {
             return original;
         }
     }
-
-    @ModifyExpressionValue(
-        method = "writeQuadVertices(" +
-            "Lnet/caffeinemc/mods/sodium/client/render/model/MutableQuadViewImpl;" +
-            "Lnet/caffeinemc/mods/sodium/api/vertex/buffer/VertexBufferWriter;" +
-            "I" +
-            "Lorg/joml/Matrix4f;" +
-            "Z" +
-            "Lorg/joml/Matrix3f;" +
-        ")V",
-        at = @At(
-            value = "FIELD",
-            target = "Lnet/caffeinemc/mods/sodium/api/vertex/format/common/EntityVertex;FORMAT:" +
-                "Lcom/mojang/blaze3d/vertex/VertexFormat;",
-            opcode = Opcodes.GETSTATIC
-        )
-    )
-    private static VertexFormat extendVertexFormat(
-        final VertexFormat original,
-        final @Local(ordinal = 0, argsOnly = true) VertexBufferWriter buffer
-    ) {
-        if (((VertexConsumerExtension) buffer).visual_snowy_leaves$mainVertexFormat()) {
-            return EntityVertexExtension.FORMAT;
-        } else {
-            return original;
-        }
-    }
 }

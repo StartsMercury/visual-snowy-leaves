@@ -20,6 +20,7 @@
         "report.ClientPacketListenerMixin",
         "shader.ShaderManagerMixin",
         "sodium.BlockRendererMixin",
+        "sodium.BufferBuilderMixin",
         "sodium.ChunkBuilderMeshingTaskMixin",
         "sodium.CompactChunkVertexMixin",
         "sodium.DefaultChunkRendererMixin",
