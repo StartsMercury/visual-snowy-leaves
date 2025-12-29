@@ -5,6 +5,10 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 public interface VertexConsumerExtension {
     int SNOW_MARKED = 1;
 
+    default boolean visual_snowy_leaves$mainVertexFormat() {
+        return false;
+    }
+
     /**
      * Should vertex brightness be stored in the alpha channel.
      * <p>

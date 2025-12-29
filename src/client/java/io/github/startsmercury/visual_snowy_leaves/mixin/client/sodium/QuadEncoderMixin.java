@@ -2,11 +2,10 @@ package io.github.startsmercury.visual_snowy_leaves.mixin.client.sodium;
 
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
-import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.compile.VertexConsumerExtension;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.sodium.EntityVertexExtension;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.sodium.SodiumBlockFeatureContext;
-import io.github.startsmercury.visual_snowy_leaves.mixin.client.vertex.BufferBuilderAccessor;
 import net.caffeinemc.mods.sodium.api.vertex.buffer.VertexBufferWriter;
 import net.caffeinemc.mods.sodium.client.render.model.QuadEncoder;
 import org.objectweb.asm.Opcodes;
@@ -44,7 +43,7 @@ public class QuadEncoderMixin {
         final @Local(ordinal = 0, argsOnly = true) VertexBufferWriter buffer,
         final @Local(name = "ptr") long ptr
     ) {
-        if (((BufferBuilderAccessor) buffer).getFormat() == DefaultVertexFormat.BLOCK) {
+        if (((VertexConsumerExtension) buffer).visual_snowy_leaves$mainVertexFormat()) {
             EntityVertexExtension.write(ptr, SodiumBlockFeatureContext.isSnowMarked() ? 1 : 0);
         }
     }
@@ -64,7 +63,7 @@ public class QuadEncoderMixin {
         final long original,
         final @Local(ordinal = 0, argsOnly = true) VertexBufferWriter buffer
     ) {
-        if (((BufferBuilderAccessor) buffer).getFormat() == DefaultVertexFormat.BLOCK) {
+        if (((VertexConsumerExtension) buffer).visual_snowy_leaves$mainVertexFormat()) {
             return original + 4;
         } else {
             return original;
@@ -91,7 +90,7 @@ public class QuadEncoderMixin {
         final VertexFormat original,
         final @Local(ordinal = 0, argsOnly = true) VertexBufferWriter buffer
     ) {
-        if (((BufferBuilderAccessor) buffer).getFormat() == DefaultVertexFormat.BLOCK) {
+        if (((VertexConsumerExtension) buffer).visual_snowy_leaves$mainVertexFormat()) {
             return EntityVertexExtension.FORMAT;
         } else {
             return original;

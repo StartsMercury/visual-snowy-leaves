@@ -15,14 +15,13 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BufferBuilder.class)
 public abstract class BufferBuilderMixin implements VertexConsumer, VertexConsumerExtension {
     @Shadow
     @Final
-    private boolean fastFormat;
+    private VertexFormat format;
 
     @ModifyExpressionValue(
         method = "addVertex(FFFIFFIIFFF)V",
@@ -37,9 +36,10 @@ public abstract class BufferBuilderMixin implements VertexConsumer, VertexConsum
         return original && this.format != DefaultVertexFormat.BLOCK;
     }
 
-    @Shadow
-    @Final
-    private VertexFormat format;
+    @Override
+    public boolean visual_snowy_leaves$mainVertexFormat() {
+        return this.format == DefaultVertexFormat.BLOCK;
+    }
 
     @Override
     public boolean visual_snowy_leaves$alphaAsBrightness() {
