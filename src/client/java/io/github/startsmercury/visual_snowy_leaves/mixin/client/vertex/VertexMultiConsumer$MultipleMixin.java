@@ -15,10 +15,10 @@ public abstract class VertexMultiConsumer$MultipleMixin implements VertexConsume
 
     @Override
     public boolean visual_snowy_leaves$mainVertexFormat() {
-        final var result = new boolean[] { true };
+        final var result = new boolean[] { false };
         assert result.length == 1;
-        assert result[0];
-        this.forEach(x -> result[0] = result[0] && x.visual_snowy_leaves$mainVertexFormat());
+        assert !result[0];
+        this.forEach(x -> result[0] = result[0] || x.visual_snowy_leaves$mainVertexFormat());
         return result[0];
     }
 

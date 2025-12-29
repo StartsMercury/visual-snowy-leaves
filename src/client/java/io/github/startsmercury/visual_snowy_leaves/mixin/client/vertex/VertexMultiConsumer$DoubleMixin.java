@@ -19,7 +19,7 @@ public abstract class VertexMultiConsumer$DoubleMixin implements VertexConsumer,
     @Override
     public boolean visual_snowy_leaves$mainVertexFormat() {
         return this.first.visual_snowy_leaves$mainVertexFormat()
-            && this.second.visual_snowy_leaves$mainVertexFormat();
+            || this.second.visual_snowy_leaves$mainVertexFormat();
     }
 
     @Override

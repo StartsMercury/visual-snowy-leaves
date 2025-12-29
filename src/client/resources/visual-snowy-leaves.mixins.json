@@ -36,6 +36,9 @@
         "tint.SpriteContentsAccessor",
         "vertex.BufferBuilderMixin",
         "vertex.DefaultVertexFormatMixin",
+        "vertex.OutlineBufferSource$EntityOutlineGeneratorMixin",
+        "vertex.SheetedDecalTextureGeneratorMixin",
+        "vertex.SpriteCoordinateExpanderMixin",
         "vertex.VertexConsumerMixin",
         "vertex.VertexMultiConsumer$DoubleMixin",
         "vertex.VertexMultiConsumer$MultipleMixin"
