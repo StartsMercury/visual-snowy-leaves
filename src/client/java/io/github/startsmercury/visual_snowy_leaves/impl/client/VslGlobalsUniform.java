@@ -7,8 +7,11 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import java.nio.ByteBuffer;
 import org.lwjgl.system.MemoryStack;
 
+/**
+ * Used for shader data that applies to all chunks, such as snow transition.
+ */
 public class VslGlobalsUniform implements AutoCloseable {
-    public static final int UBO_SIZE = new Std140SizeCalculator().putFloat().get();
+    private static final int UBO_SIZE = new Std140SizeCalculator().putFloat().get();
 
     private final GpuBuffer buffer = RenderSystem.getDevice().createBuffer(
         () -> "Visual Snowy Leaves Globals UBO",

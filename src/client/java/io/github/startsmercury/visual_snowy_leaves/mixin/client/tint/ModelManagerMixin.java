@@ -110,7 +110,7 @@ public abstract class ModelManagerMixin {
         });
 
         final var spriteWhitenerFuture = modelDiscoveryFuture
-            .thenCompose(_ -> blockModelDefinitionsFuture.thenApplyAsync(
+            .thenCompose(modelDiscovery -> blockModelDefinitionsFuture.thenApplyAsync(
                 entries -> {
                     final var spriteWhitener = SpriteWhitener.create(visualSnowyLeaves);
                     for (final var entry : entries) {

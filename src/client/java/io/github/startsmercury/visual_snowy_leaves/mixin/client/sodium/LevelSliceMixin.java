@@ -1,10 +1,11 @@
 //TODO Re-eneble when Sodium is available in non-obfuscated
 //package io.github.startsmercury.visual_snowy_leaves.mixin.client.sodium;
 //
-//import io.github.startsmercury.visual_snowy_leaves.impl.client.SnowData;
+//import io.github.startsmercury.visual_snowy_leaves.impl.client.SnowProgress;
 //import io.github.startsmercury.visual_snowy_leaves.impl.client.VisualSnowyLeavesImpl;
-//import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.SnowAware;
-//import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.SnowDataAware;
+//import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.BlockAndTintGetterExtension;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.SnowAware;
+//import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.SnowProgressAware;
 //import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.VisualSnowyLeavesAware;
 //import net.caffeinemc.mods.sodium.client.world.LevelSlice;
 //import net.minecraft.client.multiplayer.ClientLevel;
@@ -14,7 +15,7 @@
 //import org.spongepowered.asm.mixin.Shadow;
 //
 //@Mixin(LevelSlice.class)
-//public class LevelSliceMixin implements SnowAware, SnowDataAware, VisualSnowyLeavesAware {
+//public class LevelSliceMixin implements BlockAndTintGetterExtension {
 //    @Final
 //    @Shadow
 //    private ClientLevel level;
@@ -31,7 +32,7 @@
 //    }
 //
 //    @Override
-//    public SnowData visual_snowy_leaves$getSnowData() {
-//        return ((SnowDataAware) this.level).visual_snowy_leaves$getSnowData();
+//    public SnowProgress visual_snowy_leaves$getSnowProgress() {
+//        return ((SnowProgressAware) this.level).visual_snowy_leaves$getSnowProgress();
 //    }
 //}

@@ -1,5 +1,6 @@
 package io.github.startsmercury.visual_snowy_leaves.mixin.client.vertex;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexConsumer;
@@ -14,31 +15,31 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(BufferBuilder.class)
 public abstract class BufferBuilderMixin implements VertexConsumer, VertexConsumerExtension {
     @Shadow
     @Final
-    private boolean fastFormat;
+    private VertexFormat format;
 
-    @Redirect(
+    @ModifyExpressionValue(
         method = "addVertex(FFFIFFIIFFF)V",
         at = @At(
             value = "FIELD",
             target = "Lcom/mojang/blaze3d/vertex/BufferBuilder;fastFormat:Z"
         )
     )
-    private boolean fastFormat(final BufferBuilder instance) {
+    private boolean fastFormat(final boolean original) {
         // Fast-format uses an all-in-one method instead of separate vertex builder methods.
         // This approach was inspired from IrisShaders but may overkill in the long run.
-        return this.fastFormat && this.format != DefaultVertexFormat.BLOCK;
+        return original && this.format != DefaultVertexFormat.BLOCK;
     }
 
-    @Shadow
-    @Final
-    private VertexFormat format;
+    @Override
+    public boolean visual_snowy_leaves$mainVertexFormat() {
+        return this.format == DefaultVertexFormat.BLOCK;
+    }
 
     @Override
     public boolean visual_snowy_leaves$alphaAsBrightness() {

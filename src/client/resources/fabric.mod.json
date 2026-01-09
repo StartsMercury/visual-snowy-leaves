@@ -26,6 +26,9 @@
     "entrypoints": {
         "client": [
             "io.github.startsmercury.visual_snowy_leaves.impl.client.entrypoint.VisualSnowyLeavesFabric"
+        ],
+        "modmenu": [
+            "io.github.startsmercury.visual_snowy_leaves.impl.client.entrypoint.VisualSnowyLeavesModMenu"
         ]
     },
     "custom": {
@@ -49,7 +52,7 @@
         "visual-snowy-leaves.mixins.json"
     ],
     "depends": {
-        "fabricloader": ">=0.18.3",
+        "fabricloader": ">=0.18",
         "java": ">=${version_java}",
         "minecraft": "*"
     },

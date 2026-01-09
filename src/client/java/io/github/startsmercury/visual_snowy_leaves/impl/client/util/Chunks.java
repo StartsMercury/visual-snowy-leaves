@@ -26,7 +26,7 @@ public final class Chunks {
 
             for (var k = 0; k < levelChunkSections.length; ++k) {
                 final var l = level.getSectionYFromSectionIndex(k);
-                level.setSectionDirtyWithNeighbors(pos.x, l, pos.z);
+                level.setSectionDirtyWithNeighbors(pos.x(), l, pos.z());
             }
         }
     }
