@@ -57,6 +57,9 @@
         "minecraft": "*"
     },
     "recommends": {
+        "minecraft": "${version_game}"
+    },
+    "suggests": {
         "minecraft": "${version_minecraft}"
     }
 }
