@@ -3,6 +3,7 @@ package io.github.startsmercury.visual_snowy_leaves.mixin.client.sodium;
 import com.llamalad7.mixinextras.injector.wrapmethod.WrapMethod;
 import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
 import com.mojang.blaze3d.vertex.BufferBuilder;
+import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.sodium.ColorVertexExtension;
@@ -15,11 +16,19 @@ import net.caffeinemc.mods.sodium.api.vertex.format.common.EntityVertex;
 import net.caffeinemc.mods.sodium.api.vertex.format.common.GlyphVertex;
 import net.caffeinemc.mods.sodium.api.vertex.format.common.LineVertex;
 import net.caffeinemc.mods.sodium.api.vertex.format.common.ParticleVertex;
+import net.minecraft.client.renderer.SpriteCoordinateExpander;
 import org.lwjgl.system.MemoryStack;
 import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
 
-@Mixin(BufferBuilder.class)
+@Mixin(
+    value = {
+        BufferBuilder.class,
+        SheetedDecalTextureGenerator.class,
+        SpriteCoordinateExpander.class
+    },
+    targets = { "net/minecraft/client/renderer/OutlineBufferSource$EntityOutlineGenerator" }
+)
 public abstract class BufferBuilderMixin implements VertexConsumer {
     @Dynamic("net.caffeinemc.mods.sodium.mixin.core.render.immediate.consumer.BufferBuilderMixin")
     @WrapMethod(

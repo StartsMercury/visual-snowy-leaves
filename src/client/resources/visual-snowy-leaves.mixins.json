@@ -19,6 +19,7 @@
         "renderer.RenderPipelinesMixin",
         "report.ClientPacketListenerMixin",
         "shader.ShaderManagerMixin",
+        "sodium.BakedModelEncoderMixin",
         "sodium.BlockRendererMixin",
         "sodium.BufferBuilderMixin",
         "sodium.ChunkBuilderMeshingTaskMixin",
