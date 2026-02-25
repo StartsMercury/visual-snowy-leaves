@@ -13,7 +13,8 @@
         }
     ],
     "contributors": [
-        "StarmanMine142 - Ukrainian translation"
+        "StarmanMine142 - Ukrainian translation",
+        "Gaider10 - Fixed Sodium vertex format mismatches"
     ],
     "contact": {
         "homepage": "https://modrinth.com/mod/visual-snowy-leaves",
