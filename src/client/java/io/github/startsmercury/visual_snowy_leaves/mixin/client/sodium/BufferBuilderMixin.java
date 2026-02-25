@@ -6,20 +6,13 @@ import com.mojang.blaze3d.vertex.BufferBuilder;
 import com.mojang.blaze3d.vertex.SheetedDecalTextureGenerator;
 import com.mojang.blaze3d.vertex.VertexConsumer;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.sodium.ColorVertexExtension;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.sodium.EntityVertexExtension;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.sodium.GlyphVertexExtension;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.sodium.LineVertexExtension;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.sodium.ParticleVertexExtension;
-import net.caffeinemc.mods.sodium.api.vertex.format.common.ColorVertex;
-import net.caffeinemc.mods.sodium.api.vertex.format.common.EntityVertex;
-import net.caffeinemc.mods.sodium.api.vertex.format.common.GlyphVertex;
-import net.caffeinemc.mods.sodium.api.vertex.format.common.LineVertex;
-import net.caffeinemc.mods.sodium.api.vertex.format.common.ParticleVertex;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.sodium.SodiumVertexFormatExtender;
+import net.fabricmc.loader.api.FabricLoader;
 import net.minecraft.client.renderer.SpriteCoordinateExpander;
 import org.lwjgl.system.MemoryStack;
 import org.spongepowered.asm.mixin.Dynamic;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 
 @Mixin(
     value = {
@@ -30,6 +23,12 @@ import org.spongepowered.asm.mixin.Mixin;
     targets = { "net/minecraft/client/renderer/OutlineBufferSource$EntityOutlineGenerator" }
 )
 public abstract class BufferBuilderMixin implements VertexConsumer {
+    @Unique
+    private final SodiumVertexFormatExtender extender =
+        FabricLoader.getInstance().isModLoaded("sodium")
+            ? SodiumVertexFormatExtender.ENABLED
+            : SodiumVertexFormatExtender.DISABLED;
+
     @Dynamic("net.caffeinemc.mods.sodium.mixin.core.render.immediate.consumer.BufferBuilderMixin")
     @WrapMethod(
         method = "push(Lorg/lwjgl/system/MemoryStack;JILcom/mojang/blaze3d/vertex/VertexFormat;)V",
@@ -39,22 +38,16 @@ public abstract class BufferBuilderMixin implements VertexConsumer {
         final MemoryStack stack,
         final long src,
         final int count,
-        VertexFormat format,
+        final VertexFormat format,
         final Operation<Void> original
     ) {
-        if (this.visual_snowy_leaves$mainVertexFormat()) {
-            if (format == ColorVertex.FORMAT) {
-                format = ColorVertexExtension.FORMAT;
-            } else if (format == EntityVertex.FORMAT) {
-                format = EntityVertexExtension.FORMAT;
-            } else if (format == GlyphVertex.FORMAT) {
-                format = GlyphVertexExtension.FORMAT;
-            } else if (format == LineVertex.FORMAT) {
-                format = LineVertexExtension.FORMAT;
-            } else if (format == ParticleVertex.FORMAT) {
-                format = ParticleVertexExtension.FORMAT;
-            }
-        }
-        original.call(stack, src, count, format);
+        original.call(
+            stack,
+            src,
+            count,
+            this.visual_snowy_leaves$mainVertexFormat()
+                ? this.extender.toExtension(format)
+                : format
+        );
     }
 }
