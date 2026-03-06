@@ -3,6 +3,7 @@
     "package": "io.github.startsmercury.visual_snowy_leaves.mixin.client",
     "compatibilityLevel": "JAVA_21",
     "client": [
+        "axiom.ChunkedBlockRegionMixin",
         "chunks.ClientChunkCache$StorageAccessor",
         "chunks.ClientChunkCacheAccessor",
         "extension.MinecraftMixin",

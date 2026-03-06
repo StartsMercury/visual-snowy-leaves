@@ -85,6 +85,9 @@ dependencies {
 
     // Iris (Without) Shaders Support
     modCompileOnly("maven.modrinth:iris:1.10.4+1.21.11-fabric")
+
+    // Axiom 5.3.0 (1.21.11) VSL#27 Workaround
+    modCompileOnly("maven.modrinth:axiom:uoTNUpOT")
 }
 
 tasks.withType<ProcessResources> {
