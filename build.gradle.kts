@@ -65,7 +65,7 @@ repositories {
 dependencies {
     minecraft("com.mojang:minecraft:${Constants.VERSION_MINECRAFT}")
     mappings(loom.officialMojangMappings())
-    modImplementation("net.fabricmc:fabric-loader:0.18.3")
+    modImplementation("net.fabricmc:fabric-loader:0.19.2")
 
     // Optional: Custom Key Mappings
     modImplementation(fabricApi.module("fabric-lifecycle-events-v1", Constants.VERSION_FAPI))
