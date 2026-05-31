@@ -7,7 +7,7 @@ object Constants {
 }
 
 plugins {
-    id("net.fabricmc.fabric-loom-remap") version "1.14.7"
+    id("net.fabricmc.fabric-loom-remap") version "1.16.2"
 }
 
 base {
