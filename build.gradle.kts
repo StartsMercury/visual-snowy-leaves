@@ -87,7 +87,7 @@ dependencies {
     modCompileOnly("maven.modrinth:iris:1.10.7+1.21.11-fabric")
 
     // Axiom 5.3.0 (1.21.11) VSL#27 Workaround
-    modCompileOnly("maven.modrinth:axiom:uoTNUpOT")
+    modCompileOnly("maven.modrinth:axiom:DLVQrqv2")
 }
 
 tasks.withType<ProcessResources> {
