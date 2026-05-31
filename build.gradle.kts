@@ -72,7 +72,7 @@ dependencies {
     modImplementation(fabricApi.module("fabric-key-binding-api-v1", Constants.VERSION_FAPI))
 
     // Mod Menu Support
-    modImplementation("com.terraformersmc:modmenu:17.0.0-alpha.1")
+    modImplementation("com.terraformersmc:modmenu:17.0.0")
     modRuntimeOnly(fabricApi.module("fabric-resource-loader-v0", Constants.VERSION_FAPI))
     modRuntimeOnly(fabricApi.module("fabric-screen-api-v1", Constants.VERSION_FAPI))
 
