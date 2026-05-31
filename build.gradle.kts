@@ -81,7 +81,7 @@ dependencies {
     modCompileOnly(fabricApi.module("fabric-renderer-indigo", Constants.VERSION_FAPI))
 
     // Sodium's Renderer Support
-    modCompileOnly("net.caffeinemc:sodium-fabric:0.8.2+mc1.21.11")
+    modCompileOnly("net.caffeinemc:sodium-fabric:0.8.12+mc1.21.11")
 
     // Iris (Without) Shaders Support
     modCompileOnly("maven.modrinth:iris:1.10.4+1.21.11-fabric")
