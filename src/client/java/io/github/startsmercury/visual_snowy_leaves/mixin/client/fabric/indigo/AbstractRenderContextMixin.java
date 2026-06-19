@@ -21,7 +21,16 @@ public class AbstractRenderContextMixin implements AbstractRenderContextExtensio
         return null;
     }
 
-    @WrapOperation(method = "bufferQuad(Lnet/fabricmc/fabric/impl/client/indigo/renderer/mesh/MutableQuadViewImpl;Lcom/mojang/blaze3d/vertex/VertexConsumer;)V", at = @At(value = "INVOKE", target = "Lcom/mojang/blaze3d/vertex/VertexConsumer;addVertex(FFFIFFIIFFF)V"))
+    @WrapOperation(
+        method = "bufferQuad(" +
+            "Lnet/fabricmc/fabric/impl/client/indigo/renderer/mesh/MutableQuadViewImpl;" +
+            "Lcom/mojang/blaze3d/vertex/VertexConsumer;" +
+        ")V",
+        at = @At(
+            value = "INVOKE",
+            target = "Lcom/mojang/blaze3d/vertex/VertexConsumer;addVertex(FFFIFFIIFFF)V"
+        )
+    )
     private void distinguishSnowyableQuads(
         final VertexConsumer instance,
         final float f,

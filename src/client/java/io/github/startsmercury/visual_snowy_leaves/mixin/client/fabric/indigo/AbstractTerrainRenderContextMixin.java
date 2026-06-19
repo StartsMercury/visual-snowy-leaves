@@ -22,16 +22,25 @@ public class AbstractTerrainRenderContextMixin implements AbstractRenderContextE
     protected BlockRenderInfo blockInfo;
 
     @Unique
-    private boolean alphaAsBrightness;
+    private boolean extended;
 
     @Override
     public @Nullable BlockRenderInfo visual_snowy_leaves$blockInfo() {
         return this.blockInfo;
     }
 
-    @ModifyExpressionValue(method = "bufferQuad", at = @At(value = "INVOKE", target = "Lnet/fabricmc/fabric/impl/client/indigo/renderer/render/AbstractTerrainRenderContext;getVertexConsumer(Lnet/minecraft/client/renderer/chunk/ChunkSectionLayer;)Lcom/mojang/blaze3d/vertex/VertexConsumer;"))
+    @ModifyExpressionValue(
+        method = "bufferQuad",
+        at = @At(
+            value = "INVOKE",
+            target = "Lnet/fabricmc/fabric/impl/client/indigo/renderer/render/AbstractTerrainRenderContext;" +
+                "getVertexConsumer(" +
+                    "Lnet/minecraft/client/renderer/chunk/ChunkSectionLayer;" +
+                ")Lcom/mojang/blaze3d/vertex/VertexConsumer;"
+        )
+    )
     private VertexConsumer captureAlphaAsBrightness(final VertexConsumer original) {
-        this.alphaAsBrightness = original.visual_snowy_leaves$alphaAsBrightness();
+        this.extended = original.visual_snowy_leaves$isExtended();
         return original;
     }
 
@@ -43,7 +52,7 @@ public class AbstractTerrainRenderContextMixin implements AbstractRenderContextE
         )
     )
     private int storeBrightnessInAlpha(final int i, final float f, final Operation<Integer> original) {
-        if (this.alphaAsBrightness) {
+        if (this.extended) {
             return ARGB.multiplyAlpha(i, f);
         } else {
             return original.call(i, f);

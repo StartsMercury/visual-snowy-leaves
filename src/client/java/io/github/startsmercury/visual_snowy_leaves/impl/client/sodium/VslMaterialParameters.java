@@ -30,7 +30,7 @@ public final class VslMaterialParameters {
     /**
      * Encodes extended bits into unused offsets.
      * <p>
-     * This method expects valid {@code MaterialParamters.pack} bits.
+     * This method expects valid {@code MaterialParameters.pack} bits.
      * @param base  The original bits to encode into.
      * @return  The modified bits with additional encoded bits.
      */

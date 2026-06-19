@@ -37,7 +37,7 @@ public interface VertexConsumerMixin extends VertexConsumerExtension {
         final @Local(ordinal = 3, argsOnly = true) float alpha,
         final @Local(ordinal = 2) int vertex
     ) {
-        if (this.visual_snowy_leaves$alphaAsBrightness()) {
+        if (this.visual_snowy_leaves$isExtended()) {
              return ARGB.colorFromFloat(alpha * brightness[vertex], red, green, blue);
         } else {
             return color;

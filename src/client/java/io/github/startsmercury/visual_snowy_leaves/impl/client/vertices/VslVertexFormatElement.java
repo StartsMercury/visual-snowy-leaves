@@ -1,4 +1,4 @@
-package io.github.startsmercury.visual_snowy_leaves.impl.client;
+package io.github.startsmercury.visual_snowy_leaves.impl.client.vertices;
 
 import com.mojang.blaze3d.vertex.VertexFormatElement;
 import it.unimi.dsi.fastutil.ints.IntOpenHashSet;

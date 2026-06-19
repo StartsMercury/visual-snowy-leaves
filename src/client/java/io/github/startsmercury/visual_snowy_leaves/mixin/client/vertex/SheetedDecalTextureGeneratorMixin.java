@@ -14,7 +14,7 @@ public class SheetedDecalTextureGeneratorMixin implements VertexConsumerExtensio
     private VertexConsumer delegate;
 
     @Override
-    public boolean visual_snowy_leaves$mainVertexFormat() {
-        return this.delegate.visual_snowy_leaves$mainVertexFormat();
+    public boolean visual_snowy_leaves$isExtended() {
+        return this.delegate.visual_snowy_leaves$isExtended();
     }
 }

@@ -12,15 +12,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 @Mixin(RenderSystem.class)
 public class RenderSystemMixin {
     @Inject(method = "bindDefaultUniforms(Lcom/mojang/blaze3d/systems/RenderPass;)V", at = @At("RETURN"))
-    private static void a(
-            final CallbackInfo callback,
-            final @Local(ordinal = 0, argsOnly = true) RenderPass renderPass
+    private static void visual_snowy_leaves$bindSnowProgressUniform(
+        final CallbackInfo callback,
+        final @Local(ordinal = 0, argsOnly = true) RenderPass renderPass
     ) {
-
         final var globalUniform = VisualSnowyLeavesImpl.getSnowProgress();
         if (globalUniform != null) {
             renderPass.setUniform("SnowProgress", globalUniform);
         }
-
     }
 }

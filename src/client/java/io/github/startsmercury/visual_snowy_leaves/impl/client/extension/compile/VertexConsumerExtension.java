@@ -5,21 +5,7 @@ import com.mojang.blaze3d.vertex.VertexConsumer;
 public interface VertexConsumerExtension {
     int SNOW_MARKED = 1;
 
-    default boolean visual_snowy_leaves$mainVertexFormat() {
-        return false;
-    }
-
-    /**
-     * Should vertex brightness be stored in the alpha channel.
-     * <p>
-     * Instead of premultiplying the vertex brightness into the RGB color
-     * channels, the color would be assumed fully opaque and the brightness is
-     * stored in that channel instead. This moves the multiplication to the
-     * vertex shader along with enforcing full opacity.
-     *
-     * @return Should vertex brightness be stored in the alpha channel.
-     */
-    default boolean visual_snowy_leaves$alphaAsBrightness() {
+    default boolean visual_snowy_leaves$isExtended() {
         return false;
     }
 

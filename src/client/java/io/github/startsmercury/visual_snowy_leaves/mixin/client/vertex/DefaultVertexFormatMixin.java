@@ -3,7 +3,7 @@ package io.github.startsmercury.visual_snowy_leaves.mixin.client.vertex;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.mojang.blaze3d.vertex.DefaultVertexFormat;
 import com.mojang.blaze3d.vertex.VertexFormat;
-import io.github.startsmercury.visual_snowy_leaves.impl.client.VslVertexFormatElement;
+import io.github.startsmercury.visual_snowy_leaves.impl.client.vertices.VslVertexFormatElement;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 

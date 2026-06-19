@@ -1,6 +1,5 @@
 package io.github.startsmercury.visual_snowy_leaves.mixin.client.sodium;
 
-import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.extension.compile.VertexConsumerExtension;
 import io.github.startsmercury.visual_snowy_leaves.impl.client.sodium.EntityVertexExtension;
@@ -12,45 +11,9 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+// TODO: do we still need this?
 @Mixin(BakedModelEncoder.class)
 public class BakedModelEncoderMixin {
-    @ModifyExpressionValue(
-        method = {
-            "writeQuadVertices(" +
-                "Lnet/caffeinemc/mods/sodium/api/vertex/buffer/VertexBufferWriter;" +
-                "Lcom/mojang/blaze3d/vertex/PoseStack$Pose;" +
-                "Lnet/caffeinemc/mods/sodium/client/model/quad/ModelQuadView;" +
-                "F" +
-                "F" +
-                "F" +
-                "F" +
-                "[F" +
-                "[I" +
-                "I" +
-            ")V",
-            "writeQuadVertices(" +
-                "Lnet/caffeinemc/mods/sodium/api/vertex/buffer/VertexBufferWriter;" +
-                "Lcom/mojang/blaze3d/vertex/PoseStack$Pose;" +
-                "Lnet/caffeinemc/mods/sodium/client/model/quad/ModelQuadView;" +
-                "I" +
-                "I" +
-                "I" +
-                "Z" +
-            ")V"
-        },
-        at = @At(value = "CONSTANT", args = "intValue=144")
-    )
-    private static int increaseSize(
-        final int original,
-        final @Local(ordinal = 0, argsOnly = true) VertexBufferWriter buffer
-    ) {
-        if (((VertexConsumerExtension) buffer).visual_snowy_leaves$mainVertexFormat()) {
-            return original + 16;
-        } else {
-            return original;
-        }
-    }
-
     @Inject(
         method = {
             "writeQuadVertices(" +
@@ -95,45 +58,8 @@ public class BakedModelEncoderMixin {
         final @Local(ordinal = 0, argsOnly = true) VertexBufferWriter buffer,
         final @Local(name = "ptr") long ptr
     ) {
-        if (((VertexConsumerExtension) buffer).visual_snowy_leaves$mainVertexFormat()) {
+        if (((VertexConsumerExtension) buffer).visual_snowy_leaves$isExtended()) {
             EntityVertexExtension.write(ptr, SodiumBlockFeatureContext.isSnowMarked() ? 1 : 0);
-        }
-    }
-
-    @ModifyExpressionValue(
-        method = {
-            "writeQuadVertices(" +
-                "Lnet/caffeinemc/mods/sodium/api/vertex/buffer/VertexBufferWriter;" +
-                "Lcom/mojang/blaze3d/vertex/PoseStack$Pose;" +
-                "Lnet/caffeinemc/mods/sodium/client/model/quad/ModelQuadView;" +
-                "F" +
-                "F" +
-                "F" +
-                "F" +
-                "[F" +
-                "[I" +
-                "I" +
-            ")V",
-            "writeQuadVertices(" +
-                "Lnet/caffeinemc/mods/sodium/api/vertex/buffer/VertexBufferWriter;" +
-                "Lcom/mojang/blaze3d/vertex/PoseStack$Pose;" +
-                "Lnet/caffeinemc/mods/sodium/client/model/quad/ModelQuadView;" +
-                "I" +
-                "I" +
-                "I" +
-                "Z" +
-            ")V"
-        },
-        at = @At(value = "CONSTANT", args = "longValue=36")
-    )
-    private static long increaseStride(
-        final long original,
-        final @Local(ordinal = 0, argsOnly = true) VertexBufferWriter buffer
-    ) {
-        if (((VertexConsumerExtension) buffer).visual_snowy_leaves$mainVertexFormat()) {
-            return original + 4;
-        } else {
-            return original;
         }
     }
 }
